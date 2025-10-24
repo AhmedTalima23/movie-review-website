@@ -1,0 +1,137 @@
+/* Media Queries and Utility Classes for Responsive Design */
+
+/* CSS Custom Properties for Breakpoints (Easy to Update) */
+:root {
+    --breakpoint-xs: 480px;  /* Extra small (e.g., small phones) */
+    --breakpoint-sm: 640px;  /* Small (e.g., large phones) */
+    --breakpoint-md: 768px;  /* Medium (e.g., tablets) */
+    --breakpoint-lg: 1024px; /* Large (e.g., small desktops) */
+    --breakpoint-xl: 1280px; /* Extra large (e.g., desktops) */
+    --breakpoint-xxl: 1536px; /* Extra extra large (e.g., large desktops) */
+}
+
+/* Base (Mobile-First) Utilities - Apply to All Screens by Default */
+.d-none { display: none !important; }
+.d-block { display: block !important; }
+.d-flex { display: flex !important; }
+.d-grid { display: grid !important; }
+.justify-center { justify-content: center !important; }
+.align-center { align-items: center !important; }
+.text-center { text-align: center !important; }
+.text-left { text-align: left !important; }
+.p-1 { padding: 0.25rem !important; }
+.p-2 { padding: 0.5rem !important; }
+.m-1 { margin: 0.25rem !important; }
+.m-2 { margin: 0.5rem !important; }
+.w-100 { width: 100% !important; }
+.w-50 { width: 50% !important; }
+
+/* Extra Small (xs) - 480px and up */
+@media (min-width: var(--breakpoint-xs)) {
+    .xs-100 { width: 100% !important; }
+    .xs-80 { width: 80% !important; }
+    .xs-50 { width: 50% !important; }
+    .xs-33 { width: 33.33% !important; }
+    .xs-25 { width: 25% !important; }
+    .xs-20 { width: 20% !important; }
+    .xs-16 { width: 16.666% !important; }
+    .xs-d-flex { display: flex !important; }
+    .xs-justify-center { justify-content: center !important; }
+    .xs-text-center { text-align: center !important; }
+}
+
+/* Small (sm) - 640px and up */
+@media (min-width: var(--breakpoint-sm)) {
+    .sm-100 { width: 100% !important; }
+    .sm-80 { width: 80% !important; }
+    .sm-50 { width: 50% !important; }
+    .sm-33 { width: 33.33% !important; }
+    .sm-25 { width: 25% !important; }
+    .sm-20 { width: 20% !important; }
+    .sm-16 { width: 16.666% !important; }
+    .sm-d-flex { display: flex !important; }
+    .sm-justify-center { justify-content: center !important; }
+    .sm-text-center { text-align: center !important; }
+    .sm-flex-column { flex-direction: column !important; }
+}
+
+/* Medium (md) - 768px and up */
+@media (min-width: var(--breakpoint-md)) {
+    .md-100 { width: 100% !important; }
+    .md-50 { width: 50% !important; }
+    .md-33 { width: 33.33% !important; }
+    .md-25 { width: 25% !important; }
+    .md-20 { width: 20% !important; }
+    .md-16 { width: 16.666% !important; }
+    .md-d-flex { display: flex !important; }
+    .md-justify-between { justify-content: space-between !important; }
+    .md-text-left { text-align: left !important; }
+    .md-grid-cols-2 { grid-template-columns: repeat(2, 1fr) !important; }
+}
+
+/* Large (lg) - 1024px and up */
+@media (min-width: var(--breakpoint-lg)) {
+    .lg-100 { width: 100% !important; }
+    .lg-60 { width: 60% !important; }
+    .lg-50 { width: 50% !important; }
+    .lg-33 { width: 33.33% !important; }
+    .lg-30 { width: 30% !important; }
+    .lg-25 { width: 25% !important; }
+    .lg-24 { width: 24% !important; }
+    .lg-20 { width: 20% !important; }
+    .lg-16 { width: 16.666% !important; }
+    .lg-d-flex { display: flex !important; }
+    .lg-align-center { align-items: center !important; }
+    .lg-grid-cols-3 { grid-template-columns: repeat(3, 1fr) !important; }
+}
+
+/* Extra Large (xl) - 1280px and up */
+@media (min-width: var(--breakpoint-xl)) {
+    .xl-100 { width: 100% !important; }
+    .xl-50 { width: 50% !important; }
+    .xl-33 { width: 33.33% !important; }
+    .xl-25 { width: 25% !important; }
+    .xl-20 { width: 20% !important; }
+    .xl-16 { width: 16.666% !important; }
+    .xl-d-flex { display: flex !important; }
+    .xl-justify-center { justify-content: center !important; }
+    .xl-grid-cols-4 { grid-template-columns: repeat(4, 1fr) !important; }
+}
+
+/* Extra Extra Large (xxl) - 1536px and up */
+@media (min-width: var(--breakpoint-xxl)) {
+    .xxl-100 { width: 100% !important; }
+    .xxl-50 { width: 50% !important; }
+    .xxl-33 { width: 33.33% !important; }
+    .xxl-25 { width: 25% !important; }
+    .xxl-20 { width: 20% !important; }
+    .xxl-16 { width: 16.666% !important; }
+    .xxl-d-flex { display: flex !important; }
+    .xxl-text-center { text-align: center !important; }
+    .xxl-grid-cols-5 { grid-template-columns: repeat(5, 1fr) !important; }
+}
+
+/* Container Queries (Modern Browsers Only) - For Component-Level Responsiveness */
+@container (min-width: 500px) {
+    .container-sm { width: 80% !important; }
+}
+@container (min-width: 700px) {
+    .container-md { width: 90% !important; }
+}
+
+/* Special Overrides for Movie Website (e.g., Mobile Adjustments) */
+@media (max-width: 768px) {
+    .navbar-content ul { display: none !important; }
+    .bar-icon { display: block !important; }
+    .header-content { flex-direction: column !important; text-align: center !important; }
+    .header-text { flex-basis: 100% !important; }
+    .header-img { flex-basis: 100% !important; margin-top: 2rem !important; }
+    .movie { flex-direction: column !important; text-align: center !important; }
+    .movie img { margin-bottom: 1rem !important; }
+}
+
+/* Accessibility and Enhancements */
+@media (prefers-reduced-motion: no-preference) {
+    .btn:hover { transform: translateY(-2px); }
+    .card:hover { transform: translateY(-5px); }
+}
