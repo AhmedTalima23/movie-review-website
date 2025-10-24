@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <title>Settings - MovieReview</title>
+    <link rel="stylesheet" href="../../assets/css/style.css">
+    <link rel="stylesheet" href="../../assets/css/sidebar.css">
+    <link href="https://fonts.googleapis.com/css2?family=Open+Sans:wght@400;600;700&family=Inter:wght@400;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+</head>
+<body>
+    <!-- Sidebar -->
+    <div class="sidebar">
+        <div class="sidebar-header">
+            <h1><a href="../../index.html">Movie<span>Review</span></a></h1>
+        </div>
+        <div class="sidebar-menu">
+            <h3>Menu</h3>
+            <a href="movie_list.html" class="menu-item">
+                <i class="fas fa-film"></i> Browse Movies
+            </a>
+            <a href="my_reviews.html" class="menu-item">
+                <i class="fas fa-star"></i> My Reviews
+            </a>
+            <a href="watchlist.html" class="menu-item">
+                <i class="fas fa-list"></i> Watchlist
+            </a>
+            <h3>Profile</h3>
+            <a href="profile.html" class="menu-item">
+                <i class="fas fa-user"></i> My Profile
+            </a>
+            <a href="settings.html" class="menu-item active">
+                <i class="fas fa-cog"></i> Settings
+            </a>
+            <a href="../auth/logout.html" class="menu-item">
+                <i class="fas fa-sign-out-alt"></i> Logout
+            </a>
+        </div>
+    </div>
+
+    <!-- Main Content -->
+    <div class="content-with-sidebar">
+        <h2>Account Settings</h2>
+
+        <div class="settings-form">
+            <form id="settingsForm">
+                <div class="settings-row">
+                    <div class="form-group inline">
+                        <label for="fullName">Full Name</label>
+                        <input id="fullName" type="text" value="John Doe">
+                    </div>
+                    <div class="form-group inline">
+                        <label for="email">Email</label>
+                        <input id="email" type="email" value="johndoe@example.com">
+                    </div>
+                </div>
+
+                <div style="margin-top:1rem;">
+                    <label for="bio">Bio (optional)</label>
+                    <textarea id="bio" rows="3" placeholder="Tell others about your movie taste...">Movie lover and classic film fan.</textarea>
+                </div>
+
+                <h3 style="margin-top:1.2rem;">Change Password</h3>
+                <div class="settings-row">
+                    <div class="form-group inline">
+                        <label for="currentPassword">Current Password</label>
+                        <input id="currentPassword" type="password">
+                    </div>
+                    <div class="form-group inline">
+                        <label for="newPassword">New Password</label>
+                        <input id="newPassword" type="password">
+                    </div>
+                    <div class="form-group inline" style="flex-basis:100%;">
+                        <label for="confirmPassword">Confirm New Password</label>
+                        <input id="confirmPassword" type="password">
+                    </div>
+                </div>
+
+                <h3 style="margin-top:1.2rem;">Notifications</h3>
+                <div style="display:flex;flex-direction:column;gap:8px;margin-bottom:1rem;">
+                    <label class="toggle"><input type="checkbox" checked> Email notifications</label>
+                    <label class="toggle"><input type="checkbox"> SMS notifications</label>
+                    <label class="toggle"><input type="checkbox" checked> New review replies</label>
+                </div>
+
+                <h3 style="margin-top:1.2rem;">Privacy</h3>
+                <div style="display:flex;gap:1rem;align-items:center;margin-bottom:1rem;">
+                    <label><input type="radio" name="privacy" checked> Public profile</label>
+                    <label><input type="radio" name="privacy"> Private profile</label>
+                </div>
+
+                <div style="margin-top:1rem;">
+                    <button type="submit" class="btn">Save Changes</button>
+                    <a href="profile.html" class="btn" style="background:#6c6c6c;margin-left:8px;">Cancel</a>
+                </div>
+            </form>
+        </div>
+
+        <!-- Footer -->
+        <footer>
+            <div class="container">
+                <p>&copy; 2024 MovieReview. All rights reserved.</p>
+                <p>Discover, Review, and Rate your favorite movies.</p>
+            </div>
+        </footer>
+    </div>
+
+    <script>
+    // UI-only form handling (static demo): prevent real submit and show a temporary message
+    document.getElementById('settingsForm').addEventListener('submit', function(e){
+        e.preventDefault();
+        var btn = this.querySelector('button[type="submit"]');
+        btn.textContent = 'Saved ✓';
+        setTimeout(function(){ btn.textContent = 'Save Changes'; }, 1500);
+    });
+    </script>
+</body>
+</html>

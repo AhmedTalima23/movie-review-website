@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>My Reviews - MovieReview</title>
+    <link rel="stylesheet" href="../../assets/css/style.css">
+    <link rel="stylesheet" href="../../assets/css/sidebar.css">
+    <link href="https://fonts.googleapis.com/css2?family=Open+Sans:wght@400;600;700&family=Inter:wght@400;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+</head>
+<body>
+    <!-- Sidebar -->
+    <div class="sidebar">
+        <div class="sidebar-header">
+            <h1><a href="../../index.html">Movie<span>Review</span></a></h1>
+        </div>
+        <div class="sidebar-menu">
+            <h3>Menu</h3>
+            <a href="movie_list.html" class="menu-item">
+                <i class="fas fa-film"></i> Browse Movies
+            </a>
+            <a href="my_reviews.html" class="menu-item active">
+                <i class="fas fa-star"></i> My Reviews
+            </a>
+            <a href="watchlist.html" class="menu-item">
+                <i class="fas fa-list"></i> Watchlist
+            </a>
+            <h3>Profile</h3>
+            <a href="profile.html" class="menu-item">
+                <i class="fas fa-user"></i> My Profile
+            </a>
+            <a href="settings.html" class="menu-item">
+                <i class="fas fa-cog"></i> Settings
+            </a>
+            <a href="../auth/logout.html" class="menu-item">
+                <i class="fas fa-sign-out-alt"></i> Logout
+            </a>
+        </div>
+    </div>
+
+    <!-- Main Content -->
+    <div class="content-with-sidebar">
+        <h2>My Reviews</h2>
+        <div class="reviews-container">
+            <!-- Review Card -->
+            <div class="review-card">
+                <img src="../../assets/img/movies/movie1.jpg" alt="Movie Poster">
+                <div class="review-content">
+                    <div class="review-header">
+                        <h3>The Shawshank Redemption</h3>
+                        <div class="rating">
+                            <span>★★★★★</span>
+                            <span>5.0</span>
+                        </div>
+                    </div>
+                    <p class="review-date">Reviewed on: Jan 15, 2024</p>
+                    <p class="review-text">An absolute masterpiece that shows the power of hope and friendship. The performances are outstanding and the story is deeply moving.</p>
+                    <div class="review-actions">
+                        <button class="btn edit-btn"><i class="fas fa-edit"></i> Edit</button>
+                        <button class="btn delete-btn"><i class="fas fa-trash"></i> Delete</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- More review cards can be added here -->
+        </div>
+    </div>
+    <!-- Add footer -->
+    <footer>
+        <div class="container">
+            <p>&copy; 2024 MovieReview. All rights reserved.</p>
+            <p>Discover, Review, and Rate your favorite movies.</p>
+        </div>
+    </footer>
+</body>
+</html>

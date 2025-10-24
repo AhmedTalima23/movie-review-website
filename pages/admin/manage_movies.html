@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Manage Movies - Admin | MovieReview</title>
+    <link rel="stylesheet" href="../../assets/css/style.css">
+    <link rel="stylesheet" href="../../assets/css/sidebar.css">
+    <link href="https://fonts.googleapis.com/css2?family=Open+Sans:wght@400;600;700&family=Inter:wght@400;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+</head>
+<body>
+    <!-- Sidebar -->
+    <div class="sidebar">
+        <div class="sidebar-header">
+            <h1><a href="../../index.html">Movie<span>Review</span></a></h1>
+        </div>
+        <div class="sidebar-menu">
+            <h3>Admin Menu</h3>
+            <a href="home.html" class="menu-item">
+                <i class="fas fa-home"></i> Admin Home
+            </a>
+            <a href="manage_movies.html" class="menu-item active">
+                <i class="fas fa-film"></i> Manage Movies
+            </a>
+            <a href="manage_reviews.html" class="menu-item">
+                <i class="fas fa-star"></i> Manage Reviews
+            </a>
+            <a href="../auth/logout.html" class="menu-item">
+                <i class="fas fa-sign-out-alt"></i> Logout
+            </a>
+        </div>
+    </div>
+    <div class="content-with-sidebar">
+        <h2>Manage Movies</h2>
+        <div class="admin-panel">
+            <button class="btn" style="margin-bottom:1rem;"><i class="fas fa-plus"></i> Add New Movie</button>
+            <table style="width:100%; background:#222; color:#eee; border-radius:10px; overflow:hidden;">
+                <thead>
+                    <tr style="background:#333;">
+                        <th style="padding:10px;">Poster</th>
+                        <th>Title</th>
+                        <th>Genre</th>
+                        <th>Year</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td><img src="../../assets/img/movies/movie1.jpg" alt="Movie" style="width:60px; border-radius:5px;"></td>
+                        <td>The Shawshank Redemption</td>
+                        <td>Drama</td>
+                        <td>1994</td>
+                        <td>
+                            <button class="btn edit-btn"><i class="fas fa-edit"></i></button>
+                            <button class="btn delete-btn"><i class="fas fa-trash"></i></button>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td><img src="../../assets/img/movies/movie2.jpg" alt="Movie" style="width:60px; border-radius:5px;"></td>
+                        <td>The Godfather</td>
+                        <td>Crime, Drama</td>
+                        <td>1972</td>
+                        <td>
+                            <button class="btn edit-btn"><i class="fas fa-edit"></i></button>
+                            <button class="btn delete-btn"><i class="fas fa-trash"></i></button>
+                        </td>
+                    </tr>
+                    <!-- More rows as needed -->
+                </tbody>
+            </table>
+        </div>
+    </div>
+</body>
+</html>

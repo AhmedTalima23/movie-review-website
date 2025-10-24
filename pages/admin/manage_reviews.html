@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Manage Reviews - Admin | MovieReview</title>
+    <link rel="stylesheet" href="../../assets/css/style.css">
+    <link rel="stylesheet" href="../../assets/css/sidebar.css">
+    <link href="https://fonts.googleapis.com/css2?family=Open+Sans:wght@400;600;700&family=Inter:wght@400;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+</head>
+<body>
+    <!-- Sidebar -->
+    <div class="sidebar">
+        <div class="sidebar-header">
+            <h1><a href="../../index.html">Movie<span>Review</span></a></h1>
+        </div>
+        <div class="sidebar-menu">
+            <h3>Admin Menu</h3>
+            <a href="home.html" class="menu-item">
+                <i class="fas fa-home"></i> Admin Home
+            </a>
+            <a href="manage_movies.html" class="menu-item">
+                <i class="fas fa-film"></i> Manage Movies
+            </a>
+            <a href="manage_reviews.html" class="menu-item active">
+                <i class="fas fa-star"></i> Manage Reviews
+            </a>
+            <a href="../auth/logout.html" class="menu-item">
+                <i class="fas fa-sign-out-alt"></i> Logout
+            </a>
+        </div>
+    </div>
+    <div class="content-with-sidebar">
+        <h2>Manage Reviews</h2>
+        <div class="admin-panel">
+            <table style="width:100%; background:#222; color:#eee; border-radius:10px; overflow:hidden;">
+                <thead>
+                    <tr style="background:#333;">
+                        <th style="padding:10px;">Movie</th>
+                        <th>User</th>
+                        <th>Review</th>
+                        <th>Rating</th>
+                        <th>Date</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>The Shawshank Redemption</td>
+                        <td>John Doe</td>
+                        <td>Outstanding movie, a must-watch!</td>
+                        <td>5</td>
+                        <td>2024-01-15</td>
+                        <td>
+                            <button class="btn delete-btn"><i class="fas fa-trash"></i></button>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>The Godfather</td>
+                        <td>Jane Smith</td>
+                        <td>Classic mafia drama, loved it.</td>
+                        <td>5</td>
+                        <td>2024-01-10</td>
+                        <td>
+                            <button class="btn delete-btn"><i class="fas fa-trash"></i></button>
+                        </td>
+                    </tr>
+                    <!-- More rows as needed -->
+                </tbody>
+            </table>
+        </div>
+    </div>
+</body>
+</html>

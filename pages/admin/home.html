@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Dashboard - MovieReview</title>
+    <link rel="stylesheet" href="../../assets/css/style.css">
+    <link rel="stylesheet" href="../../assets/css/admin.css">
+    <link href="https://fonts.googleapis.com/css2?family=Open+Sans:wght@400;600;700&family=Inter:wght@400;700&display=swap" rel="stylesheet">
+</head>
+<body>
+    <!-- Admin Navigation Bar -->
+    <nav class="navbar">
+        <div class="container">
+            <div class="navbar-content">
+                <h1><a href="home.html">Movie<span>Review</span> Admin</a></h1>
+                <ul>
+                    <li><a href="home.html">Dashboard</a></li>
+                    <li><a href="add_movie.html">Add Movie</a></li>
+                    <li><a href="manage_movies.html">Manage Movies</a></li>
+                    <li><a href="manage_reviews.html">Manage Reviews</a></li>
+                    <li><a href="../auth/login.html">Logout</a></li>
+                </ul>
+                <div class="bar-icon">☰</div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Admin Dashboard -->
+    <section class="container admin-panel">
+        <div class="head-style">
+            <h2>Admin Dashboard</h2>
+            <p>Welcome <span>Administrator</span></p>
+        </div>
+
+        <!-- Statistics Cards -->
+        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 2rem; margin: 3rem 0;">
+            <!-- Total Movies Card -->
+            <div style="background: rgba(255, 255, 255, 0.05); border-radius: 10px; padding: 2rem; text-align: center; border-left: 4px solid var(--accent-color);">
+                <h3 style="font-size: 3rem; color: var(--accent-color); margin-bottom: 0.5rem;">156</h3>
+                <p style="color: var(--secondary-color); font-size: 1.2rem;">Total Movies</p>
+            </div>
+
+            <!-- Pending Reviews Card -->
+            <div style="background: rgba(255, 255, 255, 0.05); border-radius: 10px; padding: 2rem; text-align: center; border-left: 4px solid #FFA500;">
+                <h3 style="font-size: 3rem; color: #FFA500; margin-bottom: 0.5rem;">23</h3>
+                <p style="color: var(--secondary-color); font-size: 1.2rem;">Pending Reviews</p>
+            </div>
+
+            <!-- Total Reviews Card -->
+            <div style="background: rgba(255, 255, 255, 0.05); border-radius: 10px; padding: 2rem; text-align: center; border-left: 4px solid #4CAF50;">
+                <h3 style="font-size: 3rem; color: #4CAF50; margin-bottom: 0.5rem;">892</h3>
+                <p style="color: var(--secondary-color); font-size: 1.2rem;">Approved Reviews</p>
+            </div>
+
+            <!-- Total Users Card -->
+            <div style="background: rgba(255, 255, 255, 0.05); border-radius: 10px; padding: 2rem; text-align: center; border-left: 4px solid var(--primary-color);">
+                <h3 style="font-size: 3rem; color: var(--primary-color); margin-bottom: 0.5rem;">1,234</h3>
+                <p style="color: var(--secondary-color); font-size: 1.2rem;">Registered Users</p>
+            </div>
+        </div>
+
+        <!-- Quick Actions -->
+        <div class="head-style" style="margin-top: 3rem;">
+            <h2>Quick Actions</h2>
+            <p>Manage Your <span>Platform</span></p>
+        </div>
+
+        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 2rem; margin: 2rem 0;">
+            <!-- Add Movie -->
+            <div style="background: rgba(255, 255, 255, 0.05); border-radius: 10px; padding: 2rem; text-align: center;">
+                <h3 style="color: var(--secondary-color); margin-bottom: 1rem;">Add New Movie</h3>
+                <p style="color: #b0b0b0; margin-bottom: 1.5rem;">Add a new movie to the platform database</p>
+                <a href="add_movie.html" class="btn">Add Movie</a>
+            </div>
+
+            <!-- Manage Movies -->
+            <div style="background: rgba(255, 255, 255, 0.05); border-radius: 10px; padding: 2rem; text-align: center;">
+                <h3 style="color: var(--secondary-color); margin-bottom: 1rem;">Manage Movies</h3>
+                <p style="color: #b0b0b0; margin-bottom: 1.5rem;">View, edit, or delete existing movies</p>
+                <a href="manage_movies.html" class="btn">Manage Movies</a>
+            </div>
+
+            <!-- Manage Reviews -->
+            <div style="background: rgba(255, 255, 255, 0.05); border-radius: 10px; padding: 2rem; text-align: center;">
+                <h3 style="color: var(--secondary-color); margin-bottom: 1rem;">Manage Reviews</h3>
+                <p style="color: #b0b0b0; margin-bottom: 1.5rem;">Review and moderate user submissions</p>
+                <a href="manage_reviews.html" class="btn">Manage Reviews</a>
+            </div>
+        </div>
+
+        <!-- Recent Activity -->
+        <div class="head-style" style="margin-top: 3rem;">
+            <h2>Recent Activity</h2>
+            <p>Latest <span>Updates</span></p>
+        </div>
+
+        <div style="background: rgba(255, 255, 255, 0.05); border-radius: 10px; padding: 2rem; max-width: 1000px; margin: 2rem auto;">
+            <div style="border-left: 3px solid var(--accent-color); padding-left: 1rem; margin-bottom: 1.5rem;">
+                <p style="color: var(--secondary-color); margin-bottom: 0.3rem;">New movie added: "Oppenheimer"</p>
+                <p style="color: #7f7f90; font-size: 0.9rem;">2 hours ago</p>
+            </div>
+            <div style="border-left: 3px solid #FFA500; padding-left: 1rem; margin-bottom: 1.5rem;">
+                <p style="color: var(--secondary-color); margin-bottom: 0.3rem;">5 new reviews pending approval</p>
+                <p style="color: #7f7f90; font-size: 0.9rem;">3 hours ago</p>
+            </div>
+            <div style="border-left: 3px solid #4CAF50; padding-left: 1rem; margin-bottom: 1.5rem;">
+                <p style="color: var(--secondary-color); margin-bottom: 0.3rem;">Movie updated: "The Dark Knight" - Added new poster</p>
+                <p style="color: #7f7f90; font-size: 0.9rem;">5 hours ago</p>
+            </div>
+            <div style="border-left: 3px solid var(--primary-color); padding-left: 1rem;">
+                <p style="color: var(--secondary-color); margin-bottom: 0.3rem;">12 new users registered today</p>
+                <p style="color: #7f7f90; font-size: 0.9rem;">6 hours ago</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer>
+        <div class="container">
+            <p>&copy; 2024 MovieReview. All rights reserved.</p>
+            <p>Admin Dashboard - Manage your movie review platform.</p>
+        </div>
+    </footer>
+
+    <script src="../../assets/js/admin.js"></script>
+</body>
+</html>
