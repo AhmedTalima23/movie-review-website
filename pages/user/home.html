@@ -8,13 +8,13 @@
     <link href="https://fonts.googleapis.com/css2?family=Open+Sans:wght@400;600;700&family=Inter:wght@400;700&display=swap" rel="stylesheet">
 </head>
 <body>
-    <!-- User Navigation Bar -->
+    <!-- Navbar -->
     <nav class="navbar">
         <div class="container">
             <div class="navbar-content">
                 <h1><a href="home.html">Movie<span>Review</span></a></h1>
                 <ul>
-                    <li><a href="home.html">Home</a></li>
+                    <li><a href="home.html" class="active">Home</a></li>
                     <li><a href="movie_list.html">Browse Movies</a></li>
                     <li><a href="my_reviews.html">My Reviews</a></li>
                     <li><a href="../auth/login.html">Logout</a></li>
@@ -24,76 +24,93 @@
         </div>
     </nav>
 
-    <!-- Header Section -->
+    <!-- Header -->
     <section class="header">
         <div class="container">
             <div class="header-content">
                 <div class="header-text">
-                    <h2>Welcome Back, User!</h2>
-                    <p>Continue exploring amazing movies and share your reviews with the community.</p>
+                    <h2>Welcome Back, <span>User!</span></h2>
+                    <p>Continue exploring amazing movies and share your reviews with the community.
+                       Discover trending films, revisit your favorites, and express your cinematic voice.</p>
                     <div class="header-btn">
                         <a href="movie_list.html" class="book-btn">Browse Movies</a>
                         <a href="my_reviews.html" class="watch-btn">My Reviews</a>
                     </div>
                 </div>
                 <div class="header-img">
-                    <img src="../../assets/img/ui/hero-movie.jpg" alt="Movie Collection">
+                    <img src="../../assets/img/movies/samuel-regan-asante-wMkaMXTJjlQ-unsplash.jpg" alt="Movie Collection">
                 </div>
             </div>
         </div>
     </section>
 
     <!-- Search Section -->
-    <section class="container">
+    <section class="container" style="padding: 60px 0;">
         <div class="head-style">
             <h2>Search Movies</h2>
             <p>Find Your <span>Favorite</span></p>
         </div>
 
-        <form id="searchForm" style="max-width: 800px;">
-            <label for="searchBy">Search By</label>
-            <select id="searchBy" name="searchBy" required>
-                <option value="">Select search criteria</option>
-                <option value="id">Movie ID</option>
-                <option value="title">Title</option>
-                <option value="genre">Genre</option>
-                <option value="year">Release Year</option>
-                <option value="director">Director</option>
-            </select>
+        <form id="searchForm" style="max-width: 800px; margin: 0 auto;">
+            <div class="form-group">
+                <label for="searchBy">Search By</label>
+                <select id="searchBy" name="searchBy" required>
+                    <option value="">Select search criteria</option>
+                    <option value="id">Movie ID</option>
+                    <option value="title">Title</option>
+                    <option value="genre">Genre</option>
+                    <option value="year">Release Year</option>
+                    <option value="director">Director</option>
+                </select>
+            </div>
 
-            <label for="searchQuery">Search Query</label>
-            <input type="text" id="searchQuery" name="searchQuery" required placeholder="Enter your search term">
+            <div class="form-group">
+                <label for="searchQuery">Search Query</label>
+                <input type="text" id="searchQuery" name="searchQuery" required placeholder="Enter your search term">
+            </div>
 
-            <button type="submit">Search</button>
+            <button type="submit" class="btn">Search</button>
         </form>
     </section>
 
-    <!-- Trending Movies Section -->
+    <!-- Trending Movies -->
     <section class="container">
         <div class="head-style">
-            <h2>Trending Now</h2>
-            <p>Popular <span>Movies</span></p>
+            <h2>Featured Movies</h2>
+            <p>Popular <span>This Week</span></p>
         </div>
+
         <div class="movie-list">
-            <!-- Static Movie 1 -->
+            <!-- Movie 1 -->
             <div class="movie">
-                <img src="../../assets/img/movies/inception.jpg" alt="Inception">
-                <div>
-                    <h3>Inception</h3>
-                    <p><strong>Genre:</strong> Sci-Fi, Thriller | <strong>Year:</strong> 2010 | <strong>Director:</strong> Christopher Nolan</p>
-                    <p>A thief who steals corporate secrets through the use of dream-sharing technology is given the inverse task of planting an idea.</p>
-                    <a href="movie_details.html" class="btn">View Details</a>
+                <img src="/assets/img/movies/The Shawshank Redemption.jpg" alt="The Shawshank Redemption">
+                <div class="movie-info">
+                    <h3>The Shawshank Redemption</h3>
+                    <p><strong>Genre:</strong> Drama | <strong>Year:</strong> 1994 | <strong>Director:</strong> Frank Darabont</p>
+                    <p>Two imprisoned men bond over years, finding solace and eventual redemption through acts of decency.</p>
+                    <a href="/pages/user/movie_details.html" class="btn">View Details</a>
                 </div>
             </div>
 
-            <!-- Static Movie 2 -->
+            <!-- Movie 2 -->
             <div class="movie">
-                <img src="../../assets/img/movies/intersteelar.jpg" alt="Interstellar">
-                <div>
-                    <h3>Interstellar</h3>
-                    <p><strong>Genre:</strong> Sci-Fi, Drama | <strong>Year:</strong> 2014 | <strong>Director:</strong> Christopher Nolan</p>
-                    <p>A team of explorers travel through a wormhole in space in an attempt to ensure humanity's survival.</p>
-                    <a href="movie_details.html" class="btn">View Details</a>
+                <img src="/assets/img/movies/the godfather.jpg" alt="The Godfather">
+                <div class="movie-info">
+                    <h3>The Godfather</h3>
+                    <p><strong>Genre:</strong> Crime, Drama | <strong>Year:</strong> 1972 | <strong>Director:</strong> Francis Ford Coppola</p>
+                    <p>The aging patriarch of an organized crime dynasty transfers control of his empire to his reluctant son.</p>
+                    <a href="/pages/user/movie_details.html" class="btn">View Details</a>
+                </div>
+            </div>
+
+            <!-- Movie 3 -->
+            <div class="movie">
+                <img src="/assets/img/movies/the dark night.jpg" alt="The Dark Knight">
+                <div class="movie-info">
+                    <h3>The Dark Knight</h3>
+                    <p><strong>Genre:</strong> Action, Crime, Drama | <strong>Year:</strong> 2008 | <strong>Director:</strong> Christopher Nolan</p>
+                    <p>When the menace known as the Joker causes chaos in Gotham, Batman faces his greatest moral test yet.</p>
+                    <a href="/pages/user/movie_details.html" class="btn">View Details</a>
                 </div>
             </div>
         </div>

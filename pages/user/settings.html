@@ -44,50 +44,50 @@
         <h2>Account Settings</h2>
 
         <div class="settings-form">
-            <form id="settingsForm">
+            <form id="settingsForm" method="post" action="#">
                 <div class="settings-row">
                     <div class="form-group inline">
                         <label for="fullName">Full Name</label>
-                        <input id="fullName" type="text" value="John Doe">
+                        <input id="fullName" name="fullName" type="text" value="John Doe">
                     </div>
                     <div class="form-group inline">
                         <label for="email">Email</label>
-                        <input id="email" type="email" value="johndoe@example.com">
+                        <input id="email" name="email" type="email" value="johndoe@example.com">
                     </div>
                 </div>
 
                 <div style="margin-top:1rem;">
                     <label for="bio">Bio (optional)</label>
-                    <textarea id="bio" rows="3" placeholder="Tell others about your movie taste...">Movie lover and classic film fan.</textarea>
+                    <textarea id="bio" name="bio" rows="3" placeholder="Tell others about your movie taste...">Movie lover and classic film fan.</textarea>
                 </div>
 
                 <h3 style="margin-top:1.2rem;">Change Password</h3>
                 <div class="settings-row">
                     <div class="form-group inline">
                         <label for="currentPassword">Current Password</label>
-                        <input id="currentPassword" type="password">
+                        <input id="currentPassword" name="currentPassword" type="password">
                     </div>
                     <div class="form-group inline">
                         <label for="newPassword">New Password</label>
-                        <input id="newPassword" type="password">
+                        <input id="newPassword" name="newPassword" type="password">
                     </div>
                     <div class="form-group inline" style="flex-basis:100%;">
                         <label for="confirmPassword">Confirm New Password</label>
-                        <input id="confirmPassword" type="password">
+                        <input id="confirmPassword" name="confirmPassword" type="password">
                     </div>
                 </div>
 
                 <h3 style="margin-top:1.2rem;">Notifications</h3>
                 <div style="display:flex;flex-direction:column;gap:8px;margin-bottom:1rem;">
-                    <label class="toggle"><input type="checkbox" checked> Email notifications</label>
-                    <label class="toggle"><input type="checkbox"> SMS notifications</label>
-                    <label class="toggle"><input type="checkbox" checked> New review replies</label>
+                    <label class="toggle"><input type="checkbox" name="emailNotifications" checked> Email notifications</label>
+                    <label class="toggle"><input type="checkbox" name="smsNotifications"> SMS notifications</label>
+                    <label class="toggle"><input type="checkbox" name="replyNotifications" checked> New review replies</label>
                 </div>
 
                 <h3 style="margin-top:1.2rem;">Privacy</h3>
                 <div style="display:flex;gap:1rem;align-items:center;margin-bottom:1rem;">
-                    <label><input type="radio" name="privacy" checked> Public profile</label>
-                    <label><input type="radio" name="privacy"> Private profile</label>
+                    <label><input type="radio" name="privacy" value="public" checked> Public profile</label>
+                    <label><input type="radio" name="privacy" value="private"> Private profile</label>
                 </div>
 
                 <div style="margin-top:1rem;">
@@ -105,15 +105,5 @@
             </div>
         </footer>
     </div>
-
-    <script>
-    // UI-only form handling (static demo): prevent real submit and show a temporary message
-    document.getElementById('settingsForm').addEventListener('submit', function(e){
-        e.preventDefault();
-        var btn = this.querySelector('button[type="submit"]');
-        btn.textContent = 'Saved ✓';
-        setTimeout(function(){ btn.textContent = 'Save Changes'; }, 1500);
-    });
-    </script>
 </body>
 </html>
