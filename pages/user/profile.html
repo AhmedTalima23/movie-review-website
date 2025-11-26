@@ -5,42 +5,30 @@
     <meta name="viewport" content="width=device-width,initial-scale=1" />
     <title>My Profile - MovieReview</title>
     <link rel="stylesheet" href="../../assets/css/style.css">
-    <link rel="stylesheet" href="../../assets/css/sidebar.css">
+    <link rel="stylesheet" href="../../assets/css/navbar.css">
+    <link rel="stylesheet" href="../../assets/css/pages/user.css">
     <link href="https://fonts.googleapis.com/css2?family=Open+Sans:wght@400;600;700&family=Inter:wght@400;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
 </head>
 <body>
-    <!-- Sidebar -->
-    <div class="sidebar">
-        <div class="sidebar-header">
-            <h1><a href="../../index.html">Movie<span>Review</span></a></h1>
+    <!-- Navbar (replaces sidebar) -->
+    <nav class="navbar">
+        <div class="container">
+            <div class="navbar-content">
+                <h1><a href="../../index.html">Movie<span>Review</span></a></h1>
+                <ul>
+                    <li><a href="home.html">Home</a></li>
+                    <li><a href="movie_list.html">Browse Movies</a></li>
+                    <li><a href="my_reviews.html">My Reviews</a></li>
+                    <li><a href="../auth/login.html">Logout</a></li>
+                </ul>
+                <div class="bar-icon">☰</div>
+            </div>
         </div>
-        <div class="sidebar-menu">
-            <h3>Menu</h3>
-            <a href="movie_list.html" class="menu-item">
-                <i class="fas fa-film"></i> Browse Movies
-            </a>
-            <a href="my_reviews.html" class="menu-item">
-                <i class="fas fa-star"></i> My Reviews
-            </a>
-            <a href="watchlist.html" class="menu-item">
-                <i class="fas fa-list"></i> Watchlist
-            </a>
-            <h3>Profile</h3>
-            <a href="profile.html" class="menu-item active">
-                <i class="fas fa-user"></i> My Profile
-            </a>
-            <a href="settings.html" class="menu-item">
-                <i class="fas fa-cog"></i> Settings
-            </a>
-            <a href="../auth/logout.html" class="menu-item">
-                <i class="fas fa-sign-out-alt"></i> Logout
-            </a>
-        </div>
-    </div>
+    </nav>
 
     <!-- Main Content -->
-    <div class="content-with-sidebar">
+    <div class="content-with-sidebar no-sidebar">
         <div class="profile-header">
             <div class="avatar">
                 <img src="../../assets/img/ui/default-avatar.png" alt="User Avatar">
@@ -75,66 +63,66 @@
             </div>
         </div>
 
-        <div style="display:flex;gap:1rem;flex-wrap:wrap;">
-            <div style="flex:1; min-width:280px;">
-                <h3 style="text-align:left;margin-bottom:0.6rem;">Rating Distribution</h3>
+        <div class="stats-row">
+            <div>
+                <h3 class="left-heading">Rating Distribution</h3>
                 <div class="rating-distribution">
                     <div class="rating-row">
                         <div class="star-label">5 ★</div>
-                        <div class="progress"><span style="width:70%"></span></div>
-                        <div style="width:40px;text-align:right;color:#bdbdbd;">70%</div>
+                        <div class="progress"><span class="w-70"></span></div>
+                        <div class="percentage-label">70%</div>
                     </div>
                     <div class="rating-row">
                         <div class="star-label">4 ★</div>
-                        <div class="progress"><span style="width:18%"></span></div>
-                        <div style="width:40px;text-align:right;color:#bdbdbd;">18%</div>
+                        <div class="progress"><span class="w-18"></span></div>
+                        <div class="percentage-label">18%</div>
                     </div>
                     <div class="rating-row">
                         <div class="star-label">3 ★</div>
-                        <div class="progress"><span style="width:7%"></span></div>
-                        <div style="width:40px;text-align:right;color:#bdbdbd;">7%</div>
+                        <div class="progress"><span class="w-7"></span></div>
+                        <div class="percentage-label">7%</div>
                     </div>
                     <div class="rating-row">
                         <div class="star-label">2 ★</div>
-                        <div class="progress"><span style="width:3%"></span></div>
-                        <div style="width:40px;text-align:right;color:#bdbdbd;">3%</div>
+                        <div class="progress"><span class="w-3"></span></div>
+                        <div class="percentage-label">3%</div>
                     </div>
                     <div class="rating-row">
                         <div class="star-label">1 ★</div>
-                        <div class="progress"><span style="width:2%"></span></div>
-                        <div style="width:40px;text-align:right;color:#bdbdbd;">2%</div>
+                        <div class="progress"><span class="w-2"></span></div>
+                        <div class="percentage-label">2%</div>
                     </div>
                 </div>
             </div>
 
-            <div style="flex:1; min-width:280px;">
-                <h3 style="text-align:left;margin-bottom:0.6rem;">Activity (Last 8 months)</h3>
+            <div>
+                <h3 class="left-heading">Activity (Last 8 months)</h3>
                 <div class="activity-chart" aria-hidden="true">
-                    <!-- inline styles set heights to simulate data -->
-                    <div class="bar" style="height:20%"></div>
-                    <div class="bar" style="height:40%"></div>
-                    <div class="bar" style="height:30%"></div>
-                    <div class="bar" style="height:60%"></div>
-                    <div class="bar" style="height:80%"></div>
-                    <div class="bar" style="height:50%"></div>
-                    <div class="bar" style="height:70%"></div>
-                    <div class="bar" style="height:90%"></div>
+                    <!-- use height utility classes instead of inline heights -->
+                    <div class="bar h-20"></div>
+                    <div class="bar h-40"></div>
+                    <div class="bar h-30"></div>
+                    <div class="bar h-60"></div>
+                    <div class="bar h-80"></div>
+                    <div class="bar h-50"></div>
+                    <div class="bar h-70"></div>
+                    <div class="bar h-90"></div>
                 </div>
-                <div style="display:flex;justify-content:space-between;color:#9a9a9a;font-size:0.9rem;margin-top:8px;">
+                <div class="month-labels">
                     <div>Mar</div><div>Apr</div><div>May</div><div>Jun</div><div>Jul</div><div>Aug</div><div>Sep</div><div>Oct</div>
                 </div>
             </div>
         </div>
 
         <div class="recent-reviews">
-            <h3 style="text-align:left;margin:0.6rem 0;">Recent Reviews</h3>
+            <h3 class="left-heading">Recent Reviews</h3>
             <div class="recent-review">
-                <strong>The Shawshank Redemption</strong> <span style="color:#bdbdbd">• Jan 15, 2024</span>
-                <p style="margin:8px 0;color:#cfcfcf;">An absolute masterpiece that shows the power of hope and friendship...</p>
+                <strong>The Shawshank Redemption</strong> <span class="percentage-label">• Jan 15, 2024</span>
+                <p class="review-text">An absolute masterpiece that shows the power of hope and friendship...</p>
             </div>
             <div class="recent-review">
-                <strong>The Godfather</strong> <span style="color:#bdbdbd">• Jan 05, 2024</span>
-                <p style="margin:8px 0;color:#cfcfcf;">A brilliant and timeless mafia drama with unforgettable performances...</p>
+                <strong>The Godfather</strong> <span class="percentage-label">• Jan 05, 2024</span>
+                <p class="review-text">A brilliant and timeless mafia drama with unforgettable performances...</p>
             </div>
         </div>
 

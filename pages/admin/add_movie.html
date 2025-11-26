@@ -36,7 +36,7 @@
         <form id="addMovieForm">
             <label for="movieId">Movie ID *</label>
             <input type="text" id="movieId" name="movieId" required placeholder="Enter unique movie ID (e.g., M001)" pattern="M[0-9]{3,}">
-            <small style="color: #7f7f90; display: block; margin-top: -0.5rem; margin-bottom: 1rem;">Format: M followed by at least 3 digits</small>
+            <small class="hint-text">Format: M followed by at least 3 digits</small>
 
             <label for="title">Movie Title *</label>
             <input type="text" id="title" name="title" required placeholder="Enter movie title" minlength="1" maxlength="200">
@@ -101,7 +101,7 @@
             <input type="text" id="country" name="country" required placeholder="Enter country of origin" value="USA">
 
             <button type="submit">Add Movie</button>
-            <button type="reset" style="background: #555; margin-left: 1rem;">Reset Form</button>
+            <button type="reset" class="btn reset">Reset Form</button>
         </form>
 
         <p style="text-align: center; margin-top: 1rem;">

@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Submit Review - MovieReview</title>
     <link rel="stylesheet" href="../../assets/css/style.css">
+    <link rel="stylesheet" href="../../assets/css/pages/user.css">
     <link href="https://fonts.googleapis.com/css2?family=Open+Sans:wght@400;600;700&family=Inter:wght@400;700&display=swap" rel="stylesheet">
 </head>
 <body>
@@ -31,7 +32,7 @@
             <p>Submit Your <span>Review</span></p>
         </div>
 
-        <form id="reviewForm">
+        <form id="reviewForm" class="form-max">
             <label for="movieId">Movie ID</label>
             <input type="text" id="movieId" name="movieId" required placeholder="Enter movie ID (e.g., M001)" pattern="M[0-9]{3,}">
 
@@ -58,16 +59,16 @@
             <label for="reviewText">Your Review</label>
             <textarea id="reviewText" name="reviewText" required placeholder="Write your detailed review here..." rows="8" minlength="50"></textarea>
 
-            <label for="spoilers" style="display: flex; align-items: center; cursor: pointer;">
-                <input type="checkbox" id="spoilers" name="spoilers" style="width: auto; margin-right: 10px;">
+            <label for="spoilers" class="checkbox-label">
+                <input type="checkbox" id="spoilers" name="spoilers">
                 This review contains spoilers
             </label>
 
             <button type="submit">Submit Review</button>
         </form>
 
-        <p style="text-align: center; margin-top: 1rem;">
-            <a href="movie_list.html" style="color: var(--primary-color);">← Back to Movie List</a>
+        <p class="mt-1" style="text-align:center;">
+            <a href="movie_list.html" class="back-link">← Back to Movie List</a>
         </p>
     </section>
 

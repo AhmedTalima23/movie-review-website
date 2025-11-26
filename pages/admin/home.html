@@ -34,21 +34,21 @@
         </div>
 
         <!-- Statistics Cards -->
-        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 2rem; margin: 3rem 0;">
+        <div class="admin-stat-grid">
             <!-- Total Movies Card -->
-            <div style="background: rgba(255, 255, 255, 0.05); border-radius: 10px; padding: 2rem; text-align: center; border-left: 4px solid var(--accent-color);">
+            <div class="stat-card">
                 <h3 style="font-size: 3rem; color: var(--accent-color); margin-bottom: 0.5rem;">156</h3>
                 <p style="color: var(--secondary-color); font-size: 1.2rem;">Total Movies</p>
             </div>
 
             <!-- Pending Reviews Card -->
-            <div style="background: rgba(255, 255, 255, 0.05); border-radius: 10px; padding: 2rem; text-align: center; border-left: 4px solid #FFA500;">
+            <div class="stat-card alt-orange">
                 <h3 style="font-size: 3rem; color: #FFA500; margin-bottom: 0.5rem;">23</h3>
                 <p style="color: var(--secondary-color); font-size: 1.2rem;">Pending Reviews</p>
             </div>
 
             <!-- Total Reviews Card -->
-            <div style="background: rgba(255, 255, 255, 0.05); border-radius: 10px; padding: 2rem; text-align: center; border-left: 4px solid #4CAF50;">
+            <div class="stat-card alt-green">
                 <h3 style="font-size: 3rem; color: #4CAF50; margin-bottom: 0.5rem;">892</h3>
                 <p style="color: var(--secondary-color); font-size: 1.2rem;">Approved Reviews</p>
             </div>
@@ -66,23 +66,23 @@
             <p>Manage Your <span>Platform</span></p>
         </div>
 
-        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 2rem; margin: 2rem 0;">
+        <div class="quick-actions">
             <!-- Add Movie -->
-            <div style="background: rgba(255, 255, 255, 0.05); border-radius: 10px; padding: 2rem; text-align: center;">
+            <div class="action-card">
                 <h3 style="color: var(--secondary-color); margin-bottom: 1rem;">Add New Movie</h3>
                 <p style="color: #b0b0b0; margin-bottom: 1.5rem;">Add a new movie to the platform database</p>
                 <a href="add_movie.html" class="btn">Add Movie</a>
             </div>
 
             <!-- Manage Movies -->
-            <div style="background: rgba(255, 255, 255, 0.05); border-radius: 10px; padding: 2rem; text-align: center;">
+            <div class="action-card">
                 <h3 style="color: var(--secondary-color); margin-bottom: 1rem;">Manage Movies</h3>
                 <p style="color: #b0b0b0; margin-bottom: 1.5rem;">View, edit, or delete existing movies</p>
                 <a href="manage_movies.html" class="btn">Manage Movies</a>
             </div>
 
             <!-- Manage Reviews -->
-            <div style="background: rgba(255, 255, 255, 0.05); border-radius: 10px; padding: 2rem; text-align: center;">
+            <div class="action-card">
                 <h3 style="color: var(--secondary-color); margin-bottom: 1rem;">Manage Reviews</h3>
                 <p style="color: #b0b0b0; margin-bottom: 1.5rem;">Review and moderate user submissions</p>
                 <a href="manage_reviews.html" class="btn">Manage Reviews</a>
@@ -95,20 +95,20 @@
             <p>Latest <span>Updates</span></p>
         </div>
 
-        <div style="background: rgba(255, 255, 255, 0.05); border-radius: 10px; padding: 2rem; max-width: 1000px; margin: 2rem auto;">
-            <div style="border-left: 3px solid var(--accent-color); padding-left: 1rem; margin-bottom: 1.5rem;">
+        <div class="recent-activity">
+            <div class="item">
                 <p style="color: var(--secondary-color); margin-bottom: 0.3rem;">New movie added: "Oppenheimer"</p>
                 <p style="color: #7f7f90; font-size: 0.9rem;">2 hours ago</p>
             </div>
-            <div style="border-left: 3px solid #FFA500; padding-left: 1rem; margin-bottom: 1.5rem;">
+            <div class="item alt-orange">
                 <p style="color: var(--secondary-color); margin-bottom: 0.3rem;">5 new reviews pending approval</p>
                 <p style="color: #7f7f90; font-size: 0.9rem;">3 hours ago</p>
             </div>
-            <div style="border-left: 3px solid #4CAF50; padding-left: 1rem; margin-bottom: 1.5rem;">
+            <div class="item alt-green">
                 <p style="color: var(--secondary-color); margin-bottom: 0.3rem;">Movie updated: "The Dark Knight" - Added new poster</p>
                 <p style="color: #7f7f90; font-size: 0.9rem;">5 hours ago</p>
             </div>
-            <div style="border-left: 3px solid var(--primary-color); padding-left: 1rem;">
+            <div class="item alt-primary">
                 <p style="color: var(--secondary-color); margin-bottom: 0.3rem;">12 new users registered today</p>
                 <p style="color: #7f7f90; font-size: 0.9rem;">6 hours ago</p>
             </div>

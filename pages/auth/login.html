@@ -7,6 +7,7 @@
     <title>Login - MovieReview</title>
     <link rel="stylesheet" href="../../assets/css/style.css">
     <link rel="stylesheet" href="../../assets/css/sidebar.css">
+    <link rel="stylesheet" href="../../assets/css/pages/auth.css">
     <link href="https://fonts.googleapis.com/css2?family=Open+Sans:wght@400;600;700&family=Inter:wght@400;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
 </head>
@@ -26,51 +27,50 @@
         </div>
     </nav>
 
-```
-<!-- Login Section -->
-<section class="auth-section">
-    <div class="container">
-        <div class="auth-form card-style">
-            <div class="head-style">
-                <h2><i class="fas fa-user-circle"></i> Welcome Back</h2>
-                <p>Login to Your <span>Account</span></p>
+    <!-- Login Section -->
+    <section class="auth-section">
+        <div class="container">
+            <div class="auth-form card-style">
+                <div class="head-style">
+                    <h2><i class="fas fa-user-circle"></i> Welcome Back</h2>
+                    <p>Login to Your <span>Account</span></p>
+                </div>
+
+                <form method="get">
+                    <div class="form-group">
+                        <label for="email"><i class="fas fa-envelope"></i> Email</label>
+                        <input type="email" id="email" name="email" required placeholder="Enter your email">
+                    </div>
+
+                    <div class="form-group">
+                        <label for="password"><i class="fas fa-lock"></i> Password</label>
+                        <input type="password" id="password" name="password" required placeholder="Enter your password" minlength="6">
+                    </div>
+
+                    <div class="button-row">
+                        <button type="submit" class="btn" formaction="/pages/user/home.html">
+                            <i class="fas fa-user"></i> Login as User
+                        </button>
+                        <button type="submit" class="btn" formaction="../admin/home.html">
+                            <i class="fas fa-user-shield"></i> Login as Admin
+                        </button>
+                    </div>
+                </form>
+
+                <p class="auth-link">
+                    Don’t have an account?
+                    <a href="signup.html" style="color: var(--accent-color); font-weight:600;">Sign Up Here</a>
+                </p>
             </div>
-
-            <form method="get">
-                <div class="form-group">
-                    <label for="email"><i class="fas fa-envelope"></i> Email</label>
-                    <input type="email" id="email" name="email" required placeholder="Enter your email">
-                </div>
-
-                <div class="form-group">
-                    <label for="password"><i class="fas fa-lock"></i> Password</label>
-                    <input type="password" id="password" name="password" required placeholder="Enter your password" minlength="6">
-                </div>
-
-                <div style="display:flex;gap:10px;flex-wrap:wrap;justify-content:center;">
-                    <button type="submit" class="btn" formaction="/pages/user/home.html">
-                        <i class="fas fa-user"></i> Login as User
-                    </button>
-                    <button type="submit" class="btn" formaction="../admin/home.html">
-                        <i class="fas fa-user-shield"></i> Login as Admin
-                    </button>
-                </div>
-            </form>
-
-            <p class="auth-link" style="margin-top:1.5rem;">
-                Don’t have an account?
-                <a href="signup.html" style="color: var(--accent-color); font-weight:600;">Sign Up Here</a>
-            </p>
         </div>
-    </div>
-</section>
+    </section>
 
-<!-- Footer -->
-<footer>
-    <div class="container">
-        <p>&copy; 2025 MovieReview. All rights reserved.</p>
-        <p>Discover, Review, and Rate your favorite movies.</p>
-    </div>
-</footer>
+    <!-- Footer -->
+    <footer>
+        <div class="container">
+            <p>&copy; 2025 MovieReview. All rights reserved.</p>
+            <p>Discover, Review, and Rate your favorite movies.</p>
+        </div>
+    </footer>
 </body>
 </html>
