@@ -90,30 +90,72 @@
 	</footer>
 
 	<script>
-		// Movie data mapping
-		const movieData = {
-			'the-shawshank-redemption': {
-				title: 'The Shawshank Redemption',
-				image: '../../assets/img/movies/shaw.jpg',
-				genre: 'Drama',
-				year: '1994',
-				movieId: 'the-shawshank-redemption'
-			},
-			'the-dark-knight': {
-				title: 'The Dark Knight',
-				image: '../../assets/img/movies/R.jpeg',
-				genre: 'Action, Crime',
-				year: '2008',
-				movieId: 'the-dark-knight'
-			},
-			'the-godfather': {
-				title: 'The Godfather',
-				image: '../../assets/img/movies/godf.jpg',
-				genre: 'Crime, Drama',
-				year: '1972',
-				movieId: 'the-godfather'
+		// Function to generate movie ID from title
+		function generateMovieId(title) {
+			return title.toLowerCase()
+				.replace(/[^a-z0-9]+/g, '-')
+				.replace(/^-+|-+$/g, '');
+		}
+
+		// Function to get all movies from localStorage
+		function getMoviesArray() {
+			const movies = localStorage.getItem('movies');
+			if (movies) {
+				try {
+					return JSON.parse(movies);
+				} catch (e) {
+					console.error('Error parsing movies from localStorage:', e);
+					return [];
+				}
 			}
-		};
+			return [];
+		}
+
+		// Function to get movie data (from localStorage or fallback)
+		function getMovieData() {
+			const movies = getMoviesArray();
+			const movieData = {};
+			
+			movies.forEach(movie => {
+				const movieId = movie.movieId || movie.id || generateMovieId(movie.title);
+				movieData[movieId] = {
+					title: movie.title || 'Unknown Movie',
+					image: movie.poster || movie.image || '../../assets/img/movies/default.jpg',
+					genre: movie.additionalGenres ? `${movie.genre || ''}, ${movie.additionalGenres}`.trim() : (movie.genre || 'N/A'),
+					year: movie.releaseYear || movie.year || 'N/A',
+					movieId: movieId
+				};
+			});
+			
+			// Fallback to default movies if no movies in localStorage
+			if (Object.keys(movieData).length === 0) {
+				return {
+					'the-shawshank-redemption': {
+						title: 'The Shawshank Redemption',
+						image: '../../assets/img/movies/shaw.jpg',
+						genre: 'Drama',
+						year: '1994',
+						movieId: 'the-shawshank-redemption'
+					},
+					'the-dark-knight': {
+						title: 'The Dark Knight',
+						image: '../../assets/img/movies/R.jpeg',
+						genre: 'Action, Crime',
+						year: '2008',
+						movieId: 'the-dark-knight'
+					},
+					'the-godfather': {
+						title: 'The Godfather',
+						image: '../../assets/img/movies/godf.jpg',
+						genre: 'Crime, Drama',
+						year: '1972',
+						movieId: 'the-godfather'
+					}
+				};
+			}
+			
+			return movieData;
+		}
 
 		// Function to get current user
 		function getCurrentUser() {
@@ -139,6 +181,7 @@
 		function getAllUserReviews() {
 			const currentUser = getCurrentUser();
 			const userReviews = [];
+			const movieData = getMovieData();
 
 			// Check each movie for reviews by the current user
 			Object.keys(movieData).forEach(movieId => {
@@ -240,6 +283,29 @@
 			noReviews.style.display = 'none';
 			movieGrid.style.display = 'grid';
 
+			// Function to get IMDb rating for a movie (out of 10)
+			function calculateMovieRating(movieId) {
+				// Get movies from localStorage
+				const movies = localStorage.getItem('movies');
+				if (movies) {
+					try {
+						const moviesArray = JSON.parse(movies);
+						const movie = moviesArray.find(m => {
+							const id = m.movieId || m.id || generateMovieId(m.title);
+							return id === movieId;
+						});
+						
+						if (movie && movie.imdbRating !== undefined && movie.imdbRating !== null) {
+							return parseFloat(movie.imdbRating).toFixed(1);
+						}
+					} catch (e) {
+						console.error('Error parsing movies:', e);
+					}
+				}
+				
+				return 'N/A';
+			}
+
 			// Display review cards
 			Object.values(movieReviewsMap).forEach(review => {
 				const movieInfo = review.movieInfo;
@@ -247,22 +313,23 @@
 				reviewCard.className = 'movie-card';
 				reviewCard.setAttribute('data-movie-id', review.movieId);
 				reviewCard.setAttribute('data-review-id', review.id);
+				const movieRating = calculateMovieRating(review.movieId);
 
 				reviewCard.innerHTML = `
 					<div class="movie-card-img">
-						<div class="rating-badge">⭐ 5.0</div>
+						<div class="rating-badge">⭐ ${movieRating === 'N/A' ? 'N/A' : movieRating + '/10'}</div>
 						<img src="${movieInfo.image}" alt="${movieInfo.title}">
 					</div>
 					<div class="movie-info">
 						<h3>${movieInfo.title}</h3>
 						<p class="review-excerpt">${getExcerpt(review.text)}</p>
 						<p class="review-meta">Reviewed ${formatDate(review.date, review.time)} • ${movieInfo.genre}</p>
-						<div class="action-row">
-							<a href="movie_details.html" class="btn">View Details →</a>
-							<button class="btn delete-btn" onclick="deleteReview('${review.movieId}', ${review.id})">
-								<i class="fas fa-trash"></i> Delete
-							</button>
-						</div>
+					<div class="action-row">
+						<a href="movie_details.html?movie=${review.movieId}" class="btn">View Details →</a>
+						<button class="btn delete-btn" onclick="deleteReview('${review.movieId}', ${review.id})">
+							<i class="fas fa-trash"></i> Delete
+						</button>
+					</div>
 					</div>
 				`;
 
