@@ -20,7 +20,8 @@
                     <li><a href="home.html">Home</a></li>
                     <li><a href="movie_list.html">Browse Movies</a></li>
                     <li><a href="my_reviews.html">My Reviews</a></li>
-                    <li><a href="../auth/login.html">Logout</a></li>
+                    <li><a href="profile.html">Profile</a></li>
+                    <li><a href="../auth/logout.html">Logout</a></li>
                 </ul>
                 <div class="bar-icon">☰</div>
             </div>
@@ -33,20 +34,30 @@
 
         <div class="settings-form">
             <form id="settingsForm" method="post" action="#">
+                <div id="errorMessage" style="display: none; color: #ff4444; background: rgba(255, 68, 68, 0.1); padding: 1rem; border-radius: 5px; margin-bottom: 1rem; text-align: center;"></div>
+                <div id="successMessage" style="display: none; color: #44ff44; background: rgba(68, 255, 68, 0.1); padding: 1rem; border-radius: 5px; margin-bottom: 1rem; text-align: center;"></div>
+
                 <div class="settings-row">
                     <div class="form-group inline">
-                        <label for="fullName">Full Name</label>
-                        <input id="fullName" name="fullName" type="text" value="Ahmed Talima">
+                        <label for="firstName">First Name</label>
+                        <input id="firstName" name="firstName" type="text" required>
                     </div>
                     <div class="form-group inline">
+                        <label for="lastName">Last Name</label>
+                        <input id="lastName" name="lastName" type="text" required>
+                    </div>
+                </div>
+
+                <div class="settings-row">
+                    <div class="form-group inline full-basis">
                         <label for="email">Email</label>
-                        <input id="email" name="email" type="email" value="ahmedtalima45@gmail.com">
+                        <input id="email" name="email" type="email" required>
                     </div>
                 </div>
 
                 <div class="mt-1">
                     <label for="bio">Bio (optional)</label>
-                    <textarea id="bio" name="bio" rows="3" placeholder="Tell others about your movie taste...">Movie lover and classic film fan.</textarea>
+                    <textarea id="bio" name="bio" rows="3" placeholder="Tell others about your movie taste..."></textarea>
                 </div>
 
                 <h3 class="mt-1-2">Change Password</h3>
@@ -93,5 +104,226 @@
             </div>
         </footer>
     </div>
+
+    <script>
+        // Function to get all users from localStorage
+        function getAllUsers() {
+            const users = localStorage.getItem('users');
+            return users ? JSON.parse(users) : [];
+        }
+
+        // Function to save users to localStorage
+        function saveUsers(users) {
+            localStorage.setItem('users', JSON.stringify(users));
+        }
+
+        // Function to get current user
+        function getCurrentUser() {
+            const currentUser = localStorage.getItem('currentUser');
+            if (currentUser) {
+                try {
+                    return JSON.parse(currentUser);
+                } catch (e) {
+                    return null;
+                }
+            }
+            return null;
+        }
+
+        // Function to get full user data (with password)
+        function getFullUserData(userId) {
+            const users = getAllUsers();
+            return users.find(user => user.id === userId);
+        }
+
+        // Function to show error message
+        function showError(message) {
+            const errorDiv = document.getElementById('errorMessage');
+            const successDiv = document.getElementById('successMessage');
+            errorDiv.textContent = message;
+            errorDiv.style.display = 'block';
+            successDiv.style.display = 'none';
+            // Scroll to top to show message
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+
+        // Function to show success message
+        function showSuccess(message) {
+            const errorDiv = document.getElementById('errorMessage');
+            const successDiv = document.getElementById('successMessage');
+            successDiv.textContent = message;
+            successDiv.style.display = 'block';
+            errorDiv.style.display = 'none';
+            // Scroll to top to show message
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+
+        // Function to hide messages
+        function hideMessages() {
+            document.getElementById('errorMessage').style.display = 'none';
+            document.getElementById('successMessage').style.display = 'none';
+        }
+
+        // Function to load user settings
+        function loadUserSettings() {
+            const currentUser = getCurrentUser();
+            
+            if (!currentUser) {
+                // Redirect to login if not logged in
+                window.location.href = '../auth/login.html';
+                return;
+            }
+
+            // Get full user data
+            const fullUser = getFullUserData(currentUser.id);
+            
+            if (fullUser) {
+                // Populate form fields
+                document.getElementById('firstName').value = fullUser.firstName || '';
+                document.getElementById('lastName').value = fullUser.lastName || '';
+                document.getElementById('email').value = fullUser.email || '';
+                document.getElementById('bio').value = fullUser.bio || '';
+
+                // Load notification preferences
+                if (fullUser.settings) {
+                    document.querySelector('input[name="emailNotifications"]').checked = fullUser.settings.emailNotifications !== false;
+                    document.querySelector('input[name="smsNotifications"]').checked = fullUser.settings.smsNotifications === true;
+                    document.querySelector('input[name="replyNotifications"]').checked = fullUser.settings.replyNotifications !== false;
+                    
+                    // Load privacy setting
+                    if (fullUser.settings.privacy) {
+                        document.querySelector(`input[name="privacy"][value="${fullUser.settings.privacy}"]`).checked = true;
+                    }
+                }
+            }
+        }
+
+        // Function to save user settings
+        function saveUserSettings(e) {
+            e.preventDefault();
+            hideMessages();
+
+            const currentUser = getCurrentUser();
+            if (!currentUser) {
+                showError('You must be logged in to save settings.');
+                return;
+            }
+
+            // Get form values
+            const firstName = document.getElementById('firstName').value.trim();
+            const lastName = document.getElementById('lastName').value.trim();
+            const email = document.getElementById('email').value.trim();
+            const bio = document.getElementById('bio').value.trim();
+            const currentPassword = document.getElementById('currentPassword').value;
+            const newPassword = document.getElementById('newPassword').value;
+            const confirmPassword = document.getElementById('confirmPassword').value;
+
+            // Validation
+            if (!firstName || !lastName || !email) {
+                showError('Please fill in all required fields.');
+                return;
+            }
+
+            // Validate email format
+            const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+            if (!emailRegex.test(email)) {
+                showError('Please enter a valid email address.');
+                return;
+            }
+
+            // Get all users
+            const users = getAllUsers();
+            const userIndex = users.findIndex(user => user.id === currentUser.id);
+            
+            if (userIndex === -1) {
+                showError('User not found. Please login again.');
+                return;
+            }
+
+            const user = users[userIndex];
+
+            // Check if email is being changed and if it already exists
+            if (email !== user.email) {
+                const emailExists = users.some(u => u.email.toLowerCase() === email.toLowerCase() && u.id !== user.id);
+                if (emailExists) {
+                    showError('This email is already registered. Please use a different email.');
+                    return;
+                }
+            }
+
+            // Handle password change
+            if (currentPassword || newPassword || confirmPassword) {
+                if (!currentPassword) {
+                    showError('Please enter your current password to change it.');
+                    return;
+                }
+                if (currentPassword !== user.password) {
+                    showError('Current password is incorrect.');
+                    return;
+                }
+                if (!newPassword || newPassword.length < 6) {
+                    showError('New password must be at least 6 characters long.');
+                    return;
+                }
+                if (newPassword !== confirmPassword) {
+                    showError('New passwords do not match.');
+                    return;
+                }
+                user.password = newPassword;
+                
+                // Clear password fields
+                document.getElementById('currentPassword').value = '';
+                document.getElementById('newPassword').value = '';
+                document.getElementById('confirmPassword').value = '';
+            }
+
+            // Update user data
+            user.firstName = firstName;
+            user.lastName = lastName;
+            user.name = `${firstName} ${lastName}`;
+            user.email = email;
+            user.bio = bio;
+
+            // Update settings
+            if (!user.settings) {
+                user.settings = {};
+            }
+            user.settings.emailNotifications = document.querySelector('input[name="emailNotifications"]').checked;
+            user.settings.smsNotifications = document.querySelector('input[name="smsNotifications"]').checked;
+            user.settings.replyNotifications = document.querySelector('input[name="replyNotifications"]').checked;
+            user.settings.privacy = document.querySelector('input[name="privacy"]:checked').value;
+
+            // Save updated users
+            users[userIndex] = user;
+            saveUsers(users);
+
+            // Update current user session
+            const updatedCurrentUser = {
+                id: user.id,
+                name: user.name,
+                firstName: user.firstName,
+                lastName: user.lastName,
+                email: user.email,
+                role: user.role,
+                bio: user.bio
+            };
+            localStorage.setItem('currentUser', JSON.stringify(updatedCurrentUser));
+
+            showSuccess('Settings saved successfully!');
+            
+            // Clear success message after 3 seconds
+            setTimeout(() => {
+                hideMessages();
+            }, 3000);
+        }
+
+        // Initialize on page load
+        document.addEventListener('DOMContentLoaded', function() {
+            loadUserSettings();
+            
+            const settingsForm = document.getElementById('settingsForm');
+            settingsForm.addEventListener('submit', saveUserSettings);
+        });
+    </script>
 </body>
 </html>

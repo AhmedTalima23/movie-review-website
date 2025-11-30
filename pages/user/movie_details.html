@@ -20,7 +20,7 @@
                     <li><a href="movie_list.html">Browse Movies</a></li>
                     <li><a href="my_reviews.html">My Reviews</a></li>
                     <li><a href="profile.html">Profile</a></li>
-                    <li><a href="../auth/login.html">Logout</a></li>
+                    <li><a href="../auth/logout.html">Logout</a></li>
                 </ul>
                 <div class="bar-icon">☰</div>
             </div>
@@ -46,13 +46,13 @@
                 <p>Two imprisoned men bond over years of hardship, finding solace and redemption through acts of common decency. The film captures the essence of hope and humanity in the darkest of times.</p>
             </div>
 
-            <div class="review-section">
+            <div class="review-section" data-movie="the-shawshank-redemption">
                 <h3>Reviews</h3>
                 <div class="review-form">
-                    <textarea placeholder="Write your review..."></textarea>
-                    <button class="btn">Submit Review</button>
+                    <textarea id="review-shawshank" placeholder="Write your review..."></textarea>
+                    <button class="btn" onclick="submitReview('the-shawshank-redemption')">Submit Review</button>
                 </div>
-                <div class="reviews">
+                <div class="reviews" id="reviews-shawshank">
                     <div class="review">
                         <div class="review-header">
                             <span class="reviewer">John Doe</span>
@@ -84,19 +84,19 @@
                 <p>Batman faces the Joker, a criminal mastermind who pushes Gotham to its moral limits. A gritty, intense exploration of chaos, justice, and the thin line between hero and vigilante.</p>
             </div>
 
-            <div class="review-section">
+            <div class="review-section" data-movie="the-dark-knight">
                 <h3>Reviews</h3>
                 <div class="review-form">
-                    <textarea placeholder="Write your review..."></textarea>
-                    <button class="btn">Submit Review</button>
+                    <textarea id="review-darkknight" placeholder="Write your review..."></textarea>
+                    <button class="btn" onclick="submitReview('the-dark-knight')">Submit Review</button>
                 </div>
-                <div class="reviews">
+                <div class="reviews" id="reviews-darkknight">
                     <div class="review">
                         <div class="review-header">
                             <span class="reviewer">Sarah Lee</span>
                             <span class="review-rating">★★★★★</span>
                         </div>
-                        <p>Heath Ledger’s Joker is one of the best performances ever. A dark, brilliant masterpiece that changed superhero films forever.</p>
+                        <p>Heath Ledger's Joker is one of the best performances ever. A dark, brilliant masterpiece that changed superhero films forever.</p>
                     </div>
                 </div>
             </div>
@@ -122,13 +122,13 @@
                 <p>The aging patriarch of an organized crime dynasty transfers control of his empire to his reluctant son. A stunning exploration of family, loyalty, and power in the world of the mafia.</p>
             </div>
 
-            <div class="review-section">
+            <div class="review-section" data-movie="the-godfather">
                 <h3>Reviews</h3>
                 <div class="review-form">
-                    <textarea placeholder="Write your review..."></textarea>
-                    <button class="btn">Submit Review</button>
+                    <textarea id="review-godfather" placeholder="Write your review..."></textarea>
+                    <button class="btn" onclick="submitReview('the-godfather')">Submit Review</button>
                 </div>
-                <div class="reviews">
+                <div class="reviews" id="reviews-godfather">
                     <div class="review">
                         <div class="review-header">
                             <span class="reviewer">Michael Rossi</span>
@@ -147,5 +147,120 @@
             <p>Discover, Review, and Rate your favorite movies.</p>
         </div>
     </footer>
+
+    <script>
+        // Function to get reviews from local storage
+        function getReviews(movieId) {
+            const reviews = localStorage.getItem(`reviews_${movieId}`);
+            return reviews ? JSON.parse(reviews) : [];
+        }
+
+        // Function to save reviews to local storage
+        function saveReviews(movieId, reviews) {
+            localStorage.setItem(`reviews_${movieId}`, JSON.stringify(reviews));
+        }
+
+        // Function to get current user name (you can modify this later to get from user session)
+        function getCurrentUser() {
+            // Check if user is logged in and get their name from localStorage
+            const userData = localStorage.getItem('currentUser');
+            if (userData) {
+                try {
+                    const user = JSON.parse(userData);
+                    return user.name || user.username || 'Anonymous User';
+                } catch (e) {
+                    return 'Anonymous User';
+                }
+            }
+            return 'Anonymous User';
+        }
+
+        // Mapping movie IDs to textarea and container IDs
+        const movieIdMap = {
+            'the-shawshank-redemption': { textarea: 'review-shawshank', container: 'reviews-shawshank' },
+            'the-dark-knight': { textarea: 'review-darkknight', container: 'reviews-darkknight' },
+            'the-godfather': { textarea: 'review-godfather', container: 'reviews-godfather' }
+        };
+
+        // Function to submit a review
+        function submitReview(movieId) {
+            const ids = movieIdMap[movieId];
+            if (!ids) {
+                console.error('Invalid movie ID:', movieId);
+                return;
+            }
+
+            const textarea = document.getElementById(ids.textarea);
+            const reviewText = textarea.value.trim();
+
+            if (!reviewText) {
+                alert('Please write a review before submitting.');
+                return;
+            }
+
+            // Get existing reviews
+            const reviews = getReviews(movieId);
+
+            // Create new review object
+            const newReview = {
+                id: Date.now(), // Unique ID based on timestamp
+                movieId: movieId, // Store movie ID with review
+                user: getCurrentUser(),
+                text: reviewText,
+                date: new Date().toLocaleDateString(),
+                time: new Date().toLocaleTimeString()
+            };
+
+            // Add new review to array
+            reviews.push(newReview);
+
+            // Save to local storage
+            saveReviews(movieId, reviews);
+
+            // Clear textarea
+            textarea.value = '';
+
+            // Reload and display reviews
+            displayReviews(movieId);
+        }
+
+        // Function to display reviews
+        function displayReviews(movieId) {
+            const ids = movieIdMap[movieId];
+            if (!ids) {
+                console.error('Invalid movie ID:', movieId);
+                return;
+            }
+
+            const reviewsContainer = document.getElementById(ids.container);
+            const reviews = getReviews(movieId);
+
+            // Clear existing user-submitted reviews (keep the first hardcoded review if it exists)
+            const existingReviews = reviewsContainer.querySelectorAll('.review.user-submitted');
+            existingReviews.forEach(review => review.remove());
+
+            // Add all saved reviews
+            reviews.forEach(review => {
+                const reviewDiv = document.createElement('div');
+                reviewDiv.className = 'review user-submitted';
+                reviewDiv.innerHTML = `
+                    <div class="review-header">
+                        <span class="reviewer">${review.user}</span>
+                        <span class="review-date">${review.date} ${review.time}</span>
+                    </div>
+                    <p>${review.text}</p>
+                `;
+                reviewsContainer.appendChild(reviewDiv);
+            });
+        }
+
+        // Load and display all reviews when page loads
+        document.addEventListener('DOMContentLoaded', function() {
+            // Load reviews for each movie
+            displayReviews('the-shawshank-redemption');
+            displayReviews('the-dark-knight');
+            displayReviews('the-godfather');
+        });
+    </script>
 </body>
 </html>

@@ -18,8 +18,8 @@
                     <li><a href="home.html" class="active">Home</a></li>
                     <li><a href="movie_list.html">Browse Movies</a></li>
                     <li><a href="my_reviews.html">My Reviews</a></li>
-                    <li><a href="profile.html" class="active">Profile</a></li>
-                    <li><a href="../auth/login.html">Logout</a></li>
+                    <li><a href="profile.html">Profile</a></li>
+                    <li><a href="../auth/logout.html">Logout</a></li>
                 </ul>
                 <div class="bar-icon">☰</div>
             </div>
@@ -31,7 +31,7 @@
         <div class="container">
             <div class="header-content">
                 <div class="header-text">
-                    <h2>Welcome Back, <span>User!</span></h2>
+                    <h2>Welcome Back, <span id="userName">User!</span></h2>
                     <p>Continue exploring amazing movies and share your reviews with the community.
                        Discover trending films, revisit your favorites, and express your cinematic voice.</p>
                     <div class="header-btn">
@@ -58,7 +58,6 @@
                 <label for="searchBy">Search By</label>
                 <select id="searchBy" name="searchBy" required>
                     <option value="">Select search criteria</option>
-                    <option value="id">Movie ID</option>
                     <option value="title">Title</option>
                     <option value="genre">Genre</option>
                     <option value="year">Release Year</option>
@@ -85,36 +84,36 @@
         <div class="movie-list">
             <!-- Movie 1 -->
             <div class="movie">
-                <img src="/assets/img/movies/The Shawshank Redemption.jpg" alt="The Shawshank Redemption">
+                <img src="../../assets/img/movies/shaw.jpg" alt="The Shawshank Redemption">
                 <div class="movie-info">
                     <h3>The Shawshank Redemption</h3>
                     <p><strong>Genre:</strong> Drama | <strong>Year:</strong> 1994 | <strong>Director:</strong> Frank Darabont</p>
                     <p>Two imprisoned men bond over years, finding solace and eventual redemption through acts of decency.</p>
-                    <a href="/pages/user/movie_details.html" class="btn">View Details</a>
+                    <a href="movie_details.html" class="btn">View Details</a>
                     <a href="submit_review.html" class="btn add-review">Add Review</a>
                 </div>
             </div>
 
             <!-- Movie 2 -->
             <div class="movie">
-                <img src="/assets/img/movies/the godfather.jpg" alt="The Godfather">
+                <img src="../../assets/img/movies/godf.jpg" alt="The Godfather">
                 <div class="movie-info">
                     <h3>The Godfather</h3>
                     <p><strong>Genre:</strong> Crime, Drama | <strong>Year:</strong> 1972 | <strong>Director:</strong> Francis Ford Coppola</p>
                     <p>The aging patriarch of an organized crime dynasty transfers control of his empire to his reluctant son.</p>
-                    <a href="/pages/user/movie_details.html" class="btn">View Details</a>
+                    <a href="movie_details.html" class="btn">View Details</a>
                     <a href="submit_review.html" class="btn add-review">Add Review</a>
                 </div>
             </div>
 
             <!-- Movie 3 -->
             <div class="movie">
-                <img src="/assets/img/movies/the dark night.jpg" alt="The Dark Knight">
+                <img src="../../assets/img/movies/R.jpeg" alt="The Dark Knight">
                 <div class="movie-info">
                     <h3>The Dark Knight</h3>
                     <p><strong>Genre:</strong> Action, Crime, Drama | <strong>Year:</strong> 2008 | <strong>Director:</strong> Christopher Nolan</p>
                     <p>When the menace known as the Joker causes chaos in Gotham, Batman faces his greatest moral test yet.</p>
-                    <a href="/pages/user/movie_details.html" class="btn">View Details</a>
+                    <a href="movie_details.html" class="btn">View Details</a>
                     <a href="submit_review.html" class="btn add-review">Add Review</a>
                 </div>
             </div>
@@ -129,6 +128,67 @@
         </div>
     </footer>
 
-    <!-- <script src="../../assets/js/user.js"></script> -->
+    <script>
+        // Function to check if user is logged in
+        function isLoggedIn() {
+            const currentUser = localStorage.getItem('currentUser');
+            return currentUser !== null;
+        }
+
+        // Function to get current user
+        function getCurrentUser() {
+            const currentUser = localStorage.getItem('currentUser');
+            if (currentUser) {
+                try {
+                    return JSON.parse(currentUser);
+                } catch (e) {
+                    return null;
+                }
+            }
+            return null;
+        }
+
+        // Function to personalize the page
+        function personalizePage() {
+            const user = getCurrentUser();
+            
+            if (user) {
+                // Update welcome message with user's name
+                const userNameElement = document.getElementById('userName');
+                if (userNameElement) {
+                    userNameElement.textContent = user.name + '!';
+                }
+            } else {
+                // If not logged in, redirect to login page
+                window.location.href = '../auth/login.html';
+            }
+        }
+
+        // Handle search form
+        function setupSearchForm() {
+            const searchForm = document.getElementById('searchForm');
+            
+            if (searchForm) {
+                searchForm.addEventListener('submit', function(e) {
+                    e.preventDefault();
+                    const searchQuery = document.getElementById('searchQuery').value;
+                    const searchBy = document.getElementById('searchBy').value;
+                    
+                    if (searchQuery && searchBy) {
+                        // Redirect to movie list page with search parameters
+                        window.location.href = `movie_list.html?search=${encodeURIComponent(searchQuery)}&by=${encodeURIComponent(searchBy)}`;
+                    } else {
+                        alert('Please select a search criteria and enter a search term.');
+                    }
+                });
+            }
+        }
+
+        // Initialize on page load
+        document.addEventListener('DOMContentLoaded', function() {
+            personalizePage();
+            setupSearchForm();
+        });
+    </script>
 </body>
 </html>

@@ -31,7 +31,10 @@
                 <h2>Create Your Account</h2>
                 <p class="form-subtext">Join MovieReview and explore thousands of reviews and ratings from movie lovers like you!</p>
 
-                <form action="../user/home.html" method="get">
+                <form id="signupForm">
+                    <div id="errorMessage" style="display: none; color: #ff4444; background: rgba(255, 68, 68, 0.1); padding: 1rem; border-radius: 5px; margin-bottom: 1rem; text-align: center;"></div>
+                    <div id="successMessage" style="display: none; color: #44ff44; background: rgba(68, 255, 68, 0.1); padding: 1rem; border-radius: 5px; margin-bottom: 1rem; text-align: center;"></div>
+                    
                     <div class="form-row">
                         <div class="form-group half-width">
                             <label for="first-name">First Name</label>
@@ -51,15 +54,20 @@
                     <div class="form-row">
                         <div class="form-group half-width">
                             <label for="password">Password</label>
-                            <input type="password" id="password" name="password" placeholder="Enter password" required>
+                            <input type="password" id="password" name="password" placeholder="Enter password" required minlength="6">
                         </div>
                         <div class="form-group half-width">
                             <label for="confirm-password">Confirm Password</label>
-                            <input type="password" id="confirm-password" name="confirm-password" placeholder="Re-enter password" required>
+                            <input type="password" id="confirm-password" name="confirm-password" placeholder="Re-enter password" required minlength="6">
                         </div>
                     </div>
-
-                    <button type="submit" class="btn">Sign Up</button>
+                    <div class="button-row">
+                        <button type="button" id="signupAdmin" class="btn">Sign Up as Admin</button>
+                    </div>  
+                    <br>
+                    <div class="button-row">
+                        <button type="button" id="signupUser" class="btn">Sign Up as User</button>
+                    </div>
                 </form>
 
                 <p class="auth-link">Already have an account? <a href="login.html">Login here</a></p>
@@ -74,5 +82,169 @@
             <p>Discover, Review, and Rate your favorite movies.</p>
         </div>
     </footer>
+
+    <script>
+        // Function to get all users from localStorage
+        function getAllUsers() {
+            const users = localStorage.getItem('users');
+            return users ? JSON.parse(users) : [];
+        }
+
+        // Function to save users to localStorage
+        function saveUsers(users) {
+            localStorage.setItem('users', JSON.stringify(users));
+        }
+
+        // Function to check if email already exists
+        function emailExists(email) {
+            const users = getAllUsers();
+            return users.some(user => user.email.toLowerCase() === email.toLowerCase());
+        }
+
+        // Function to show error message
+        function showError(message) {
+            const errorDiv = document.getElementById('errorMessage');
+            const successDiv = document.getElementById('successMessage');
+            errorDiv.textContent = message;
+            errorDiv.style.display = 'block';
+            successDiv.style.display = 'none';
+        }
+
+        // Function to show success message
+        function showSuccess(message) {
+            const errorDiv = document.getElementById('errorMessage');
+            const successDiv = document.getElementById('successMessage');
+            successDiv.textContent = message;
+            successDiv.style.display = 'block';
+            errorDiv.style.display = 'none';
+        }
+
+        // Function to hide messages
+        function hideMessages() {
+            document.getElementById('errorMessage').style.display = 'none';
+            document.getElementById('successMessage').style.display = 'none';
+        }
+
+        // Function to handle signup
+        function handleSignup(role) {
+            // Hide previous messages
+            hideMessages();
+
+            // Get form values
+            const firstName = document.getElementById('first-name').value.trim();
+            const lastName = document.getElementById('last-name').value.trim();
+            const email = document.getElementById('email').value.trim();
+            const password = document.getElementById('password').value;
+            const confirmPassword = document.getElementById('confirm-password').value;
+
+            // Validation
+            if (!firstName || !lastName || !email || !password || !confirmPassword) {
+                showError('Please fill in all fields.');
+                return;
+            }
+
+            // Validate email format
+            const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+            if (!emailRegex.test(email)) {
+                showError('Please enter a valid email address.');
+                return;
+            }
+
+            // Check password length
+            if (password.length < 6) {
+                showError('Password must be at least 6 characters long.');
+                return;
+            }
+
+            // Check if passwords match
+            if (password !== confirmPassword) {
+                showError('Passwords do not match. Please try again.');
+                return;
+            }
+
+            // Check if email already exists
+            if (emailExists(email)) {
+                showError('An account with this email already exists. Please use a different email or login.');
+                return;
+            }
+
+            // Create user object
+            const user = {
+                id: Date.now(), // Unique ID based on timestamp
+                firstName: firstName,
+                lastName: lastName,
+                name: `${firstName} ${lastName}`, // Full name for convenience
+                email: email,
+                password: password, // In production, this should be hashed
+                role: role, // 'admin' or 'user'
+                createdAt: new Date().toISOString()
+            };
+
+            // Get existing users
+            const users = getAllUsers();
+
+            // Add new user
+            users.push(user);
+
+            // Save to localStorage
+            saveUsers(users);
+
+            // Set current user
+            const currentUser = {
+                id: user.id,
+                name: user.name,
+                firstName: user.firstName,
+                lastName: user.lastName,
+                email: user.email,
+                role: user.role
+            };
+            localStorage.setItem('currentUser', JSON.stringify(currentUser));
+
+            // Show success message
+            showSuccess(`Account created successfully! Redirecting to ${role === 'admin' ? 'Admin' : 'User'} dashboard...`);
+
+            // Redirect after a short delay
+            setTimeout(() => {
+                if (role === 'admin') {
+                    window.location.href = '../admin/home.html';
+                } else {
+                    window.location.href = '../user/home.html';
+                }
+            }, 1500);
+        }
+
+        // Add event listeners
+        document.addEventListener('DOMContentLoaded', function() {
+            const signupAdminBtn = document.getElementById('signupAdmin');
+            const signupUserBtn = document.getElementById('signupUser');
+            const form = document.getElementById('signupForm');
+
+            // Handle Admin signup
+            signupAdminBtn.addEventListener('click', function(e) {
+                e.preventDefault();
+                handleSignup('admin');
+            });
+
+            // Handle User signup
+            signupUserBtn.addEventListener('click', function(e) {
+                e.preventDefault();
+                handleSignup('user');
+            });
+
+            // Prevent form submission on Enter key (handle it manually)
+            form.addEventListener('submit', function(e) {
+                e.preventDefault();
+            });
+
+            // Clear error messages when user starts typing
+            const inputs = form.querySelectorAll('input');
+            inputs.forEach(input => {
+                input.addEventListener('input', function() {
+                    hideMessages();
+                });
+            });
+        });
+    </script>
 </body>
 </html>
+
