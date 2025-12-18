@@ -5,156 +5,9 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Movie Details - MovieReview</title>
     <link rel="stylesheet" href="../../assets/css/style.css">
-    <link rel="stylesheet" href="../../assets/css/navbar.css">
+    <!-- <link rel="stylesheet" href="../../assets/css/navbar.css"> -->
+    <link rel="stylesheet" href="../../assets/css/movie_details_css.css">
     <link href="https://fonts.googleapis.com/css2?family=Open+Sans:wght@400;600;700&family=Inter:wght@400;700&display=swap" rel="stylesheet">
-    <style>
-        /* --- Improved Layout Styles --- */
-        body {
-            font-family: 'Open Sans', sans-serif;
-            background-color: #0f0f0f;
-            color: #f0f0f0;
-            line-height: 1.6;
-        }
-        .container {
-            width: 90%;
-            max-width: 1100px;
-            margin: auto;
-        }
-
-        .movie-section {
-            margin: 3rem 0;
-            background: #1c1c1c;
-            border-radius: 15px;
-            overflow: hidden;
-            box-shadow: 0 4px 12px rgba(255, 71, 87, 0.2);
-            transition: transform 0.3s ease;
-        }
-
-        .movie-section:hover {
-            transform: scale(1.01);
-        }
-
-        .movie-header {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 2rem;
-            padding: 2rem;
-        }
-
-        .movie-header img {
-            width: 250px;
-            height: 370px;
-            object-fit: cover;
-            border-radius: 10px;
-            transition: transform 0.4s ease;
-        }
-
-        .movie-header img:hover {
-            transform: scale(1.05);
-        }
-
-        .movie-info h2 {
-            font-size: 2rem;
-            color: #d50b1c;
-            margin-bottom: 0.5rem;
-        }
-
-        .movie-meta {
-            color: #ccc;
-            font-size: 0.95rem;
-            margin-bottom: 0.5rem;
-        }
-
-        .director, .cast {
-            font-size: 0.95rem;
-            color: #aaa;
-            margin-bottom: 0.3rem;
-        }
-
-        .rating {
-            margin-top: 1rem;
-            font-size: 1rem;
-            color: gold;
-        }
-
-        .movie-synopsis, .review-section {
-            padding: 1.5rem 2rem;
-            border-top: 1px solid #333;
-        }
-
-        .movie-synopsis h3, .review-section h3 {
-            color: #d50b1c;
-            margin-bottom: 1rem;
-        }
-
-        .movie-synopsis p {
-            color: #ddd;
-            font-size: 1rem;
-        }
-
-        .review-form textarea {
-            width: 100%;
-            background: #2a2a2a;
-            color: #fff;
-            border: none;
-            border-radius: 10px;
-            padding: 1rem;
-            margin-bottom: 1rem;
-            resize: none;
-        }
-
-        .btn {
-            background: #92141e;
-            color: #fff;
-            padding: 0.7rem 1.5rem;
-            border: none;
-            border-radius: 8px;
-            cursor: pointer;
-            transition: background 0.3s ease;
-        }
-
-        .btn:hover {
-            background: #80161f;
-        }
-
-        .reviews {
-            margin-top: 1.5rem;
-        }
-
-        .review {
-            background: #262626;
-            padding: 1rem;
-            border-radius: 10px;
-            margin-bottom: 1rem;
-        }
-
-        .review-header {
-            display: flex;
-            justify-content: space-between;
-            margin-bottom: 0.5rem;
-        }
-
-        .reviewer {
-            font-weight: 600;
-        }
-
-        .review-rating {
-            color: gold;
-        }
-
-        footer {
-            background-color: #1a1a1a;
-            text-align: center;
-            padding: 2rem 0;
-            color: #ccc;
-            margin-top: 3rem;
-        }
-
-        footer p:first-child {
-            color: #821d26;
-            font-weight: 600;
-        }
-    </style>
 </head>
 <body>
     <!-- Navbar -->
@@ -166,6 +19,7 @@
                     <li><a href="home.html" class="active">Home</a></li>
                     <li><a href="movie_list.html">Browse Movies</a></li>
                     <li><a href="my_reviews.html">My Reviews</a></li>
+                    <li><a href="profile.html">Profile</a></li>
                     <li><a href="../auth/login.html">Logout</a></li>
                 </ul>
                 <div class="bar-icon">☰</div>
@@ -177,7 +31,7 @@
     <section class="movie-section">
         <div class="container">
             <div class="movie-header">
-                <img src="../../assets/img/movies/The Shawshank Redemption.jpg" alt="The Shawshank Redemption">
+                <img src="../../assets/img/movies/shaw.jpg" alt="The Shawshank Redemption">
                 <div class="movie-info">
                     <h2>The Shawshank Redemption</h2>
                     <p class="movie-meta">Drama | 1994 | 142 mins</p>

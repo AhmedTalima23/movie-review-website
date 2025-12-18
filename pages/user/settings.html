@@ -5,42 +5,30 @@
     <meta name="viewport" content="width=device-width,initial-scale=1" />
     <title>Settings - MovieReview</title>
     <link rel="stylesheet" href="../../assets/css/style.css">
-    <link rel="stylesheet" href="../../assets/css/sidebar.css">
+    <!-- <link rel="stylesheet" href="../../assets/css/navbar.css"> -->
+    <link rel="stylesheet" href="../../assets/css/pages/user.css">
     <link href="https://fonts.googleapis.com/css2?family=Open+Sans:wght@400;600;700&family=Inter:wght@400;700&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <!-- <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css"> -->
 </head>
 <body>
-    <!-- Sidebar -->
-    <div class="sidebar">
-        <div class="sidebar-header">
-            <h1><a href="../../index.html">Movie<span>Review</span></a></h1>
+    <!-- Navbar (replaces sidebar) -->
+    <nav class="navbar">
+        <div class="container">
+            <div class="navbar-content">
+                <h1><a href="../../index.html">Movie<span>Review</span></a></h1>
+                <ul>
+                    <li><a href="home.html">Home</a></li>
+                    <li><a href="movie_list.html">Browse Movies</a></li>
+                    <li><a href="my_reviews.html">My Reviews</a></li>
+                    <li><a href="../auth/login.html">Logout</a></li>
+                </ul>
+                <div class="bar-icon">☰</div>
+            </div>
         </div>
-        <div class="sidebar-menu">
-            <h3>Menu</h3>
-            <a href="movie_list.html" class="menu-item">
-                <i class="fas fa-film"></i> Browse Movies
-            </a>
-            <a href="my_reviews.html" class="menu-item">
-                <i class="fas fa-star"></i> My Reviews
-            </a>
-            <a href="watchlist.html" class="menu-item">
-                <i class="fas fa-list"></i> Watchlist
-            </a>
-            <h3>Profile</h3>
-            <a href="profile.html" class="menu-item">
-                <i class="fas fa-user"></i> My Profile
-            </a>
-            <a href="settings.html" class="menu-item active">
-                <i class="fas fa-cog"></i> Settings
-            </a>
-            <a href="../auth/logout.html" class="menu-item">
-                <i class="fas fa-sign-out-alt"></i> Logout
-            </a>
-        </div>
-    </div>
+    </nav>
 
     <!-- Main Content -->
-    <div class="content-with-sidebar">
+    <div class="content-with-sidebar no-sidebar">
         <h2>Account Settings</h2>
 
         <div class="settings-form">
@@ -48,20 +36,20 @@
                 <div class="settings-row">
                     <div class="form-group inline">
                         <label for="fullName">Full Name</label>
-                        <input id="fullName" name="fullName" type="text" value="John Doe">
+                        <input id="fullName" name="fullName" type="text" value="Ahmed Talima">
                     </div>
                     <div class="form-group inline">
                         <label for="email">Email</label>
-                        <input id="email" name="email" type="email" value="johndoe@example.com">
+                        <input id="email" name="email" type="email" value="ahmedtalima45@gmail.com">
                     </div>
                 </div>
 
-                <div style="margin-top:1rem;">
+                <div class="mt-1">
                     <label for="bio">Bio (optional)</label>
                     <textarea id="bio" name="bio" rows="3" placeholder="Tell others about your movie taste...">Movie lover and classic film fan.</textarea>
                 </div>
 
-                <h3 style="margin-top:1.2rem;">Change Password</h3>
+                <h3 class="mt-1-2">Change Password</h3>
                 <div class="settings-row">
                     <div class="form-group inline">
                         <label for="currentPassword">Current Password</label>
@@ -71,28 +59,28 @@
                         <label for="newPassword">New Password</label>
                         <input id="newPassword" name="newPassword" type="password">
                     </div>
-                    <div class="form-group inline" style="flex-basis:100%;">
+                    <div class="form-group inline full-basis">
                         <label for="confirmPassword">Confirm New Password</label>
                         <input id="confirmPassword" name="confirmPassword" type="password">
                     </div>
                 </div>
 
-                <h3 style="margin-top:1.2rem;">Notifications</h3>
-                <div style="display:flex;flex-direction:column;gap:8px;margin-bottom:1rem;">
+                <h3 class="mt-1-2">Notifications</h3>
+                <div class="flex-gap mb-1">
                     <label class="toggle"><input type="checkbox" name="emailNotifications" checked> Email notifications</label>
                     <label class="toggle"><input type="checkbox" name="smsNotifications"> SMS notifications</label>
                     <label class="toggle"><input type="checkbox" name="replyNotifications" checked> New review replies</label>
                 </div>
 
-                <h3 style="margin-top:1.2rem;">Privacy</h3>
-                <div style="display:flex;gap:1rem;align-items:center;margin-bottom:1rem;">
+                <h3 class="mt-1-2">Privacy</h3>
+                <div class="radio-group">
                     <label><input type="radio" name="privacy" value="public" checked> Public profile</label>
                     <label><input type="radio" name="privacy" value="private"> Private profile</label>
                 </div>
 
-                <div style="margin-top:1rem;">
+                <div class="mt-1">
                     <button type="submit" class="btn">Save Changes</button>
-                    <a href="profile.html" class="btn" style="background:#6c6c6c;margin-left:8px;">Cancel</a>
+                    <a href="profile.html" class="btn btn-cancel">Cancel</a>
                 </div>
             </form>
         </div>
@@ -100,7 +88,7 @@
         <!-- Footer -->
         <footer>
             <div class="container">
-                <p>&copy; 2024 MovieReview. All rights reserved.</p>
+                <p>&copy; 2025 MovieReview. All rights reserved.</p>
                 <p>Discover, Review, and Rate your favorite movies.</p>
             </div>
         </footer>

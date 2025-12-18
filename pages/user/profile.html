@@ -1,62 +1,52 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="View and manage your MovieReview profile, reviews, and activity">
     <title>My Profile - MovieReview</title>
     <link rel="stylesheet" href="../../assets/css/style.css">
-    <link rel="stylesheet" href="../../assets/css/sidebar.css">
+    <link rel="stylesheet" href="../../assets/css/pages/user.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Open+Sans:wght@400;600;700&family=Inter:wght@400;700&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
 </head>
 <body>
-    <!-- Sidebar -->
-    <div class="sidebar">
-        <div class="sidebar-header">
-            <h1><a href="../../index.html">Movie<span>Review</span></a></h1>
+    <!-- Navigation -->
+    <nav class="navbar" role="navigation" aria-label="Main navigation">
+        <div class="container">
+            <div class="navbar-content">
+                <h1><a href="../../index.html">Movie<span>Review</span></a></h1>
+                <ul role="menubar">
+                    <li role="none"><a href="home.html" role="menuitem">Home</a></li>
+                    <li role="none"><a href="movie_list.html" role="menuitem">Browse Movies</a></li>
+                    <li role="none"><a href="my_reviews.html" role="menuitem">My Reviews</a></li>
+                    <li role="none"><a href="profile.html" class="active" role="menuitem" aria-current="page">Profile</a></li>
+                    <li role="none"><a href="../auth/login.html" role="menuitem">Logout</a></li>
+                </ul>
+                <button class="bar-icon" aria-label="Toggle navigation menu" aria-expanded="false">☰</button>
+            </div>
         </div>
-        <div class="sidebar-menu">
-            <h3>Menu</h3>
-            <a href="movie_list.html" class="menu-item">
-                <i class="fas fa-film"></i> Browse Movies
-            </a>
-            <a href="my_reviews.html" class="menu-item">
-                <i class="fas fa-star"></i> My Reviews
-            </a>
-            <a href="watchlist.html" class="menu-item">
-                <i class="fas fa-list"></i> Watchlist
-            </a>
-            <h3>Profile</h3>
-            <a href="profile.html" class="menu-item active">
-                <i class="fas fa-user"></i> My Profile
-            </a>
-            <a href="settings.html" class="menu-item">
-                <i class="fas fa-cog"></i> Settings
-            </a>
-            <a href="../auth/logout.html" class="menu-item">
-                <i class="fas fa-sign-out-alt"></i> Logout
-            </a>
-        </div>
-    </div>
+    </nav>
 
     <!-- Main Content -->
-    <div class="content-with-sidebar">
-        <div class="profile-header">
+    <main class="content-with-sidebar no-sidebar">
+        <section class="profile-header">
             <div class="avatar">
-                <img src="../../assets/img/ui/default-avatar.png" alt="User Avatar">
+                <img src="../../assets/img/ui/me.jpg" alt="Ahmed Talima profile picture" width="150" height="150">
             </div>
             <div class="profile-info">
-                <h2>John Doe</h2>
-                <p>johndoe@example.com • Joined Jan 2023</p>
-                <p>Location: New York, USA</p>
+                <h2>Ahmed Talima</h2>
+                <p><a href="mailto:ahmedtalima45@gmail.com">ahmedtalima45@gmail.com</a> • Joined <time datetime="2023-01">Jan 2023</time></p>
+                <p><span aria-label="Location">Location: Egypt - Cairo</span></p>
                 <div class="profile-actions">
-                    <a href="settings.html" class="btn"><i class="fas fa-edit"></i> Edit Profile</a>
+                    <a href="settings.html" class="btn" aria-label="Edit profile settings"><i class="fas fa-edit" aria-hidden="true"></i> Edit Profile</a>
                     <a href="my_reviews.html" class="btn">My Reviews</a>
                 </div>
             </div>
-        </div>
+        </section>
 
-        <div class="profile-stats">
+        <section class="profile-stats" aria-label="Profile statistics">
             <div class="stat">
                 <div class="value">24</div>
                 <div class="label">Reviews</div>
@@ -73,78 +63,94 @@
                 <div class="value">Drama</div>
                 <div class="label">Top Genre</div>
             </div>
-        </div>
+        </section>
 
-        <div style="display:flex;gap:1rem;flex-wrap:wrap;">
-            <div style="flex:1; min-width:280px;">
-                <h3 style="text-align:left;margin-bottom:0.6rem;">Rating Distribution</h3>
+        <div class="stats-row">
+            <section aria-labelledby="rating-dist-heading">
+                <h3 id="rating-dist-heading" class="left-heading">Rating Distribution</h3>
                 <div class="rating-distribution">
                     <div class="rating-row">
                         <div class="star-label">5 ★</div>
-                        <div class="progress"><span style="width:70%"></span></div>
-                        <div style="width:40px;text-align:right;color:#bdbdbd;">70%</div>
+                        <div class="progress" role="progressbar" aria-valuenow="70" aria-valuemin="0" aria-valuemax="100" aria-label="5 stars: 70%">
+                            <span class="w-70"></span>
+                        </div>
+                        <div class="percentage-label">70%</div>
                     </div>
                     <div class="rating-row">
                         <div class="star-label">4 ★</div>
-                        <div class="progress"><span style="width:18%"></span></div>
-                        <div style="width:40px;text-align:right;color:#bdbdbd;">18%</div>
+                        <div class="progress" role="progressbar" aria-valuenow="18" aria-valuemin="0" aria-valuemax="100" aria-label="4 stars: 18%">
+                            <span class="w-18"></span>
+                        </div>
+                        <div class="percentage-label">18%</div>
                     </div>
                     <div class="rating-row">
                         <div class="star-label">3 ★</div>
-                        <div class="progress"><span style="width:7%"></span></div>
-                        <div style="width:40px;text-align:right;color:#bdbdbd;">7%</div>
+                        <div class="progress" role="progressbar" aria-valuenow="7" aria-valuemin="0" aria-valuemax="100" aria-label="3 stars: 7%">
+                            <span class="w-7"></span>
+                        </div>
+                        <div class="percentage-label">7%</div>
                     </div>
                     <div class="rating-row">
                         <div class="star-label">2 ★</div>
-                        <div class="progress"><span style="width:3%"></span></div>
-                        <div style="width:40px;text-align:right;color:#bdbdbd;">3%</div>
+                        <div class="progress" role="progressbar" aria-valuenow="3" aria-valuemin="0" aria-valuemax="100" aria-label="2 stars: 3%">
+                            <span class="w-3"></span>
+                        </div>
+                        <div class="percentage-label">3%</div>
                     </div>
                     <div class="rating-row">
                         <div class="star-label">1 ★</div>
-                        <div class="progress"><span style="width:2%"></span></div>
-                        <div style="width:40px;text-align:right;color:#bdbdbd;">2%</div>
+                        <div class="progress" role="progressbar" aria-valuenow="2" aria-valuemin="0" aria-valuemax="100" aria-label="1 star: 2%">
+                            <span class="w-2"></span>
+                        </div>
+                        <div class="percentage-label">2%</div>
                     </div>
                 </div>
-            </div>
+            </section>
 
-            <div style="flex:1; min-width:280px;">
-                <h3 style="text-align:left;margin-bottom:0.6rem;">Activity (Last 8 months)</h3>
-                <div class="activity-chart" aria-hidden="true">
-                    <!-- inline styles set heights to simulate data -->
-                    <div class="bar" style="height:20%"></div>
-                    <div class="bar" style="height:40%"></div>
-                    <div class="bar" style="height:30%"></div>
-                    <div class="bar" style="height:60%"></div>
-                    <div class="bar" style="height:80%"></div>
-                    <div class="bar" style="height:50%"></div>
-                    <div class="bar" style="height:70%"></div>
-                    <div class="bar" style="height:90%"></div>
+            <section aria-labelledby="activity-heading">
+                <h3 id="activity-heading" class="left-heading">Activity (Last 8 months)</h3>
+                <div class="activity-chart" role="img" aria-label="Activity chart showing review activity from March to October">
+                    <div class="bar h-20" aria-label="March: 20%"></div>
+                    <div class="bar h-40" aria-label="April: 40%"></div>
+                    <div class="bar h-30" aria-label="May: 30%"></div>
+                    <div class="bar h-60" aria-label="June: 60%"></div>
+                    <div class="bar h-80" aria-label="July: 80%"></div>
+                    <div class="bar h-50" aria-label="August: 50%"></div>
+                    <div class="bar h-70" aria-label="September: 70%"></div>
+                    <div class="bar h-90" aria-label="October: 90%"></div>
                 </div>
-                <div style="display:flex;justify-content:space-between;color:#9a9a9a;font-size:0.9rem;margin-top:8px;">
-                    <div>Mar</div><div>Apr</div><div>May</div><div>Jun</div><div>Jul</div><div>Aug</div><div>Sep</div><div>Oct</div>
+                <div class="month-labels" role="presentation">
+                    <span>Mar</span>
+                    <span>Apr</span>
+                    <span>May</span>
+                    <span>Jun</span>
+                    <span>Jul</span>
+                    <span>Aug</span>
+                    <span>Sep</span>
+                    <span>Oct</span>
                 </div>
-            </div>
+            </section>
         </div>
 
-        <div class="recent-reviews">
-            <h3 style="text-align:left;margin:0.6rem 0;">Recent Reviews</h3>
-            <div class="recent-review">
-                <strong>The Shawshank Redemption</strong> <span style="color:#bdbdbd">• Jan 15, 2024</span>
-                <p style="margin:8px 0;color:#cfcfcf;">An absolute masterpiece that shows the power of hope and friendship...</p>
-            </div>
-            <div class="recent-review">
-                <strong>The Godfather</strong> <span style="color:#bdbdbd">• Jan 05, 2024</span>
-                <p style="margin:8px 0;color:#cfcfcf;">A brilliant and timeless mafia drama with unforgettable performances...</p>
-            </div>
-        </div>
+        <section class="recent-reviews" aria-labelledby="recent-reviews-heading">
+            <h3 id="recent-reviews-heading" class="left-heading">Recent Reviews</h3>
+            <article class="recent-review">
+                <strong>The Shawshank Redemption</strong> <span class="percentage-label">• <time datetime="2024-01-15">Jan 15, 2024</time></span>
+                <p class="review-text">An absolute masterpiece that shows the power of hope and friendship...</p>
+            </article>
+            <article class="recent-review">
+                <strong>The Godfather</strong> <span class="percentage-label">• <time datetime="2024-01-05">Jan 05, 2024</time></span>
+                <p class="review-text">A brilliant and timeless mafia drama with unforgettable performances...</p>
+            </article>
+        </section>
 
         <!-- Footer -->
-        <footer>
+        <footer role="contentinfo">
             <div class="container">
-                <p>&copy; 2024 MovieReview. All rights reserved.</p>
+                <p>&copy; 2025 MovieReview. All rights reserved.</p>
                 <p>Discover, Review, and Rate your favorite movies.</p>
             </div>
         </footer>
-    </div>
+    </main>
 </body>
 </html>

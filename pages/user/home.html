@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Home - MovieReview</title>
     <link rel="stylesheet" href="../../assets/css/style.css">
+    <link rel="stylesheet" href="../../assets/css/pages/user.css">
     <link href="https://fonts.googleapis.com/css2?family=Open+Sans:wght@400;600;700&family=Inter:wght@400;700&display=swap" rel="stylesheet">
 </head>
 <body>
@@ -17,6 +18,7 @@
                     <li><a href="home.html" class="active">Home</a></li>
                     <li><a href="movie_list.html">Browse Movies</a></li>
                     <li><a href="my_reviews.html">My Reviews</a></li>
+                    <li><a href="profile.html" class="active">Profile</a></li>
                     <li><a href="../auth/login.html">Logout</a></li>
                 </ul>
                 <div class="bar-icon">☰</div>
@@ -45,13 +47,13 @@
     </section>
 
     <!-- Search Section -->
-    <section class="container" style="padding: 60px 0;">
+    <section class="container mt-1" aria-label="Search Section">
         <div class="head-style">
             <h2>Search Movies</h2>
             <p>Find Your <span>Favorite</span></p>
         </div>
 
-        <form id="searchForm" style="max-width: 800px; margin: 0 auto;">
+        <form id="searchForm" class="form-max">
             <div class="form-group">
                 <label for="searchBy">Search By</label>
                 <select id="searchBy" name="searchBy" required>
@@ -89,6 +91,7 @@
                     <p><strong>Genre:</strong> Drama | <strong>Year:</strong> 1994 | <strong>Director:</strong> Frank Darabont</p>
                     <p>Two imprisoned men bond over years, finding solace and eventual redemption through acts of decency.</p>
                     <a href="/pages/user/movie_details.html" class="btn">View Details</a>
+                    <a href="submit_review.html" class="btn add-review">Add Review</a>
                 </div>
             </div>
 
@@ -100,6 +103,7 @@
                     <p><strong>Genre:</strong> Crime, Drama | <strong>Year:</strong> 1972 | <strong>Director:</strong> Francis Ford Coppola</p>
                     <p>The aging patriarch of an organized crime dynasty transfers control of his empire to his reluctant son.</p>
                     <a href="/pages/user/movie_details.html" class="btn">View Details</a>
+                    <a href="submit_review.html" class="btn add-review">Add Review</a>
                 </div>
             </div>
 
@@ -111,6 +115,7 @@
                     <p><strong>Genre:</strong> Action, Crime, Drama | <strong>Year:</strong> 2008 | <strong>Director:</strong> Christopher Nolan</p>
                     <p>When the menace known as the Joker causes chaos in Gotham, Batman faces his greatest moral test yet.</p>
                     <a href="/pages/user/movie_details.html" class="btn">View Details</a>
+                    <a href="submit_review.html" class="btn add-review">Add Review</a>
                 </div>
             </div>
         </div>
@@ -119,11 +124,11 @@
     <!-- Footer -->
     <footer>
         <div class="container">
-            <p>&copy; 2024 MovieReview. All rights reserved.</p>
+            <p>&copy; 2025 MovieReview. All rights reserved.</p>
             <p>Discover, Review, and Rate your favorite movies.</p>
         </div>
     </footer>
 
-    <script src="../../assets/js/user.js"></script>
+    <!-- <script src="../../assets/js/user.js"></script> -->
 </body>
 </html>
