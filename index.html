@@ -14,10 +14,10 @@
         <div class="container">
             <div class="navbar-content">
                 <h1><a href="index.html">Movie<span>Review</span></a></h1>
-                <ul>
+                <ul id="navLinks">
                     <li><a href="index.html" class="active">Home</a></li>
-                    <li><a href="pages/auth/login.html">Login</a></li>
-                    <li><a href="pages/auth/signup.html">Sign Up</a></li>
+                    <li><a href="pages/auth/login.html" id="loginLink">Login</a></li>
+                    <li><a href="pages/auth/signup.html" id="signupLink">Sign Up</a></li>
                 </ul>
                 <div class="bar-icon">☰</div>
             </div>
@@ -29,10 +29,10 @@
         <div class="container">
             <div class="header-content">
                 <div class="header-text">
-                    <h2>Discover. Review. Rate.</h2>
-                    <p>Join our community of movie lovers! Read reviews, share your opinions, and explore a world of cinematic stories.</p>
-                    <div class="header-btn">
-                        <a href="pages/auth/signup.html" class="book-btn">Get Started</a>
+                    <h2 id="headerTitle">Discover. Review. Rate.</h2>
+                    <p id="headerSubtext">Join our community of movie lovers! Read reviews, share your opinions, and explore a world of cinematic stories.</p>
+                    <div class="header-btn" id="headerButtons">
+                        <a href="pages/auth/signup.html" class="book-btn" id="getStartedBtn">Get Started</a>
                     </div>
                 </div>
                 <div class="header-img">
@@ -57,8 +57,8 @@
                     <h3>The Shawshank Redemption</h3>
                     <p><strong>Genre:</strong> Drama | <strong>Year:</strong> 1994 | <strong>Director:</strong> Frank Darabont</p>
                     <p>Two imprisoned men bond over years, finding solace and eventual redemption through acts of decency.</p>
-                    <a href="pages/auth/login.html" class="btn">View Details</a>
-                    <a href="pages/user/submit_review.html" class="btn add-review">Add Review</a>
+                    <a href="pages/user/movie_details.html" class="btn view-details-btn" data-movie="the-shawshank-redemption">View Details</a>
+                    <a href="pages/user/submit_review.html" class="btn add-review add-review-btn">Add Review</a>
                 </div>
             </div>
 
@@ -69,8 +69,8 @@
                     <h3>The Godfather</h3>
                     <p><strong>Genre:</strong> Crime, Drama | <strong>Year:</strong> 1972 | <strong>Director:</strong> Francis Ford Coppola</p>
                     <p>The aging patriarch of an organized crime dynasty transfers control of his empire to his reluctant son.</p>
-                    <a href="pages/auth/login.html" class="btn">View Details</a>
-                    <a href="pages/user/submit_review.html" class="btn add-review">Add Review</a>
+                    <a href="pages/user/movie_details.html" class="btn view-details-btn" data-movie="the-godfather">View Details</a>
+                    <a href="pages/user/submit_review.html" class="btn add-review add-review-btn">Add Review</a>
                 </div>
             </div>
 
@@ -81,8 +81,8 @@
                     <h3>The Dark Knight</h3>
                     <p><strong>Genre:</strong> Action, Crime, Drama | <strong>Year:</strong> 2008 | <strong>Director:</strong> Christopher Nolan</p>
                     <p>When the menace known as the Joker causes chaos in Gotham, Batman faces his greatest moral test yet.</p>
-                    <a href="pages/auth/login.html" class="btn">View Details</a>
-                    <a href="pages/user/submit_review.html" class="btn add-review">Add Review</a>
+                    <a href="pages/user/movie_details.html" class="btn view-details-btn" data-movie="the-dark-knight">View Details</a>
+                    <a href="pages/user/submit_review.html" class="btn add-review add-review-btn">Add Review</a>
                 </div>
             </div>
         </div>
@@ -96,5 +96,97 @@
         </div>
     </footer>
 
+    <script>
+        // Function to check if user is logged in
+        function isLoggedIn() {
+            const currentUser = localStorage.getItem('currentUser');
+            return currentUser !== null;
+        }
+
+        // Function to get current user
+        function getCurrentUser() {
+            const currentUser = localStorage.getItem('currentUser');
+            if (currentUser) {
+                try {
+                    return JSON.parse(currentUser);
+                } catch (e) {
+                    return null;
+                }
+            }
+            return null;
+        }
+
+        // Function to update navigation based on login status
+        function updateNavigation() {
+            const navLinks = document.getElementById('navLinks');
+            const user = getCurrentUser();
+
+            if (user) {
+                // User is logged in - show user menu
+                navLinks.innerHTML = `
+                    <li><a href="index.html" class="active">Home</a></li>
+                    <li><a href="pages/user/movie_list.html">Browse Movies</a></li>
+                    <li><a href="pages/user/my_reviews.html">My Reviews</a></li>
+                    <li><a href="pages/user/profile.html">Profile</a></li>
+                    <li><a href="pages/auth/logout.html">Logout</a></li>
+                `;
+
+                // Update header for logged-in users
+                const headerTitle = document.getElementById('headerTitle');
+                const headerSubtext = document.getElementById('headerSubtext');
+                const headerButtons = document.getElementById('headerButtons');
+
+                headerTitle.textContent = `Welcome back, ${user.name}!`;
+                headerSubtext.textContent = 'Continue exploring amazing movies and share your reviews with the community.';
+                headerButtons.innerHTML = `
+                    <a href="pages/user/movie_list.html" class="book-btn">Browse Movies</a>
+                    <a href="pages/user/my_reviews.html" class="book-btn" style="background: var(--main-color); margin-left: 1rem;">My Reviews</a>
+                `;
+            } else {
+                // User is not logged in - show guest menu
+                navLinks.innerHTML = `
+                    <li><a href="index.html" class="active">Home</a></li>
+                    <li><a href="pages/auth/login.html">Login</a></li>
+                    <li><a href="pages/auth/signup.html">Sign Up</a></li>
+                `;
+            }
+        }
+
+        // Function to handle movie detail links
+        function setupMovieLinks() {
+            const viewDetailsBtns = document.querySelectorAll('.view-details-btn');
+            const addReviewBtns = document.querySelectorAll('.add-review-btn');
+
+            viewDetailsBtns.forEach(btn => {
+                btn.addEventListener('click', function(e) {
+                    if (!isLoggedIn()) {
+                        e.preventDefault();
+                        if (confirm('Please login to view movie details. Would you like to go to the login page?')) {
+                            window.location.href = 'pages/auth/login.html';
+                        }
+                    }
+                    // If logged in, allow navigation to movie details
+                });
+            });
+
+            addReviewBtns.forEach(btn => {
+                btn.addEventListener('click', function(e) {
+                    if (!isLoggedIn()) {
+                        e.preventDefault();
+                        if (confirm('Please login to add a review. Would you like to go to the login page?')) {
+                            window.location.href = 'pages/auth/login.html';
+                        }
+                    }
+                    // If logged in, allow navigation to submit review
+                });
+            });
+        }
+
+        // Initialize on page load
+        document.addEventListener('DOMContentLoaded', function() {
+            updateNavigation();
+            setupMovieLinks();
+        });
+    </script>
 </body>
 </html>

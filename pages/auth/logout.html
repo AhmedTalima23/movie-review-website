@@ -6,15 +6,13 @@
     <link rel="stylesheet" href="../../assets/css/style.css">
     <link rel="stylesheet" href="../../assets/css/sidebar.css">
     <link href="https://fonts.googleapis.com/css2?family=Open+Sans:wght@400;600;700&family=Inter:wght@400;700&display=swap" rel="stylesheet">
-    <meta http-equiv="refresh" content="2;url=../../index.html">
     <link rel="stylesheet" href="../../assets/css/pages/auth.css">
 </head>
 <body>
     <div class="logout-message">
         <i class="fas fa-sign-out-alt"></i>
-        <h2>You have logged out</h2>
-        <p>Redirecting to home page...</p>
-        <p class="mt-1"><a href="../../index.html" class="btn">Go to Home Now</a></p>
+        <h2>Logging out...</h2>
+        <p>Please wait while we log you out...</p>
     </div>
 
     <footer>
@@ -23,5 +21,38 @@
             <p>Discover, Review, and Rate your favorite movies.</p>
         </div>
     </footer>
+
+    <script>
+        // Function to logout user
+        function logout() {
+            // Clear current user session from localStorage
+            localStorage.removeItem('currentUser');
+            
+            // Optional: Clear other session-related data if needed
+            // You can uncomment these if you want to clear more data on logout:
+            // localStorage.clear(); // This would clear ALL localStorage data
+            
+            // Update the message
+            const logoutMessage = document.querySelector('.logout-message');
+            logoutMessage.innerHTML = `
+                <i class="fas fa-sign-out-alt"></i>
+                <h2>You have been logged out</h2>
+                <p>Thank you for using MovieReview!</p>
+                <p class="mt-1"><a href="../../index.html" class="btn">Go to Home</a></p>
+                <br>
+                <p class="mt-1"><a href="login.html" class="btn" style="background: var(--main-color);">Login Again</a></p>
+            `;
+            
+            // Redirect to home page after a short delay
+            setTimeout(() => {
+                window.location.href = '../../index.html';
+            }, 2000);
+        }
+
+        // Execute logout when page loads
+        document.addEventListener('DOMContentLoaded', function() {
+            logout();
+        });
+    </script>
 </body>
 </html>

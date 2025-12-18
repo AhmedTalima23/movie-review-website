@@ -22,7 +22,8 @@
                     <li role="none"><a href="movie_list.html" role="menuitem">Browse Movies</a></li>
                     <li role="none"><a href="my_reviews.html" role="menuitem">My Reviews</a></li>
                     <li role="none"><a href="profile.html" class="active" role="menuitem" aria-current="page">Profile</a></li>
-                    <li role="none"><a href="../auth/login.html" role="menuitem">Logout</a></li>
+                    <li role="none"><a href="settings.html" role="menuitem">Settings</a></li>
+                    <li role="none"><a href="../auth/logout.html" role="menuitem">Logout</a></li>
                 </ul>
                 <button class="bar-icon" aria-label="Toggle navigation menu" aria-expanded="false">☰</button>
             </div>
@@ -33,12 +34,12 @@
     <main class="content-with-sidebar no-sidebar">
         <section class="profile-header">
             <div class="avatar">
-                <img src="../../assets/img/ui/me.jpg" alt="Ahmed Talima profile picture" width="150" height="150">
+                <img id="profileAvatar" src="../../assets/img/ui/default-avatar.png" alt="Profile picture" width="150" height="150" onerror="this.src='data:image/svg+xml,%3Csvg xmlns=%27http://www.w3.org/2000/svg%27 viewBox=%270 0 100 100%27%3E%3Ccircle cx=%2750%27 cy=%2750%27 r=%2740%27 fill=%27%233b0b0b%27/%3E%3Ctext x=%2750%27 y=%2755%27 font-size=%2730%27 text-anchor=%27middle%27 fill=%27%23f4e4e4%27%3E👤%3C/text%3E%3C/svg%3E'">
             </div>
             <div class="profile-info">
-                <h2>Ahmed Talima</h2>
-                <p><a href="mailto:ahmedtalima45@gmail.com">ahmedtalima45@gmail.com</a> • Joined <time datetime="2023-01">Jan 2023</time></p>
-                <p><span aria-label="Location">Location: Egypt - Cairo</span></p>
+                <h2 id="profileName">Loading...</h2>
+                <p id="profileEmail">Loading...</p>
+                <p id="profileBio" style="color: #999; margin-top: 0.5rem;"></p>
                 <div class="profile-actions">
                     <a href="settings.html" class="btn" aria-label="Edit profile settings"><i class="fas fa-edit" aria-hidden="true"></i> Edit Profile</a>
                     <a href="my_reviews.html" class="btn">My Reviews</a>
@@ -48,19 +49,19 @@
 
         <section class="profile-stats" aria-label="Profile statistics">
             <div class="stat">
-                <div class="value">24</div>
+                <div class="value" id="totalReviews">0</div>
                 <div class="label">Reviews</div>
             </div>
             <div class="stat">
-                <div class="value">4.6</div>
+                <div class="value" id="averageRating">0.0</div>
                 <div class="label">Average Rating</div>
             </div>
             <div class="stat">
-                <div class="value">12</div>
+                <div class="value">0</div>
                 <div class="label">Watchlist</div>
             </div>
             <div class="stat">
-                <div class="value">Drama</div>
+                <div class="value" id="topGenre">-</div>
                 <div class="label">Top Genre</div>
             </div>
         </section>
@@ -134,14 +135,9 @@
 
         <section class="recent-reviews" aria-labelledby="recent-reviews-heading">
             <h3 id="recent-reviews-heading" class="left-heading">Recent Reviews</h3>
-            <article class="recent-review">
-                <strong>The Shawshank Redemption</strong> <span class="percentage-label">• <time datetime="2024-01-15">Jan 15, 2024</time></span>
-                <p class="review-text">An absolute masterpiece that shows the power of hope and friendship...</p>
-            </article>
-            <article class="recent-review">
-                <strong>The Godfather</strong> <span class="percentage-label">• <time datetime="2024-01-05">Jan 05, 2024</time></span>
-                <p class="review-text">A brilliant and timeless mafia drama with unforgettable performances...</p>
-            </article>
+            <div id="recentReviewsContainer">
+                <p style="color: #999; text-align: center; padding: 2rem;">No reviews yet. Start reviewing movies to see them here!</p>
+            </div>
         </section>
 
         <!-- Footer -->
@@ -152,5 +148,203 @@
             </div>
         </footer>
     </main>
+
+    <script>
+        // Movie data mapping
+        const movieData = {
+            'the-shawshank-redemption': {
+                title: 'The Shawshank Redemption',
+                genre: 'Drama'
+            },
+            'the-dark-knight': {
+                title: 'The Dark Knight',
+                genre: 'Action, Crime'
+            },
+            'the-godfather': {
+                title: 'The Godfather',
+                genre: 'Crime, Drama'
+            }
+        };
+
+        // Function to get current user
+        function getCurrentUser() {
+            const currentUser = localStorage.getItem('currentUser');
+            if (currentUser) {
+                try {
+                    return JSON.parse(currentUser);
+                } catch (e) {
+                    return null;
+                }
+            }
+            return null;
+        }
+
+        // Function to get reviews from local storage
+        function getReviews(movieId) {
+            const reviews = localStorage.getItem(`reviews_${movieId}`);
+            return reviews ? JSON.parse(reviews) : [];
+        }
+
+        // Function to get all user reviews
+        function getAllUserReviews() {
+            const currentUser = getCurrentUser();
+            if (!currentUser) return [];
+
+            const userReviews = [];
+            const userName = currentUser.name || 'Anonymous User';
+
+            // Check each movie for reviews by the current user
+            Object.keys(movieData).forEach(movieId => {
+                const reviews = getReviews(movieId);
+                const userMovieReviews = reviews.filter(review => review.user === userName);
+                
+                if (userMovieReviews.length > 0) {
+                    userMovieReviews.forEach(review => {
+                        userReviews.push({
+                            ...review,
+                            movieId: movieId,
+                            movieTitle: movieData[movieId].title
+                        });
+                    });
+                }
+            });
+
+            return userReviews;
+        }
+
+        // Function to format date
+        function formatDate(dateString) {
+            try {
+                const date = new Date(dateString);
+                if (!isNaN(date.getTime())) {
+                    const options = { year: 'numeric', month: 'short', day: 'numeric' };
+                    return date.toLocaleDateString('en-US', options);
+                }
+                return dateString;
+            } catch (e) {
+                return dateString;
+            }
+        }
+
+        // Function to format join date
+        function formatJoinDate(isoString) {
+            try {
+                const date = new Date(isoString);
+                if (!isNaN(date.getTime())) {
+                    const options = { year: 'numeric', month: 'short' };
+                    return date.toLocaleDateString('en-US', options);
+                }
+                return 'Recently';
+            } catch (e) {
+                return 'Recently';
+            }
+        }
+
+        // Function to get excerpt from review text
+        function getExcerpt(text, maxLength = 80) {
+            if (!text) return '';
+            if (text.length <= maxLength) return text;
+            return text.substring(0, maxLength) + '...';
+        }
+
+        // Function to load and display profile
+        function loadProfile() {
+            const currentUser = getCurrentUser();
+            
+            if (!currentUser) {
+                window.location.href = '../auth/login.html';
+                return;
+            }
+
+            // Load user profile data
+            const users = JSON.parse(localStorage.getItem('users') || '[]');
+            const fullUser = users.find(u => u.id === currentUser.id);
+            
+            // Display user info
+            document.getElementById('profileName').textContent = currentUser.name || 'User';
+            document.getElementById('profileEmail').innerHTML = `
+                <a href="mailto:${currentUser.email}">${currentUser.email}</a> • 
+                Joined <time datetime="${fullUser?.createdAt || new Date().toISOString()}">
+                    ${formatJoinDate(fullUser?.createdAt || new Date().toISOString())}
+                </time>
+            `;
+            
+            const bioElement = document.getElementById('profileBio');
+            if (currentUser.bio && currentUser.bio.trim()) {
+                bioElement.textContent = currentUser.bio;
+                bioElement.style.display = 'block';
+            } else {
+                bioElement.style.display = 'none';
+            }
+
+            // Get all user reviews
+            const userReviews = getAllUserReviews();
+
+            // Update stats - count total reviews
+            document.getElementById('totalReviews').textContent = userReviews.length;
+
+            // Calculate average rating (out of 10)
+            // For now, use a default value - can be calculated from actual ratings if reviews have rating field
+            document.getElementById('averageRating').textContent = '7.0'; // Default out of 10
+
+            // Calculate top genre
+            const genreCount = {};
+            userReviews.forEach(review => {
+                const movieId = review.movieId;
+                if (movieData[movieId]) {
+                    const genres = movieData[movieId].genre.split(',').map(g => g.trim());
+                    genres.forEach(genre => {
+                        genreCount[genre] = (genreCount[genre] || 0) + 1;
+                    });
+                }
+            });
+            const topGenre = Object.keys(genreCount).reduce((a, b) => genreCount[a] > genreCount[b] ? a : b, '');
+            document.getElementById('topGenre').textContent = topGenre || '-';
+
+            // Display recent reviews
+            displayRecentReviews(userReviews);
+
+            // Update rating distribution
+            updateRatingDistribution(userReviews);
+        }
+
+        // Function to display recent reviews
+        function displayRecentReviews(reviews) {
+            const container = document.getElementById('recentReviewsContainer');
+            
+            if (reviews.length === 0) {
+                container.innerHTML = '<p style="color: #999; text-align: center; padding: 2rem;">No reviews yet. Start reviewing movies to see them here!</p>';
+                return;
+            }
+
+            // Sort by date (most recent first) and take top 3
+            reviews.sort((a, b) => {
+                const dateA = new Date(a.date + ' ' + a.time);
+                const dateB = new Date(b.date + ' ' + b.time);
+                return dateB - dateA;
+            });
+
+            const recentReviews = reviews.slice(0, 3);
+            
+            container.innerHTML = recentReviews.map(review => `
+                <article class="recent-review">
+                    <strong>${review.movieTitle || 'Unknown Movie'}</strong> 
+                    <span class="percentage-label">• <time datetime="${review.date}">${formatDate(review.date)}</time></span>
+                    <p class="review-text">${getExcerpt(review.text)}</p>
+                </article>
+            `).join('');
+        }
+
+        // Function to update rating distribution (placeholder)
+        function updateRatingDistribution(reviews) {
+            // This is a placeholder since reviews don't have ratings yet
+            // When rating system is implemented, calculate actual distribution
+        }
+
+        // Initialize on page load
+        document.addEventListener('DOMContentLoaded', function() {
+            loadProfile();
+        });
+    </script>
 </body>
 </html>

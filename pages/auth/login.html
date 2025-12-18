@@ -35,7 +35,10 @@
                     <p>Login to Your <span>Account</span></p>
                 </div>
 
-                <form method="get">
+                <form id="loginForm">
+                    <div id="errorMessage" style="display: none; color: #ff4444; background: rgba(255, 68, 68, 0.1); padding: 1rem; border-radius: 5px; margin-bottom: 1rem; text-align: center;"></div>
+                    <div id="successMessage" style="display: none; color: #44ff44; background: rgba(68, 255, 68, 0.1); padding: 1rem; border-radius: 5px; margin-bottom: 1rem; text-align: center;"></div>
+                    
                     <div class="form-group">
                         <label for="email"><i class="fas fa-envelope"></i> Email</label>
                         <input type="email" id="email" name="email" required placeholder="Enter your email">
@@ -47,11 +50,8 @@
                     </div>
 
                     <div class="button-row">
-                        <button type="submit" class="btn" formaction="/pages/user/home.html">
-                            <i class="fas fa-user"></i> Login as User
-                        </button>
-                        <button type="submit" class="btn" formaction="../admin/home.html">
-                            <i class="fas fa-user-shield"></i> Login as Admin
+                        <button type="button" id="loginBtn" class="btn">
+                            <i class="fas fa-sign-in-alt"></i> Login
                         </button>
                     </div>
                 </form>
@@ -71,5 +71,140 @@
             <p>Discover, Review, and Rate your favorite movies.</p>
         </div>
     </footer>
+
+    <script>
+        // Function to get all users from localStorage
+        function getAllUsers() {
+            const users = localStorage.getItem('users');
+            return users ? JSON.parse(users) : [];
+        }
+
+        // Function to show error message
+        function showError(message) {
+            const errorDiv = document.getElementById('errorMessage');
+            const successDiv = document.getElementById('successMessage');
+            errorDiv.textContent = message;
+            errorDiv.style.display = 'block';
+            successDiv.style.display = 'none';
+        }
+
+        // Function to show success message
+        function showSuccess(message) {
+            const errorDiv = document.getElementById('errorMessage');
+            const successDiv = document.getElementById('successMessage');
+            successDiv.textContent = message;
+            successDiv.style.display = 'block';
+            errorDiv.style.display = 'none';
+        }
+
+        // Function to hide messages
+        function hideMessages() {
+            document.getElementById('errorMessage').style.display = 'none';
+            document.getElementById('successMessage').style.display = 'none';
+        }
+
+        // Function to handle login
+        function handleLogin() {
+            // Hide previous messages
+            hideMessages();
+
+            // Get form values
+            const email = document.getElementById('email').value.trim();
+            const password = document.getElementById('password').value;
+
+            // Validation
+            if (!email || !password) {
+                showError('Please fill in all fields.');
+                return;
+            }
+
+            // Validate email format
+            const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+            if (!emailRegex.test(email)) {
+                showError('Please enter a valid email address.');
+                return;
+            }
+
+            // Get all users from localStorage
+            const users = getAllUsers();
+
+            // Find user by email
+            const user = users.find(u => u.email.toLowerCase() === email.toLowerCase());
+
+            // Check if user exists
+            if (!user) {
+                showError('No account found with this email address. Please sign up first.');
+                return;
+            }
+
+            // Check if password matches
+            if (user.password !== password) {
+                showError('Incorrect password. Please try again.');
+                return;
+            }
+
+            // User authenticated successfully
+            // Set current user session (without password for security)
+            const currentUser = {
+                id: user.id,
+                name: user.name,
+                firstName: user.firstName,
+                lastName: user.lastName,
+                email: user.email,
+                role: user.role
+            };
+            localStorage.setItem('currentUser', JSON.stringify(currentUser));
+
+            // Show success message
+            const roleName = user.role === 'admin' ? 'Admin' : 'User';
+            showSuccess(`Login successful! Welcome back, ${user.name}. Redirecting to ${roleName} dashboard...`);
+
+            // Redirect based on user's role (not button clicked, but actual role)
+            setTimeout(() => {
+                if (user.role === 'admin') {
+                    window.location.href = '../admin/home.html';
+                } else {
+                    window.location.href = '../user/home.html';
+                }
+            }, 1500);
+        }
+
+        // Add event listeners
+        document.addEventListener('DOMContentLoaded', function() {
+            const loginBtn = document.getElementById('loginBtn');
+            const form = document.getElementById('loginForm');
+            const emailInput = document.getElementById('email');
+            const passwordInput = document.getElementById('password');
+
+            // Handle login button click
+            loginBtn.addEventListener('click', function(e) {
+                e.preventDefault();
+                handleLogin();
+            });
+
+            // Handle form submission (Enter key)
+            form.addEventListener('submit', function(e) {
+                e.preventDefault();
+                handleLogin();
+            });
+
+            // Clear error messages when user starts typing
+            emailInput.addEventListener('input', function() {
+                hideMessages();
+            });
+
+            passwordInput.addEventListener('input', function() {
+                hideMessages();
+            });
+
+            // Allow login on Enter key press in password field
+            passwordInput.addEventListener('keypress', function(e) {
+                if (e.key === 'Enter') {
+                    e.preventDefault();
+                    handleLogin();
+                }
+            });
+        });
+    </script>
 </body>
 </html>

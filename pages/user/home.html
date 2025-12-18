@@ -18,8 +18,8 @@
                     <li><a href="home.html" class="active">Home</a></li>
                     <li><a href="movie_list.html">Browse Movies</a></li>
                     <li><a href="my_reviews.html">My Reviews</a></li>
-                    <li><a href="profile.html" class="active">Profile</a></li>
-                    <li><a href="../auth/login.html">Logout</a></li>
+                    <li><a href="profile.html">Profile</a></li>
+                    <li><a href="../auth/logout.html">Logout</a></li>
                 </ul>
                 <div class="bar-icon">☰</div>
             </div>
@@ -31,7 +31,7 @@
         <div class="container">
             <div class="header-content">
                 <div class="header-text">
-                    <h2>Welcome Back, <span>User!</span></h2>
+                    <h2>Welcome Back, <span id="userName">User!</span></h2>
                     <p>Continue exploring amazing movies and share your reviews with the community.
                        Discover trending films, revisit your favorites, and express your cinematic voice.</p>
                     <div class="header-btn">
@@ -58,7 +58,6 @@
                 <label for="searchBy">Search By</label>
                 <select id="searchBy" name="searchBy" required>
                     <option value="">Select search criteria</option>
-                    <option value="id">Movie ID</option>
                     <option value="title">Title</option>
                     <option value="genre">Genre</option>
                     <option value="year">Release Year</option>
@@ -82,42 +81,9 @@
             <p>Popular <span>This Week</span></p>
         </div>
 
-        <div class="movie-list">
-            <!-- Movie 1 -->
-            <div class="movie">
-                <img src="/assets/img/movies/The Shawshank Redemption.jpg" alt="The Shawshank Redemption">
-                <div class="movie-info">
-                    <h3>The Shawshank Redemption</h3>
-                    <p><strong>Genre:</strong> Drama | <strong>Year:</strong> 1994 | <strong>Director:</strong> Frank Darabont</p>
-                    <p>Two imprisoned men bond over years, finding solace and eventual redemption through acts of decency.</p>
-                    <a href="/pages/user/movie_details.html" class="btn">View Details</a>
-                    <a href="submit_review.html" class="btn add-review">Add Review</a>
-                </div>
-            </div>
-
-            <!-- Movie 2 -->
-            <div class="movie">
-                <img src="/assets/img/movies/the godfather.jpg" alt="The Godfather">
-                <div class="movie-info">
-                    <h3>The Godfather</h3>
-                    <p><strong>Genre:</strong> Crime, Drama | <strong>Year:</strong> 1972 | <strong>Director:</strong> Francis Ford Coppola</p>
-                    <p>The aging patriarch of an organized crime dynasty transfers control of his empire to his reluctant son.</p>
-                    <a href="/pages/user/movie_details.html" class="btn">View Details</a>
-                    <a href="submit_review.html" class="btn add-review">Add Review</a>
-                </div>
-            </div>
-
-            <!-- Movie 3 -->
-            <div class="movie">
-                <img src="/assets/img/movies/the dark night.jpg" alt="The Dark Knight">
-                <div class="movie-info">
-                    <h3>The Dark Knight</h3>
-                    <p><strong>Genre:</strong> Action, Crime, Drama | <strong>Year:</strong> 2008 | <strong>Director:</strong> Christopher Nolan</p>
-                    <p>When the menace known as the Joker causes chaos in Gotham, Batman faces his greatest moral test yet.</p>
-                    <a href="/pages/user/movie_details.html" class="btn">View Details</a>
-                    <a href="submit_review.html" class="btn add-review">Add Review</a>
-                </div>
-            </div>
+        <div class="movie-list" id="movieList">
+            <!-- Movies will be loaded dynamically from localStorage -->
+            <p style="text-align: center; color: #999; padding: 2rem;">Loading movies...</p>
         </div>
     </section>
 
@@ -129,6 +95,182 @@
         </div>
     </footer>
 
-    <!-- <script src="../../assets/js/user.js"></script> -->
+    <script>
+        // Function to check if user is logged in
+        function isLoggedIn() {
+            const currentUser = localStorage.getItem('currentUser');
+            return currentUser !== null;
+        }
+
+        // Function to get current user
+        function getCurrentUser() {
+            const currentUser = localStorage.getItem('currentUser');
+            if (currentUser) {
+                try {
+                    return JSON.parse(currentUser);
+                } catch (e) {
+                    return null;
+                }
+            }
+            return null;
+        }
+
+        // Function to get all movies from localStorage
+        function getAllMovies() {
+            const movies = localStorage.getItem('movies');
+            if (movies) {
+                try {
+                    const moviesArray = JSON.parse(movies);
+                    // Convert array to object with movieId as key for backward compatibility
+                    const moviesObj = {};
+                    moviesArray.forEach(movie => {
+                        const movieId = movie.movieId || movie.id || generateMovieId(movie.title);
+                        moviesObj[movieId] = {
+                            title: movie.title,
+                            image: movie.poster || movie.image || '../../assets/img/movies/default.jpg',
+                            genre: movie.additionalGenres ? `${movie.genre || ''}, ${movie.additionalGenres}` : (movie.genre || ''),
+                            year: movie.releaseYear || movie.year || '',
+                            movieId: movieId,
+                            director: movie.director || '',
+                            description: movie.description || '',
+                            cast: movie.cast || '',
+                            duration: movie.duration || '',
+                            rating: movie.rating || '',
+                            language: movie.language || '',
+                            country: movie.country || '',
+                            trailer: movie.trailer || ''
+                        };
+                    });
+                    return moviesObj;
+                } catch (e) {
+                    console.error('Error parsing movies from localStorage:', e);
+                    return getDefaultMovies();
+                }
+            }
+            // Fallback to default movies for backward compatibility
+            return getDefaultMovies();
+        }
+
+        // Function to generate movie ID from title
+        function generateMovieId(title) {
+            return title.toLowerCase()
+                .replace(/[^a-z0-9]+/g, '-')
+                .replace(/^-+|-+$/g, '');
+        }
+
+        // Default movies for backward compatibility
+        function getDefaultMovies() {
+            return {
+                'the-shawshank-redemption': {
+                    title: 'The Shawshank Redemption',
+                    image: '../../assets/img/movies/shaw.jpg',
+                    genre: 'Drama',
+                    year: '1994',
+                    movieId: 'the-shawshank-redemption',
+                    director: 'Frank Darabont',
+                    description: 'Two imprisoned men bond over years, finding solace and eventual redemption through acts of decency.'
+                },
+                'the-dark-knight': {
+                    title: 'The Dark Knight',
+                    image: '../../assets/img/movies/R.jpeg',
+                    genre: 'Action, Crime',
+                    year: '2008',
+                    movieId: 'the-dark-knight',
+                    director: 'Christopher Nolan',
+                    description: 'When the menace known as the Joker causes chaos in Gotham, Batman faces his greatest moral test yet.'
+                },
+                'the-godfather': {
+                    title: 'The Godfather',
+                    image: '../../assets/img/movies/godf.jpg',
+                    genre: 'Crime, Drama',
+                    year: '1972',
+                    movieId: 'the-godfather',
+                    director: 'Francis Ford Coppola',
+                    description: 'The aging patriarch of an organized crime dynasty transfers control of his empire to his reluctant son.'
+                }
+            };
+        }
+
+        // Function to display movies
+        function displayMovies() {
+            const movieList = document.getElementById('movieList');
+            if (!movieList) return;
+
+            const movies = getAllMovies();
+            const movieArray = Object.values(movies);
+
+            if (movieArray.length === 0) {
+                movieList.innerHTML = '<p style="text-align: center; color: #999; padding: 2rem;">No movies available. Check back later!</p>';
+                return;
+            }
+
+            // Limit to first 6 movies for featured section
+            const featuredMovies = movieArray.slice(0, 6);
+
+            movieList.innerHTML = featuredMovies.map(movie => {
+                const genreDisplay = movie.genre || 'N/A';
+                const yearDisplay = movie.year || 'N/A';
+                const directorDisplay = movie.director || 'N/A';
+                const description = movie.description || 'No description available.';
+                const imageSrc = movie.image || '../../assets/img/movies/default.jpg';
+
+                return `
+                    <div class="movie">
+                        <img src="${imageSrc}" alt="${movie.title}" onerror="this.src='../../assets/img/movies/default.jpg'">
+                        <div class="movie-info">
+                            <h3>${movie.title}</h3>
+                            <p><strong>Genre:</strong> ${genreDisplay} | <strong>Year:</strong> ${yearDisplay} | <strong>Director:</strong> ${directorDisplay}</p>
+                            <p>${description.length > 150 ? description.substring(0, 150) + '...' : description}</p>
+                            <a href="movie_details.html?movie=${encodeURIComponent(movie.movieId)}" class="btn">View Details</a>
+                            <a href="submit_review.html?movie=${encodeURIComponent(movie.movieId)}" class="btn add-review">Add Review</a>
+                        </div>
+                    </div>
+                `;
+            }).join('');
+        }
+
+        // Function to personalize the page
+        function personalizePage() {
+            const user = getCurrentUser();
+            
+            if (user) {
+                // Update welcome message with user's name
+                const userNameElement = document.getElementById('userName');
+                if (userNameElement) {
+                    userNameElement.textContent = user.name + '!';
+                }
+            } else {
+                // If not logged in, redirect to login page
+                window.location.href = '../auth/login.html';
+            }
+        }
+
+        // Handle search form
+        function setupSearchForm() {
+            const searchForm = document.getElementById('searchForm');
+            
+            if (searchForm) {
+                searchForm.addEventListener('submit', function(e) {
+                    e.preventDefault();
+                    const searchQuery = document.getElementById('searchQuery').value;
+                    const searchBy = document.getElementById('searchBy').value;
+                    
+                    if (searchQuery && searchBy) {
+                        // Redirect to movie list page with search parameters
+                        window.location.href = `movie_list.html?search=${encodeURIComponent(searchQuery)}&by=${encodeURIComponent(searchBy)}`;
+                    } else {
+                        alert('Please select a search criteria and enter a search term.');
+                    }
+                });
+            }
+        }
+
+        // Initialize on page load
+        document.addEventListener('DOMContentLoaded', function() {
+            personalizePage();
+            setupSearchForm();
+            displayMovies();
+        });
+    </script>
 </body>
 </html>

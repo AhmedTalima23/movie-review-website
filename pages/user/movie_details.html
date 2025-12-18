@@ -20,123 +20,18 @@
                     <li><a href="movie_list.html">Browse Movies</a></li>
                     <li><a href="my_reviews.html">My Reviews</a></li>
                     <li><a href="profile.html">Profile</a></li>
-                    <li><a href="../auth/login.html">Logout</a></li>
+                    <li><a href="../auth/logout.html">Logout</a></li>
                 </ul>
                 <div class="bar-icon">☰</div>
             </div>
         </div>
     </nav>
 
-    <!-- THE SHAWSHANK REDEMPTION -->
+    <!-- Movie Details Section (Dynamically Loaded) -->
     <section class="movie-section">
-        <div class="container">
-            <div class="movie-header">
-                <img src="../../assets/img/movies/shaw.jpg" alt="The Shawshank Redemption">
-                <div class="movie-info">
-                    <h2>The Shawshank Redemption</h2>
-                    <p class="movie-meta">Drama | 1994 | 142 mins</p>
-                    <p class="director">Director: Frank Darabont</p>
-                    <p class="cast">Cast: Tim Robbins, Morgan Freeman, Bob Gunton</p>
-                    <div class="rating">★★★★★ <span class="rating-value">4.8/5</span></div>
-                </div>
-            </div>
-
-            <div class="movie-synopsis">
-                <h3>Synopsis</h3>
-                <p>Two imprisoned men bond over years of hardship, finding solace and redemption through acts of common decency. The film captures the essence of hope and humanity in the darkest of times.</p>
-            </div>
-
-            <div class="review-section">
-                <h3>Reviews</h3>
-                <div class="review-form">
-                    <textarea placeholder="Write your review..."></textarea>
-                    <button class="btn">Submit Review</button>
-                </div>
-                <div class="reviews">
-                    <div class="review">
-                        <div class="review-header">
-                            <span class="reviewer">John Doe</span>
-                            <span class="review-rating">★★★★★</span>
-                        </div>
-                        <p>An unforgettable film that redefines hope. Truly timeless storytelling and performances.</p>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </section>
-
-    <!-- THE DARK KNIGHT -->
-    <section class="movie-section">
-        <div class="container">
-            <div class="movie-header">
-                <img src="../../assets/img/movies/the dark night.jpg" alt="The Dark Knight">
-                <div class="movie-info">
-                    <h2>The Dark Knight</h2>
-                    <p class="movie-meta">Action, Crime, Drama | 2008 | 152 mins</p>
-                    <p class="director">Director: Christopher Nolan</p>
-                    <p class="cast">Cast: Christian Bale, Heath Ledger, Aaron Eckhart</p>
-                    <div class="rating">★★★★★ <span class="rating-value">4.9/5</span></div>
-                </div>
-            </div>
-
-            <div class="movie-synopsis">
-                <h3>Synopsis</h3>
-                <p>Batman faces the Joker, a criminal mastermind who pushes Gotham to its moral limits. A gritty, intense exploration of chaos, justice, and the thin line between hero and vigilante.</p>
-            </div>
-
-            <div class="review-section">
-                <h3>Reviews</h3>
-                <div class="review-form">
-                    <textarea placeholder="Write your review..."></textarea>
-                    <button class="btn">Submit Review</button>
-                </div>
-                <div class="reviews">
-                    <div class="review">
-                        <div class="review-header">
-                            <span class="reviewer">Sarah Lee</span>
-                            <span class="review-rating">★★★★★</span>
-                        </div>
-                        <p>Heath Ledger’s Joker is one of the best performances ever. A dark, brilliant masterpiece that changed superhero films forever.</p>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </section>
-
-    <!-- THE GODFATHER -->
-    <section class="movie-section">
-        <div class="container">
-            <div class="movie-header">
-                <img src="../../assets/img/movies/The Godfather.jpg" alt="The Godfather">
-                <div class="movie-info">
-                    <h2>The Godfather</h2>
-                    <p class="movie-meta">Crime, Drama | 1972 | 175 mins</p>
-                    <p class="director">Director: Francis Ford Coppola</p>
-                    <p class="cast">Cast: Marlon Brando, Al Pacino, James Caan</p>
-                    <div class="rating">★★★★★ <span class="rating-value">4.9/5</span></div>
-                </div>
-            </div>
-
-            <div class="movie-synopsis">
-                <h3>Synopsis</h3>
-                <p>The aging patriarch of an organized crime dynasty transfers control of his empire to his reluctant son. A stunning exploration of family, loyalty, and power in the world of the mafia.</p>
-            </div>
-
-            <div class="review-section">
-                <h3>Reviews</h3>
-                <div class="review-form">
-                    <textarea placeholder="Write your review..."></textarea>
-                    <button class="btn">Submit Review</button>
-                </div>
-                <div class="reviews">
-                    <div class="review">
-                        <div class="review-header">
-                            <span class="reviewer">Michael Rossi</span>
-                            <span class="review-rating">★★★★★</span>
-                        </div>
-                        <p>An absolute classic. Every scene is legendary. The Godfather defines cinema excellence and storytelling perfection.</p>
-                    </div>
-                </div>
+        <div class="container" id="movieDetailsContainer">
+            <div style="text-align: center; padding: 3rem; color: #999;">
+                <p>Loading movie details...</p>
             </div>
         </div>
     </section>
@@ -147,5 +42,256 @@
             <p>Discover, Review, and Rate your favorite movies.</p>
         </div>
     </footer>
+
+    <script>
+        // Function to generate movie ID from title
+        function generateMovieId(title) {
+            return title.toLowerCase()
+                .replace(/[^a-z0-9]+/g, '-')
+                .replace(/^-+|-+$/g, '');
+        }
+
+        // Function to get all movies from localStorage
+        function getMoviesArray() {
+            const movies = localStorage.getItem('movies');
+            if (movies) {
+                try {
+                    return JSON.parse(movies);
+                } catch (e) {
+                    console.error('Error parsing movies from localStorage:', e);
+                    return [];
+                }
+            }
+            return [];
+        }
+
+        // Function to get movie by ID
+        function getMovieById(movieId) {
+            const movies = getMoviesArray();
+            return movies.find(movie => {
+                const id = movie.movieId || movie.id || generateMovieId(movie.title);
+                return id === movieId;
+            });
+        }
+
+        // Function to get URL parameter
+        function getURLParameter(name) {
+            const urlParams = new URLSearchParams(window.location.search);
+            return urlParams.get(name);
+        }
+
+        // Function to get reviews from local storage
+        function getReviews(movieId) {
+            const reviews = localStorage.getItem(`reviews_${movieId}`);
+            return reviews ? JSON.parse(reviews) : [];
+        }
+
+        // Function to save reviews to local storage
+        function saveReviews(movieId, reviews) {
+            localStorage.setItem(`reviews_${movieId}`, JSON.stringify(reviews));
+        }
+
+        // Function to get current user name
+        function getCurrentUser() {
+            const userData = localStorage.getItem('currentUser');
+            if (userData) {
+                try {
+                    const user = JSON.parse(userData);
+                    return user.name || user.username || 'Anonymous User';
+                } catch (e) {
+                    return 'Anonymous User';
+                }
+            }
+            return 'Anonymous User';
+        }
+
+        // Function to submit a review
+        function submitReview(movieId) {
+            const textarea = document.getElementById('review-textarea');
+            const ratingSelect = document.getElementById('review-rating');
+            const reviewText = textarea ? textarea.value.trim() : '';
+            const rating = ratingSelect ? ratingSelect.value : '';
+
+            if (!reviewText) {
+                alert('Please write a review before submitting.');
+                return;
+            }
+
+            if (!rating) {
+                alert('Please select a rating before submitting.');
+                return;
+            }
+
+            // Get existing reviews
+            const reviews = getReviews(movieId);
+
+            // Create new review object
+            const newReview = {
+                id: Date.now(),
+                movieId: movieId,
+                user: getCurrentUser(),
+                text: reviewText,
+                rating: parseFloat(rating), // Store rating as number
+                date: new Date().toLocaleDateString(),
+                time: new Date().toLocaleTimeString(),
+                approved: false
+            };
+
+            // Add new review to array
+            reviews.push(newReview);
+
+            // Save to local storage
+            saveReviews(movieId, reviews);
+
+            // Clear form
+            if (textarea) textarea.value = '';
+            if (ratingSelect) ratingSelect.value = '';
+
+            // Show message that review is pending approval
+            alert('Your review has been submitted and is pending admin approval. It will be visible once approved.');
+
+            // Reload and display reviews
+            displayReviews(movieId);
+        }
+
+        // Function to display reviews
+        function displayReviews(movieId) {
+            const reviewsContainer = document.getElementById('reviews-container');
+            if (!reviewsContainer) return;
+
+            const reviews = getReviews(movieId);
+            const approvedReviews = reviews.filter(r => r.approved === true);
+
+            // Clear existing user-submitted reviews
+            const existingReviews = reviewsContainer.querySelectorAll('.review.user-submitted');
+            existingReviews.forEach(review => review.remove());
+
+            // Add all approved reviews
+            if (approvedReviews.length === 0) {
+                const noReviews = document.createElement('div');
+                noReviews.className = 'review';
+                noReviews.innerHTML = '<p style="color: #999; text-align: center; padding: 1rem;">No reviews yet. Be the first to review this movie!</p>';
+                reviewsContainer.appendChild(noReviews);
+            } else {
+                approvedReviews.forEach(review => {
+                    const reviewDiv = document.createElement('div');
+                    reviewDiv.className = 'review user-submitted';
+                    const rating = review.rating || 'N/A';
+                    const ratingDisplay = rating !== 'N/A' ? `${rating}/10` : 'No rating';
+                    reviewDiv.innerHTML = `
+                        <div class="review-header">
+                            <span class="reviewer">${review.user}</span>
+                            <span class="review-rating" style="color: var(--accent-color); font-weight: bold; margin: 0 1rem;">⭐ ${ratingDisplay}</span>
+                            <span class="review-date">${review.date} ${review.time}</span>
+                        </div>
+                        <p>${review.text}</p>
+                    `;
+                    reviewsContainer.appendChild(reviewDiv);
+                });
+            }
+        }
+
+        // Function to load and display movie details
+        function loadMovieDetails() {
+            const container = document.getElementById('movieDetailsContainer');
+            if (!container) return;
+
+            // Get movie ID from URL
+            const movieId = getURLParameter('movie');
+            
+            if (!movieId) {
+                container.innerHTML = `
+                    <div style="text-align: center; padding: 3rem; color: #f44336;">
+                        <h2>Movie Not Found</h2>
+                        <p>No movie ID provided. Please select a movie from the <a href="movie_list.html" style="color: var(--primary-color);">movie list</a>.</p>
+                    </div>
+                `;
+                return;
+            }
+
+            // Get movie from localStorage
+            const movie = getMovieById(movieId);
+            
+            if (!movie) {
+                container.innerHTML = `
+                    <div style="text-align: center; padding: 3rem; color: #f44336;">
+                        <h2>Movie Not Found</h2>
+                        <p>The movie you're looking for doesn't exist. <a href="movie_list.html" style="color: var(--primary-color);">Browse movies</a></p>
+                    </div>
+                `;
+                return;
+            }
+
+            // Prepare movie data
+            const imageSrc = movie.poster || movie.image || '../../assets/img/movies/default.jpg';
+            const genre = movie.additionalGenres ? `${movie.genre || ''}, ${movie.additionalGenres}`.trim() : (movie.genre || 'N/A');
+            const year = movie.releaseYear || movie.year || 'N/A';
+            const duration = movie.duration ? `${movie.duration} mins` : 'N/A';
+            const director = movie.director || 'N/A';
+            const cast = movie.cast || 'N/A';
+            const description = movie.description || 'No description available.';
+            const rating = movie.rating || 'N/A';
+
+            // Get IMDb rating for the movie (out of 10)
+            let avgRating = 'N/A';
+            if (movie.imdbRating !== undefined && movie.imdbRating !== null) {
+                avgRating = parseFloat(movie.imdbRating).toFixed(1);
+            }
+
+            // Display movie
+            container.innerHTML = `
+                <div class="movie-header">
+                    <img src="${imageSrc}" alt="${movie.title}" onerror="this.src='../../assets/img/movies/default.jpg'">
+                    <div class="movie-info">
+                        <h2>${movie.title}</h2>
+                        <p class="movie-meta">${genre} | ${year} | ${duration}</p>
+                        <p class="director">Director: ${director}</p>
+                        <p class="cast">Cast: ${cast}</p>
+                        <div class="rating">★★★★★★★★★★ <span class="rating-value">${avgRating === 'N/A' ? 'N/A' : avgRating + '/10'}</span></div>
+                    </div>
+                </div>
+
+                <div class="movie-synopsis">
+                    <h3>Synopsis</h3>
+                    <p>${description}</p>
+                </div>
+
+                <div class="review-section" data-movie="${movieId}">
+                    <h3>Reviews</h3>
+                    <div class="review-form">
+                        <div style="margin-bottom: 1rem;">
+                            <label for="review-rating" style="display: block; margin-bottom: 0.5rem; color: var(--secondary-color);">Rating (out of 10):</label>
+                            <select id="review-rating" style="width: 100%; padding: 0.75rem; border: 1px solid #333; background: #1a1a1a; color: white; border-radius: 5px; font-size: 1rem;">
+                                <option value="">Select a rating</option>
+                                <option value="10">10 - Masterpiece</option>
+                                <option value="9">9 - Excellent</option>
+                                <option value="8">8 - Very Good</option>
+                                <option value="7">7 - Good</option>
+                                <option value="6">6 - Above Average</option>
+                                <option value="5">5 - Average</option>
+                                <option value="4">4 - Below Average</option>
+                                <option value="3">3 - Poor</option>
+                                <option value="2">2 - Very Poor</option>
+                                <option value="1">1 - Terrible</option>
+                            </select>
+                        </div>
+                        <textarea id="review-textarea" placeholder="Write your review..."></textarea>
+                        <button class="btn" onclick="submitReview('${movieId}')">Submit Review</button>
+                    </div>
+                    <div class="reviews" id="reviews-container">
+                        <!-- Reviews will be loaded here -->
+                    </div>
+                </div>
+            `;
+
+            // Display reviews
+            displayReviews(movieId);
+        }
+
+        // Load movie details when page loads
+        document.addEventListener('DOMContentLoaded', function() {
+            loadMovieDetails();
+        });
+    </script>
 </body>
 </html>

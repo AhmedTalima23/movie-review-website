@@ -19,7 +19,7 @@
                     <li><a href="add_movie.html">Add Movie</a></li>
                     <li><a href="manage_movies.html">Manage Movies</a></li>
                     <li><a href="manage_reviews.html">Manage Reviews</a></li>
-                    <li><a href="../auth/login.html">Logout</a></li>
+                    <li><a href="../auth/logout.html">Logout</a></li>
                 </ul>
                 <div class="bar-icon">☰</div>
             </div>
@@ -34,9 +34,9 @@
         </div>
 
         <form id="addMovieForm">
-            <label for="movieId">Movie ID *</label>
-            <input type="text" id="movieId" name="movieId" required placeholder="Enter unique movie ID (e.g., M001)" pattern="M[0-9]{3,}">
-            <small class="hint-text">Format: M followed by at least 3 digits</small>
+            <label for="movieId">Movie ID (Optional)</label>
+            <input type="text" id="movieId" name="movieId" placeholder="Enter unique movie ID (e.g., M001) or leave blank to auto-generate from title" pattern="M[0-9]{3,}">
+            <small class="hint-text">Leave blank to auto-generate from title, or use format: M followed by at least 3 digits</small>
 
             <label for="title">Movie Title *</label>
             <input type="text" id="title" name="title" required placeholder="Enter movie title" minlength="1" maxlength="200">
@@ -84,6 +84,9 @@
                 <option value="R">R - Restricted</option>
                 <option value="NC-17">NC-17 - Adults Only</option>
             </select>
+
+            <label for="imdbRating">IMDb Rating (out of 10) *</label>
+            <input type="number" id="imdbRating" name="imdbRating" required placeholder="Enter IMDb rating (e.g., 8.5)" min="0" max="10" step="0.1">
 
             <label for="description">Description *</label>
             <textarea id="description" name="description" required placeholder="Enter movie description/plot summary" rows="6" minlength="20"></textarea>

@@ -19,7 +19,7 @@
                     <li><a href="movie_list.html">Browse Movies</a></li>
                     <li><a href="my_reviews.html">My Reviews</a></li>
 					<li><a href="profile.html">Profile</a></li>
-                    <li><a href="../auth/login.html">Logout</a></li>
+                    <li><a href="../auth/logout.html">Logout</a></li>
                 </ul>
                 <div class="bar-icon">☰</div>
             </div>
@@ -50,11 +50,11 @@
 		<div class="browse-container">
 			<div class="stats-bar">
 				<div class="stat-item">
-					<span class="stat-number">24</span>
+					<span class="stat-number" id="totalReviews">0</span>
 					<span class="stat-label">My Reviews</span>
 				</div>
 				<div class="stat-item">
-					<span class="stat-number">4.6</span>
+					<span class="stat-number" id="averageRating">0.0</span>
 					<span class="stat-label">Average Rating</span>
 				</div>
 				<div class="stat-item">
@@ -69,71 +69,278 @@
 				<a href="#" class="filter-tab">Needs Edit</a>
 			</div>
 
-			<div class="movie-grid">
-				<!-- review card using movie-card style -->
-				<div class="movie-card">
-					<div class="movie-card-img">
-						<div class="rating-badge">⭐ 5.0</div>
-						<img src="../../assets/img/movies/shaw.jpg" alt="The Shawshank Redemption">
-					</div>
-					<div class="movie-info">
-						<h3>The Shawshank Redemption</h3>
-						<p class="review-excerpt">An absolute masterpiece that shows the power of hope</p>
-						<p class="review-meta">Reviewed Jan 15, 2024 • Drama</p>
-						<div class="action-row">
-							<a href="movie_details.html" class="btn">View Details →</a>
-							<!-- <a href="submit_review.html" class="btn add-review"><i class="fas fa-plus"></i> Add Review</a> -->
-							<a href="submit_review.html" class="btn edit-btn"><i class="fas fa-edit"></i> Edit</a>
-							<button class="btn delete-btn"><i class="fas fa-trash"></i> Delete</button>
-						</div>
-					</div>
-				</div>
+			<div id="noReviews" class="no-results" style="display: none; text-align: center; padding: 3rem; color: var(--secondary-color);">
+				<h3>No reviews yet</h3>
+				<p>Start reviewing movies to see them here!</p>
+				<a href="movie_list.html" class="btn" style="margin-top: 1rem;">Browse Movies</a>
+			</div>
 
-				<!-- second -->
-				<div class="movie-card">
-					<div class="movie-card-img">
-						<div class="rating-badge">⭐ 4.9</div>
-						<img src="../../assets/img/movies/R.jpeg" alt="The Dark Knight">
-					</div>
-					<div class="movie-info">
-						<h3>The Dark Knight</h3>
-						<p class="review-excerpt">Heath Ledger delivers an unforgettable performance</p>
-						<p class="review-meta">Reviewed Feb 2, 2024 • Action</p>
-						<div class="action-row">
-							<a href="movie_details.html" class="btn">View Details →</a>
-							<!-- <a href="submit_review.html" class="btn add-review"><i class="fas fa-plus"></i> Add Review</a> -->
-							<a href="submit_review.html" class="btn edit-btn"><i class="fas fa-edit"></i> Edit</a>
-							<button class="btn delete-btn"><i class="fas fa-trash"></i> Delete</button>
-						</div>
-					</div>
-				</div>
-
-				<!-- third -->
-				<div class="movie-card">
-					<div class="movie-card-img">
-						<div class="rating-badge">⭐ 5.0</div>
-						<img src="../../assets/img/movies/godf.jpg" alt="The Godfather">
-					</div>
-					<div class="movie-info">
-						<h3>The Godfather</h3>
-						<p class="review-excerpt">A cinematic classic that defines storytelling excellence.
-							</p>
-						<p class="review-meta">Reviewed Mar 10, 2024 • Crime</p>
-						<div class="action-row">
-							<a href="movie_details.html" class="btn">View Details →</a>
-							<!-- <a href="submit_review.html" class="btn add-review"><i class="fas fa-plus"></i> Add Review</a> -->
-							<a href="submit_review.html" class="btn edit-btn"><i class="fas fa-edit"></i> Edit</a>
-							<button class="btn delete-btn"><i class="fas fa-trash"></i> Delete</button>
-						</div>
-					</div>
-				</div>
-
+			<div class="movie-grid" id="movieGrid">
+				<!-- Review cards will be dynamically loaded here -->
 			</div> <!-- /.movie-grid -->
 
-			<div class="load-more">
-				<a href="#" class="load-more-btn">Load More Reviews</a>
-			</div>
 		</div>
 	</section>
+
+	<footer>
+		<div class="container">
+			<p>&copy; 2025 MovieReview. All rights reserved.</p>
+			<p>Discover, Review, and Rate your favorite movies.</p>
+		</div>
+	</footer>
+
+	<script>
+		// Function to generate movie ID from title
+		function generateMovieId(title) {
+			return title.toLowerCase()
+				.replace(/[^a-z0-9]+/g, '-')
+				.replace(/^-+|-+$/g, '');
+		}
+
+		// Function to get all movies from localStorage
+		function getMoviesArray() {
+			const movies = localStorage.getItem('movies');
+			if (movies) {
+				try {
+					return JSON.parse(movies);
+				} catch (e) {
+					console.error('Error parsing movies from localStorage:', e);
+					return [];
+				}
+			}
+			return [];
+		}
+
+		// Function to get movie data (from localStorage or fallback)
+		function getMovieData() {
+			const movies = getMoviesArray();
+			const movieData = {};
+			
+			movies.forEach(movie => {
+				const movieId = movie.movieId || movie.id || generateMovieId(movie.title);
+				movieData[movieId] = {
+					title: movie.title || 'Unknown Movie',
+					image: movie.poster || movie.image || '../../assets/img/movies/default.jpg',
+					genre: movie.additionalGenres ? `${movie.genre || ''}, ${movie.additionalGenres}`.trim() : (movie.genre || 'N/A'),
+					year: movie.releaseYear || movie.year || 'N/A',
+					movieId: movieId
+				};
+			});
+			
+			// Fallback to default movies if no movies in localStorage
+			if (Object.keys(movieData).length === 0) {
+				return {
+					'the-shawshank-redemption': {
+						title: 'The Shawshank Redemption',
+						image: '../../assets/img/movies/shaw.jpg',
+						genre: 'Drama',
+						year: '1994',
+						movieId: 'the-shawshank-redemption'
+					},
+					'the-dark-knight': {
+						title: 'The Dark Knight',
+						image: '../../assets/img/movies/R.jpeg',
+						genre: 'Action, Crime',
+						year: '2008',
+						movieId: 'the-dark-knight'
+					},
+					'the-godfather': {
+						title: 'The Godfather',
+						image: '../../assets/img/movies/godf.jpg',
+						genre: 'Crime, Drama',
+						year: '1972',
+						movieId: 'the-godfather'
+					}
+				};
+			}
+			
+			return movieData;
+		}
+
+		// Function to get current user
+		function getCurrentUser() {
+			const userData = localStorage.getItem('currentUser');
+			if (userData) {
+				try {
+					const user = JSON.parse(userData);
+					return user.name || user.username || 'Anonymous User';
+				} catch (e) {
+					return 'Anonymous User';
+				}
+			}
+			return 'Anonymous User';
+		}
+
+		// Function to get reviews from local storage
+		function getReviews(movieId) {
+			const reviews = localStorage.getItem(`reviews_${movieId}`);
+			return reviews ? JSON.parse(reviews) : [];
+		}
+
+		// Function to get all user reviews
+		function getAllUserReviews() {
+			const currentUser = getCurrentUser();
+			const userReviews = [];
+			const movieData = getMovieData();
+
+			// Check each movie for reviews by the current user
+			Object.keys(movieData).forEach(movieId => {
+				const reviews = getReviews(movieId);
+				const userMovieReviews = reviews.filter(review => review.user === currentUser);
+				
+				// If user has reviews for this movie, add them
+				if (userMovieReviews.length > 0) {
+					userMovieReviews.forEach(review => {
+						userReviews.push({
+							...review,
+							movieId: movieId,
+							movieInfo: movieData[movieId]
+						});
+					});
+				}
+			});
+
+			return userReviews;
+		}
+
+		// Function to delete a review
+		function deleteReview(movieId, reviewId) {
+			if (confirm('Are you sure you want to delete this review?')) {
+				const reviews = getReviews(movieId);
+				const updatedReviews = reviews.filter(review => review.id !== reviewId);
+				
+				// Save updated reviews
+				if (updatedReviews.length > 0) {
+					localStorage.setItem(`reviews_${movieId}`, JSON.stringify(updatedReviews));
+				} else {
+					// Remove the key if no reviews left
+					localStorage.removeItem(`reviews_${movieId}`);
+				}
+
+				// Reload reviews
+				loadUserReviews();
+			}
+		}
+
+		// Function to format date
+		function formatDate(dateString, timeString) {
+			try {
+				// Try to parse the date string
+				const date = new Date(dateString);
+				if (!isNaN(date.getTime())) {
+					const options = { year: 'numeric', month: 'short', day: 'numeric' };
+					return date.toLocaleDateString('en-US', options);
+				}
+				// If parsing fails, return the original string
+				return dateString;
+			} catch (e) {
+				return dateString;
+			}
+		}
+
+		// Function to get excerpt from review text
+		function getExcerpt(text, maxLength = 80) {
+			if (text.length <= maxLength) return text;
+			return text.substring(0, maxLength) + '...';
+		}
+
+		// Function to load and display user reviews
+		function loadUserReviews() {
+			const movieGrid = document.getElementById('movieGrid');
+			const noReviews = document.getElementById('noReviews');
+			const totalReviewsEl = document.getElementById('totalReviews');
+			const averageRatingEl = document.getElementById('averageRating');
+
+			// Clear existing reviews
+			movieGrid.innerHTML = '';
+
+			// Get all user reviews
+			const userReviews = getAllUserReviews();
+
+			// Group reviews by movie (show only one card per movie with the most recent review)
+			const movieReviewsMap = {};
+			userReviews.forEach(review => {
+				if (!movieReviewsMap[review.movieId] || 
+					new Date(review.date + ' ' + review.time) > 
+					new Date(movieReviewsMap[review.movieId].date + ' ' + movieReviewsMap[review.movieId].time)) {
+					movieReviewsMap[review.movieId] = review;
+				}
+			});
+
+			// Update stats - count unique movies reviewed
+			const uniqueMoviesReviewed = Object.keys(movieReviewsMap).length;
+			totalReviewsEl.textContent = uniqueMoviesReviewed;
+
+			// Calculate average rating (if you add ratings later)
+			// For now, just show the count
+			if (uniqueMoviesReviewed === 0) {
+				averageRatingEl.textContent = '0.0';
+				noReviews.style.display = 'block';
+				movieGrid.style.display = 'none';
+				return;
+			}
+
+			noReviews.style.display = 'none';
+			movieGrid.style.display = 'grid';
+
+			// Function to get IMDb rating for a movie (out of 10)
+			function calculateMovieRating(movieId) {
+				// Get movies from localStorage
+				const movies = localStorage.getItem('movies');
+				if (movies) {
+					try {
+						const moviesArray = JSON.parse(movies);
+						const movie = moviesArray.find(m => {
+							const id = m.movieId || m.id || generateMovieId(m.title);
+							return id === movieId;
+						});
+						
+						if (movie && movie.imdbRating !== undefined && movie.imdbRating !== null) {
+							return parseFloat(movie.imdbRating).toFixed(1);
+						}
+					} catch (e) {
+						console.error('Error parsing movies:', e);
+					}
+				}
+				
+				return 'N/A';
+			}
+
+			// Display review cards
+			Object.values(movieReviewsMap).forEach(review => {
+				const movieInfo = review.movieInfo;
+				const reviewCard = document.createElement('div');
+				reviewCard.className = 'movie-card';
+				reviewCard.setAttribute('data-movie-id', review.movieId);
+				reviewCard.setAttribute('data-review-id', review.id);
+				const movieRating = calculateMovieRating(review.movieId);
+
+				reviewCard.innerHTML = `
+					<div class="movie-card-img">
+						<div class="rating-badge">⭐ ${movieRating === 'N/A' ? 'N/A' : movieRating + '/10'}</div>
+						<img src="${movieInfo.image}" alt="${movieInfo.title}">
+					</div>
+					<div class="movie-info">
+						<h3>${movieInfo.title}</h3>
+						<p class="review-excerpt">${getExcerpt(review.text)}</p>
+						<p class="review-meta">Reviewed ${formatDate(review.date, review.time)} • ${movieInfo.genre}</p>
+					<div class="action-row">
+						<a href="movie_details.html?movie=${review.movieId}" class="btn">View Details →</a>
+						<button class="btn delete-btn" onclick="deleteReview('${review.movieId}', ${review.id})">
+							<i class="fas fa-trash"></i> Delete
+						</button>
+					</div>
+					</div>
+				`;
+
+				movieGrid.appendChild(reviewCard);
+			});
+		}
+
+		// Load reviews when page loads
+		document.addEventListener('DOMContentLoaded', function() {
+			loadUserReviews();
+		});
+	</script>
 </body>
 </html>
