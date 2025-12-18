@@ -26,12 +26,12 @@
         // Function to logout user
         function logout() {
             // Clear current user session from localStorage
-            localStorage.removeItem('currentUser');
-            
+            sessionStorage.removeItem('currentUser');
+
             // Optional: Clear other session-related data if needed
             // You can uncomment these if you want to clear more data on logout:
             // localStorage.clear(); // This would clear ALL localStorage data
-            
+
             // Update the message
             const logoutMessage = document.querySelector('.logout-message');
             logoutMessage.innerHTML = `
@@ -42,7 +42,7 @@
                 <br>
                 <p class="mt-1"><a href="login.html" class="btn" style="background: var(--main-color);">Login Again</a></p>
             `;
-            
+
             // Redirect to home page after a short delay
             setTimeout(() => {
                 window.location.href = '../../index.html';

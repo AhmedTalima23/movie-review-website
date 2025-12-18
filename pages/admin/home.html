@@ -236,25 +236,25 @@
                     return dateFromId;
                 }
             }
-            
+
             // Fallback: try to parse date and time strings
             const dateString = review.date;
             const timeString = review.time;
-            
+
             if (!dateString) {
                 // If no date, use current date as fallback
                 return new Date();
             }
-            
+
             try {
                 // Try parsing the date string directly first
                 let date = new Date(dateString);
-                
+
                 // If that fails or gives invalid date, try parsing with time
                 if (isNaN(date.getTime()) && timeString) {
                     date = new Date(dateString + ' ' + timeString);
                 }
-                
+
                 // If still invalid, try common date formats
                 if (isNaN(date.getTime())) {
                     // Try MM/DD/YYYY or DD/MM/YYYY format
@@ -268,12 +268,12 @@
                         }
                     }
                 }
-                
+
                 // If still invalid, use current date as fallback
                 if (isNaN(date.getTime())) {
                     return new Date(); // Use current date as fallback
                 }
-                
+
                 // Add time if provided
                 if (timeString && !isNaN(date.getTime())) {
                     const timeParts = timeString.match(/(\d+):(\d+)(?::(\d+))?\s*(AM|PM)?/i);
@@ -282,16 +282,16 @@
                         const minutes = parseInt(timeParts[2]);
                         const seconds = timeParts[3] ? parseInt(timeParts[3]) : 0;
                         const ampm = timeParts[4];
-                        
+
                         if (ampm) {
                             if (ampm.toUpperCase() === 'PM' && hours !== 12) hours += 12;
                             if (ampm.toUpperCase() === 'AM' && hours === 12) hours = 0;
                         }
-                        
+
                         date.setHours(hours, minutes, seconds);
                     }
                 }
-                
+
                 return date;
             } catch (e) {
                 // If all parsing fails, use current date
@@ -303,7 +303,7 @@
         function getRecentActivity() {
             const activities = [];
             const movieData = getAllMovies();
-            
+
             // Get latest reviews
             const allReviews = getAllReviews();
             const sortedReviews = allReviews.sort((a, b) => {
@@ -311,21 +311,21 @@
                 const dateB = parseReviewDate(b);
                 return dateB - dateA;
             });
-            
+
             // Add recent reviews to activities
             sortedReviews.slice(0, 5).forEach(review => {
                 const timestamp = parseReviewDate(review);
                 // Format the date nicely for display
-                const displayDate = timestamp.toLocaleDateString('en-US', { 
-                    year: 'numeric', 
-                    month: 'short', 
-                    day: 'numeric' 
+                const displayDate = timestamp.toLocaleDateString('en-US', {
+                    year: 'numeric',
+                    month: 'short',
+                    day: 'numeric'
                 });
-                const displayTime = timestamp.toLocaleTimeString('en-US', { 
-                    hour: 'numeric', 
-                    minute: '2-digit' 
+                const displayTime = timestamp.toLocaleTimeString('en-US', {
+                    hour: 'numeric',
+                    minute: '2-digit'
                 });
-                
+
                 activities.push({
                     type: 'review',
                     message: `New review by ${review.user || 'Anonymous'} on ${movieData[review.movieId]?.title || 'a movie'}`,
@@ -333,7 +333,7 @@
                     timestamp: timestamp
                 });
             });
-            
+
             // Get recent user registrations
             const users = getAllUsers();
             const sortedUsers = users.filter(user => user.createdAt).sort((a, b) => {
@@ -342,7 +342,7 @@
                 if (isNaN(dateA.getTime()) || isNaN(dateB.getTime())) return 0;
                 return dateB - dateA;
             });
-            
+
             // Add recent user registrations to activities
             sortedUsers.slice(0, 3).forEach(user => {
                 if (user.createdAt) {
@@ -357,7 +357,7 @@
                     }
                 }
             });
-            
+
             // Sort all activities by timestamp (newest first) and filter out invalid dates
             return activities
                 .filter(activity => activity.timestamp && !isNaN(activity.timestamp.getTime()))
@@ -370,51 +370,51 @@
             if (!timestamp || isNaN(timestamp.getTime())) {
                 return 'Recently';
             }
-            
+
             const now = new Date();
             const diff = now - timestamp;
-            
+
             // Handle negative differences (future dates)
             if (diff < 0) {
                 return timestamp.toLocaleDateString();
             }
-            
+
             const minutes = Math.floor(diff / 60000);
             const hours = Math.floor(diff / 3600000);
             const days = Math.floor(diff / 86400000);
-            
+
             if (minutes < 1) return 'Just now';
             if (minutes < 60) return `${minutes}m ago`;
             if (hours < 24) return `${hours}h ago`;
             if (days < 7) return `${days}d ago`;
-            
+
             return timestamp.toLocaleDateString();
         }
 
         // Function to update dashboard statistics
         function updateDashboardStats() {
             // Update admin name
-            const currentUser = JSON.parse(localStorage.getItem('currentUser') || '{}');
+           const currentUser = JSON.parse(sessionStorage.getItem('currentUser') || '{}');
             if (currentUser.name) {
                 document.getElementById('adminName').textContent = currentUser.name;
             }
-            
+
             // Get data
             const movieData = getAllMovies();
             const users = getAllUsers();
             const allReviews = getAllReviews();
             const reviewedMovies = getMoviesWithReviews();
-            
+
             // Update statistics
             document.getElementById('totalMovies').textContent = Object.keys(movieData).length;
             document.getElementById('totalReviews').textContent = allReviews.length;
             document.getElementById('totalUsers').textContent = users.length;
             document.getElementById('moviesReviewed').textContent = reviewedMovies.length;
-            
+
             // Update recent activity
             const recentActivity = getRecentActivity();
             const activityContainer = document.getElementById('recentActivity');
-            
+
             if (recentActivity.length === 0) {
                 activityContainer.innerHTML = `
                     <div class="item">
@@ -438,7 +438,7 @@
         // Initialize dashboard when page loads
         document.addEventListener('DOMContentLoaded', function() {
             updateDashboardStats();
-            
+
             // Update stats every 30 seconds
             setInterval(updateDashboardStats, 30000);
         });

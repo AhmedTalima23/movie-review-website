@@ -99,13 +99,13 @@
     <script>
         // Function to check if user is logged in
         function isLoggedIn() {
-            const currentUser = localStorage.getItem('currentUser');
+            const currentUser = sessionStorage.getItem('currentUser');
             return currentUser !== null;
         }
 
         // Function to get current user
         function getCurrentUser() {
-            const currentUser = localStorage.getItem('currentUser');
+            const currentUser = sessionStorage.getItem('currentUser');
             if (currentUser) {
                 try {
                     return JSON.parse(currentUser);

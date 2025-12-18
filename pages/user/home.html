@@ -104,7 +104,7 @@
 
         // Function to get current user
         function getCurrentUser() {
-            const currentUser = localStorage.getItem('currentUser');
+           const currentUser = sessionStorage.getItem('currentUser');
             if (currentUser) {
                 try {
                     return JSON.parse(currentUser);
@@ -232,7 +232,7 @@
         // Function to personalize the page
         function personalizePage() {
             const user = getCurrentUser();
-            
+
             if (user) {
                 // Update welcome message with user's name
                 const userNameElement = document.getElementById('userName');
@@ -248,13 +248,13 @@
         // Handle search form
         function setupSearchForm() {
             const searchForm = document.getElementById('searchForm');
-            
+
             if (searchForm) {
                 searchForm.addEventListener('submit', function(e) {
                     e.preventDefault();
                     const searchQuery = document.getElementById('searchQuery').value;
                     const searchBy = document.getElementById('searchBy').value;
-                    
+
                     if (searchQuery && searchBy) {
                         // Redirect to movie list page with search parameters
                         window.location.href = `movie_list.html?search=${encodeURIComponent(searchQuery)}&by=${encodeURIComponent(searchBy)}`;

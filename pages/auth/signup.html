@@ -34,7 +34,7 @@
                 <form id="signupForm">
                     <div id="errorMessage" style="display: none; color: #ff4444; background: rgba(255, 68, 68, 0.1); padding: 1rem; border-radius: 5px; margin-bottom: 1rem; text-align: center;"></div>
                     <div id="successMessage" style="display: none; color: #44ff44; background: rgba(68, 255, 68, 0.1); padding: 1rem; border-radius: 5px; margin-bottom: 1rem; text-align: center;"></div>
-                    
+
                     <div class="form-row">
                         <div class="form-group half-width">
                             <label for="first-name">First Name</label>
@@ -63,7 +63,7 @@
                     </div>
                     <div class="button-row">
                         <button type="button" id="signupAdmin" class="btn">Sign Up as Admin</button>
-                    </div>  
+                    </div>
                     <br>
                     <div class="button-row">
                         <button type="button" id="signupUser" class="btn">Sign Up as User</button>
@@ -92,7 +92,7 @@
 
         // Function to save users to localStorage
         function saveUsers(users) {
-            localStorage.setItem('users', JSON.stringify(users));
+           sessionStorage.setItem('currentUser', JSON.stringify(currentUser));
         }
 
         // Function to check if email already exists
