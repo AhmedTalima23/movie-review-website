@@ -315,6 +315,33 @@
 				reviewCard.setAttribute('data-review-id', review.id);
 				const movieRating = calculateMovieRating(review.movieId);
 
+				// Check review status
+				const isDenied = review.denied === true;
+				const isApproved = review.approved === true;
+				const denialReason = review.denialReason || '';
+
+				let statusHTML = '';
+				if (isDenied) {
+					statusHTML = `
+						<div style="background-color: rgba(244, 67, 54, 0.15); border-left: 4px solid #f44336; padding: 0.75rem; margin: 0.75rem 0; border-radius: 3px;">
+							<p style="margin: 0; color: #f44336; font-weight: 600; font-size: 0.9rem;">❌ Review Denied</p>
+							${denialReason ? `<p style="margin: 0.25rem 0 0 0; color: #d32f2f; font-size: 0.85rem;">Reason: ${denialReason}</p>` : ''}
+						</div>
+					`;
+				} else if (isApproved) {
+					statusHTML = `
+						<div style="background-color: rgba(76, 175, 80, 0.15); border-left: 4px solid #4CAF50; padding: 0.75rem; margin: 0.75rem 0; border-radius: 3px;">
+							<p style="margin: 0; color: #4CAF50; font-weight: 600; font-size: 0.9rem;">✓ Review Accepted</p>
+						</div>
+					`;
+				} else {
+					statusHTML = `
+						<div style="background-color: rgba(255, 165, 0, 0.15); border-left: 4px solid #FFA500; padding: 0.75rem; margin: 0.75rem 0; border-radius: 3px;">
+							<p style="margin: 0; color: #FF8C00; font-weight: 600; font-size: 0.9rem;">⏳ Pending Review</p>
+						</div>
+					`;
+				}
+
 				reviewCard.innerHTML = `
 					<div class="movie-card-img">
 						<div class="rating-badge">⭐ ${movieRating === 'N/A' ? 'N/A' : movieRating + '/10'}</div>
@@ -322,6 +349,7 @@
 					</div>
 					<div class="movie-info">
 						<h3>${movieInfo.title}</h3>
+						${statusHTML}
 						<p class="review-excerpt">${getExcerpt(review.text)}</p>
 						<p class="review-meta">Reviewed ${formatDate(review.date, review.time)} • ${movieInfo.genre}</p>
 					<div class="action-row">
