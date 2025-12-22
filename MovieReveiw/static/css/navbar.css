@@ -1,0 +1,58 @@
+.navbar {
+    background: #1a1a1a;
+    padding: 1rem 0;
+}
+
+.navbar-content {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.navbar h1 a {
+    color: #fff;
+    text-decoration: none;
+    font-family: 'Inter', sans-serif;
+}
+
+.navbar h1 span {
+    color: #e50914;
+}
+
+.navbar ul {
+    display: flex;
+    list-style: none;
+    gap: 1rem;
+}
+
+.navbar ul li a {
+    color: #fff;
+    text-decoration: none;
+    padding: 0.5rem 1rem;
+    transition: color 0.3s;
+}
+
+.navbar ul li a:hover {
+    color: #e50914;
+}
+
+.user-profile {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    color: #fff;
+}
+
+.user-profile img {
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+}
+
+.admin-badge {
+    background: #e50914;
+    color: #fff;
+    padding: 0.2rem 0.5rem;
+    border-radius: 4px;
+    font-size: 0.8rem;
+}

@@ -1,0 +1,12 @@
+/* Login / Signup / Logout helpers */
+
+.button-row { display:flex; gap:10px; flex-wrap:wrap; justify-content:center; }
+.auth-link { margin-top:1.5rem; text-align:center; }
+.auth-link a { color: var(--accent-color); font-weight:600; }
+
+/* logout message (moved from inline) */
+.logout-message { margin: 150px auto 0 auto; max-width: 400px; background: #222; color: #eee; padding: 2rem; border-radius: 10px; text-align: center; box-shadow: 0 2px 10px rgba(0,0,0,0.2); }
+.logout-message i { font-size: 2rem; color: #ce1212; margin-bottom: 1rem; }
+
+/* small helpers for forms/cards on auth pages */
+.card-style { padding: 2rem; border-radius: 10px; background: rgba(255,255,255,0.03); }

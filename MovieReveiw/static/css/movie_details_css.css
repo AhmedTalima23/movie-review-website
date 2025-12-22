@@ -1,0 +1,403 @@
+body {
+    padding-top: 80px;
+}
+.movie-details {
+    padding: 0;
+    background: var(--bg-color);
+}
+.details-container {
+    width: 85%;
+    margin: 0 auto;
+    padding: 3rem 0;
+}
+/* Hero Section with Movie Banner */
+.movie-banner {
+    position: relative;
+    height: 500px;
+    margin: 0 -15vw 3rem;
+    overflow: hidden;
+    border-radius: 0 0 30px 30px;
+}
+.movie-banner::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: linear-gradient(to bottom,
+        rgba(15, 14, 14, 0.3) 0%,
+        rgba(15, 14, 14, 0.7) 50%,
+        var(--bg-color) 100%);
+    z-index: 1;
+}
+.movie-banner img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    filter: blur(8px);
+    transform: scale(1.1);
+}
+/* Movie Header */
+.movie-header {
+    display: grid;
+    grid-template-columns: 300px 1fr;
+    gap: 3rem;
+    margin-bottom: 3rem;
+    position: relative;
+}
+.movie-poster {
+    position: relative;
+    border-radius: 20px;
+    overflow: hidden;
+    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5);
+    transition: transform 0.3s ease;
+}
+.movie-poster:hover {
+    transform: translateY(-10px);
+}
+.movie-poster img {
+    width: 100%;
+    height: auto;
+    display: block;
+}
+.movie-main-info {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+}
+.movie-main-info h2 {
+    font-family: var(--secondary-font);
+    font-size: 3rem;
+    color: var(--secondary-color);
+    margin-bottom: 1rem;
+    line-height: 1.2;
+}
+.movie-meta {
+    display: flex;
+    gap: 1.5rem;
+    flex-wrap: wrap;
+    margin-bottom: 1.5rem;
+    font-size: 1rem;
+}
+.meta-item {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    color: #999;
+    background: rgba(255, 255, 255, 0.03);
+    padding: 0.5rem 1rem;
+    border-radius: 20px;
+    border: 1px solid rgba(255, 255, 255, 0.05);
+}
+.meta-item span {
+    color: var(--secondary-color);
+    font-weight: 600;
+}
+.movie-credits {
+    margin: 1.5rem 0;
+}
+.credit-row {
+    margin-bottom: 0.8rem;
+    color: #999;
+    font-size: 1rem;
+}
+.credit-row strong {
+    color: var(--secondary-color);
+    margin-right: 0.5rem;
+}
+/* Rating Display */
+.rating-display {
+    display: flex;
+    align-items: center;
+    gap: 2rem;
+    margin-top: 2rem;
+    padding: 1.5rem;
+    background: rgba(255, 255, 255, 0.03);
+    border-radius: 15px;
+    border: 1px solid rgba(255, 255, 255, 0.05);
+}
+.rating-score {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+.score-number {
+    font-size: 3.5rem;
+    font-weight: 700;
+    color: var(--accent-color);
+    font-family: var(--secondary-font);
+    line-height: 1;
+}
+.score-label {
+    color: #999;
+    font-size: 0.9rem;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+}
+.stars {
+    font-size: 2rem;
+    color: #ffc107;
+    letter-spacing: 0.2rem;
+}
+.action-buttons {
+    display: flex;
+    gap: 1rem;
+    margin-top: 2rem;
+    flex-wrap: wrap;
+}
+.action-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.9rem 2rem;
+    border-radius: 50px;
+    font-weight: 600;
+    transition: all 0.3s ease;
+    border: 2px solid;
+    text-decoration: none;
+    font-family: var(--main-font);
+}
+.action-btn.primary {
+    background: linear-gradient(135deg, var(--accent-color) 0%, var(--main-color) 100%);
+    color: white;
+    border-color: transparent;
+}
+.action-btn.primary:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 10px 30px rgba(206, 18, 18, 0.4);
+}
+.action-btn.secondary {
+    background: transparent;
+    color: var(--secondary-color);
+    border-color: rgba(255, 255, 255, 0.2);
+}
+.action-btn.secondary:hover {
+    background: rgba(255, 255, 255, 0.05);
+    border-color: var(--accent-color);
+    color: var(--accent-color);
+}
+/* Content Sections */
+.content-section {
+    background: rgba(255, 255, 255, 0.03);
+    border-radius: 20px;
+    padding: 2.5rem;
+    margin-bottom: 2rem;
+    border: 1px solid rgba(255, 255, 255, 0.05);
+}
+.content-section h3 {
+    font-family: var(--secondary-font);
+    font-size: 1.8rem;
+    color: var(--secondary-color);
+    margin-bottom: 1.5rem;
+    display: flex;
+    align-items: center;
+    gap: 0.8rem;
+}
+.content-section h3::before {
+    content: '';
+    width: 4px;
+    height: 30px;
+    background: linear-gradient(to bottom, var(--accent-color), var(--main-color));
+    border-radius: 2px;
+}
+.movie-synopsis p {
+    font-size: 1.1rem;
+    line-height: 1.8;
+    color: #ccc;
+}
+/* Stats Grid */
+.movie-stats {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+    gap: 1.5rem;
+    margin: 2rem 0;
+}
+.stat-box {
+    text-align: center;
+    padding: 1.5rem;
+    background: rgba(255, 255, 255, 0.03);
+    border-radius: 15px;
+    border: 1px solid rgba(255, 255, 255, 0.05);
+}
+.stat-box .value {
+    font-size: 2rem;
+    font-weight: 700;
+    color: var(--accent-color);
+    display: block;
+    margin-bottom: 0.5rem;
+}
+.stat-box .label {
+    color: #999;
+    font-size: 0.9rem;
+}
+/* Review Form */
+.review-form {
+    background: rgba(255, 255, 255, 0.03);
+    padding: 2rem;
+    border-radius: 15px;
+    margin-bottom: 2rem;
+    border: 1px solid rgba(255, 255, 255, 0.05);
+}
+.review-form h4 {
+    color: var(--secondary-color);
+    margin-bottom: 1rem;
+    font-size: 1.2rem;
+}
+.rating-input {
+    display: flex;
+    gap: 0.5rem;
+    margin-bottom: 1rem;
+}
+.rating-input input[type="radio"] {
+    display: none;
+}
+.rating-input label {
+    font-size: 2rem;
+    color: #444;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+.rating-input input[type="radio"]:checked ~ label,
+.rating-input label:hover,
+.rating-input label:hover ~ label {
+    color: #ffc107;
+}
+.review-form textarea {
+    width: 100%;
+    min-height: 120px;
+    padding: 1rem;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 10px;
+    background: rgba(255, 255, 255, 0.02);
+    color: var(--secondary-color);
+    font-family: var(--main-font);
+    font-size: 1rem;
+    resize: vertical;
+    margin-bottom: 1rem;
+}
+.review-form textarea:focus {
+    outline: none;
+    border-color: var(--accent-color);
+}
+.review-form .btn {
+    background: linear-gradient(135deg, var(--accent-color) 0%, var(--main-color) 100%);
+    color: white;
+    padding: 0.8rem 2.5rem;
+    border: none;
+    border-radius: 50px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    font-family: var(--main-font);
+}
+.review-form .btn:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 10px 25px rgba(206, 18, 18, 0.4);
+}
+/* Reviews List */
+.reviews-list {
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+}
+.review-card {
+    background: rgba(255, 255, 255, 0.03);
+    padding: 1.8rem;
+    border-radius: 15px;
+    border: 1px solid rgba(255, 255, 255, 0.05);
+    transition: all 0.3s ease;
+}
+.review-card:hover {
+    transform: translateX(10px);
+    border-color: rgba(206, 18, 18, 0.3);
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+}
+.review-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 1rem;
+    flex-wrap: wrap;
+    gap: 1rem;
+}
+.reviewer-info {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+}
+.reviewer-avatar {
+    width: 50px;
+    height: 50px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, var(--accent-color), var(--main-color));
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    font-weight: 700;
+    font-size: 1.2rem;
+}
+.reviewer-details h4 {
+    color: var(--secondary-color);
+    margin: 0;
+    font-size: 1.1rem;
+}
+.review-date {
+    color: #777;
+    font-size: 0.85rem;
+}
+.review-rating {
+    display: flex;
+    gap: 0.3rem;
+    font-size: 1.2rem;
+    color: #ffc107;
+}
+.review-text {
+    color: #ccc;
+    line-height: 1.7;
+    margin-top: 1rem;
+}
+.review-actions {
+    display: flex;
+    gap: 1rem;
+    margin-top: 1rem;
+    padding-top: 1rem;
+    border-top: 1px solid rgba(255, 255, 255, 0.05);
+}
+.review-action-btn {
+    background: transparent;
+    border: none;
+    color: #999;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-size: 0.9rem;
+    transition: color 0.3s ease;
+}
+.review-action-btn:hover {
+    color: var(--accent-color);
+}
+/* Additional page-specific rules moved from inline movie_details.html */
+.movie-section { margin: 3rem 0; background: #1c1c1c; border-radius: 15px; overflow: hidden; box-shadow: 0 4px 12px rgba(255,71,87,0.2); transition: transform 0.3s ease; }
+.movie-section:hover { transform: scale(1.01); }
+.movie-header { display:flex; flex-wrap:wrap; gap:2rem; padding:2rem; }
+.movie-header img { width:250px; height:370px; object-fit:cover; border-radius:10px; transition: transform 0.4s ease; }
+.movie-header img:hover { transform: scale(1.05); }
+.movie-info h2 { font-size:2rem; color:#d50b1c; margin-bottom:0.5rem; }
+.movie-meta { color:#ccc; font-size:0.95rem; margin-bottom:0.5rem; }
+.director, .cast { font-size:0.95rem; color:#aaa; margin-bottom:0.3rem; }
+.rating { margin-top:1rem; font-size:1rem; color:gold; }
+.movie-synopsis, .review-section { padding:1.5rem 2rem; border-top:1px solid #333; }
+.movie-synopsis h3, .review-section h3 { color:#d50b1c; margin-bottom:1rem; }
+.review-form textarea { width:100%; background:#2a2a2a; color:#fff; border:none; border-radius:10px; padding:1rem; margin-bottom:1rem; resize:none; }
+.btn { background:#92141e; color:#fff; padding:0.7rem 1.5rem; border:none; border-radius:8px; cursor:pointer; transition:background 0.3s ease; }
+.btn:hover { background:#80161f; }
+.reviews { margin-top:1.5rem; }
+.review { background:#262626; padding:1rem; border-radius:10px; margin-bottom:1rem; }
+.review-header { display:flex; justify-content:space-between; margin-bottom:0.5rem; }
+.reviewer { font-weight:600; }
+.review-rating { color:gold; }
+footer { background-color:#1a1a1a; text-align:center; padding:2rem 0; color:#ccc; margin-top:3rem; }
+footer p:first-child { color:#821d26; font-weight:600; }

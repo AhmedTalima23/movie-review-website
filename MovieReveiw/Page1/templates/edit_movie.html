@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+{% load static %}
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Edit Movie - MovieReview Admin</title>
+    <link rel="stylesheet" href="{% static 'css/style.css' %}">
+    <link rel="stylesheet" href="{% static 'css/admin.css' %}">
+    <link href="https://fonts.googleapis.com/css2?family=Open+Sans:wght@400;600;700&family=Inter:wght@400;700&display=swap" rel="stylesheet">
+</head>
+<body>
+    <!-- Admin Navigation Bar -->
+    <nav class="navbar">
+        <div class="container">
+            <div class="navbar-content">
+                <h1><a href="{% url 'admin_home' %}">Movie<span>Review</span> Admin</a></h1>
+                <ul>
+                    <li><a href="{% url 'admin_home' %}">Dashboard</a></li>
+                    <li><a href="{% url 'add_movie_page' %}">Add Movie</a></li>
+                    <li><a href="{% url 'manage_movies' %}">Manage Movies</a></li>
+                    <li><a href="#">Manage Reviews</a></li>
+                    <li><a href="{% url 'logout' %}">Logout</a></li>
+                </ul>
+                <div class="bar-icon">☰</div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Edit Movie Form -->
+    <section class="container">
+        <div class="head-style">
+            <h2>Edit Movie</h2>
+            <p>Update Movie <span>Details</span></p>
+        </div>
+
+        {% if messages %}
+            {% for message in messages %}
+                <div class="{% if message.tags == 'error' %}error-message{% else %}success-message{% endif %}">
+                    {{ message }}
+                </div>
+            {% endfor %}
+        {% endif %}
+
+        <form method="post">
+            {% csrf_token %}
+            
+            <label for="title">Movie Title *</label>
+            <input type="text" id="title" name="title" required placeholder="Enter movie title" minlength="1" maxlength="200" value="{{ movie.title|default:'' }}">
+
+            <label for="genre">Genre *</label>
+            <select id="genre" name="genre" required>
+                <option value="">Select primary genre</option>
+                <option value="Action" {% if movie.genre == 'Action' %}selected{% endif %}>Action</option>
+                <option value="Adventure" {% if movie.genre == 'Adventure' %}selected{% endif %}>Adventure</option>
+                <option value="Animation" {% if movie.genre == 'Animation' %}selected{% endif %}>Animation</option>
+                <option value="Comedy" {% if movie.genre == 'Comedy' %}selected{% endif %}>Comedy</option>
+                <option value="Crime" {% if movie.genre == 'Crime' %}selected{% endif %}>Crime</option>
+                <option value="Documentary" {% if movie.genre == 'Documentary' %}selected{% endif %}>Documentary</option>
+                <option value="Drama" {% if movie.genre == 'Drama' %}selected{% endif %}>Drama</option>
+                <option value="Fantasy" {% if movie.genre == 'Fantasy' %}selected{% endif %}>Fantasy</option>
+                <option value="Horror" {% if movie.genre == 'Horror' %}selected{% endif %}>Horror</option>
+                <option value="Mystery" {% if movie.genre == 'Mystery' %}selected{% endif %}>Mystery</option>
+                <option value="Romance" {% if movie.genre == 'Romance' %}selected{% endif %}>Romance</option>
+                <option value="Sci-Fi" {% if movie.genre == 'Sci-Fi' %}selected{% endif %}>Sci-Fi</option>
+                <option value="Thriller" {% if movie.genre == 'Thriller' %}selected{% endif %}>Thriller</option>
+                <option value="Western" {% if movie.genre == 'Western' %}selected{% endif %}>Western</option>
+            </select>
+
+            <label for="additionalGenres">Additional Genres (Optional)</label>
+            <input type="text" id="additionalGenres" name="additionalGenres" placeholder="e.g., Thriller, Mystery (comma-separated)" value="{{ movie.additionalGenres|default:'' }}">
+
+            <label for="releaseYear">Release Year *</label>
+            <input type="number" id="releaseYear" name="releaseYear" required placeholder="Enter release year" min="1888" max="2025" value="{{ movie.releaseYear|default:'' }}">
+
+            <label for="director">Director *</label>
+            <input type="text" id="director" name="director" required placeholder="Enter director name" minlength="2" value="{{ movie.director|default:'' }}">
+
+            <label for="cast">Main Cast (Optional)</label>
+            <input type="text" id="cast" name="cast" placeholder="e.g., Actor 1, Actor 2, Actor 3 (comma-separated)" value="{{ movie.cast|default:'' }}">
+
+            <label for="duration">Duration (minutes)</label>
+            <input type="number" id="duration" name="duration" placeholder="Enter movie duration in minutes" min="1" value="{{ movie.duration|default:'' }}">
+
+            <label for="rating">Content Rating (Optional)</label>
+            <select id="rating" name="rating">
+                <option value="">Select content rating</option>
+                <option value="G" {% if movie.rating == 'G' %}selected{% endif %}>G - General Audiences</option>
+                <option value="PG" {% if movie.rating == 'PG' %}selected{% endif %}>PG - Parental Guidance Suggested</option>
+                <option value="PG-13" {% if movie.rating == 'PG-13' %}selected{% endif %}>PG-13 - Parents Strongly Cautioned</option>
+                <option value="R" {% if movie.rating == 'R' %}selected{% endif %}>R - Restricted</option>
+                <option value="NC-17" {% if movie.rating == 'NC-17' %}selected{% endif %}>NC-17 - Adults Only</option>
+            </select>
+
+            <label for="imdbRating">IMDb Rating (out of 10) *</label>
+            <input type="number" id="imdbRating" name="imdbRating" required placeholder="Enter IMDb rating (e.g., 8.5)" min="0" max="10" step="0.1" value="{{ movie.imdbRating|default:'' }}">
+
+            <label for="description">Description *</label>
+            <textarea id="description" name="description" required placeholder="Enter movie description/plot summary" rows="6" minlength="20">{{ movie.description|default:'' }}</textarea>
+
+            <label for="poster">Poster Image URL</label>
+            <input type="url" id="poster" name="poster" placeholder="Enter poster image URL (e.g., https://example.com/poster.jpg)" value="{{ movie.poster|default:'' }}">
+
+            <label for="trailer">Trailer URL (Optional)</label>
+            <input type="url" id="trailer" name="trailer" placeholder="Enter trailer URL (e.g., YouTube link)" value="{{ movie.trailer|default:'' }}">
+
+            <label for="language">Language *</label>
+            <input type="text" id="language" name="language" required placeholder="Enter primary language" value="{{ movie.language|default:'English' }}">
+
+            <label for="country">Country *</label>
+            <input type="text" id="country" name="country" required placeholder="Enter country of origin" value="{{ movie.country|default:'USA' }}">
+
+            <button type="submit">Update Movie</button>
+            <a href="{% url 'manage_movies' %}" class="btn reset" style="text-decoration: none; display: inline-block; margin-left: 1rem;">Cancel</a>
+        </form>
+
+        <p style="text-align: center; margin-top: 1rem;">
+            <a href="{% url 'manage_movies' %}" style="color: var(--primary-color);">← Back to Manage Movies</a>
+        </p>
+    </section>
+
+    <!-- Footer -->
+    <footer>
+        <div class="container">
+            <p>&copy; 2025 MovieReview. All rights reserved.</p>
+        </div>
+    </footer>
+</body>
+</html>
