@@ -212,10 +212,26 @@
 
         // Genres
         function populateGenreFilter(movies) {
-            const genres = new Set();
+            // Standard comprehensive list of genres
+            const STANDARD_GENRES = [
+                "Action", "Adventure", "Animation", "Biography", "Comedy",
+                "Crime", "Documentary", "Drama", "Family", "Fantasy",
+                "History", "Horror", "Music", "Musical", "Mystery",
+                "Romance", "Sci-Fi", "Sport", "Thriller", "War", "Western"
+            ];
+
+            // Initialize set with standard genres
+            const genres = new Set(STANDARD_GENRES);
+
+            // Add any other genres found in the movies
             movies.forEach(m => {
                 if (m.genre) {
-                    m.genre.split(',').forEach(g => genres.add(g.trim()));
+                    m.genre.split(',').forEach(g => {
+                        const trimmedGenre = g.trim();
+                        if (trimmedGenre) {
+                            genres.add(trimmedGenre);
+                        }
+                    });
                 }
             });
 
@@ -225,6 +241,7 @@
             genreSelect.innerHTML = '';
             genreSelect.appendChild(firstOpt);
 
+            // Sort and append options
             Array.from(genres).sort().forEach(g => {
                 const opt = document.createElement('option');
                 opt.value = g;

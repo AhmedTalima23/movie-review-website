@@ -79,34 +79,46 @@ def manage_reviews_view(request):
 
 def approve_review_view(request, review_id):
     if 'user_id' not in request.session or request.session.get('user_type') != 'admin':
-        return redirect('/login/')
+        return JsonResponse({'success': False, 'message': 'Unauthorized access.'}, status=403)
+
+    if request.method != 'POST':
+        return JsonResponse({'success': False, 'message': 'Invalid request method.'}, status=405)
 
     try:
         review = Review.objects.get(reviewID=review_id)
         review.status = 'approved'
         review.save()
-        messages.success(request, 'Review approved successfully.')
+        return JsonResponse({'success': True, 'message': 'Review approved successfully.'})
     except Review.DoesNotExist:
-        messages.error(request, 'Review not found.')
-
-    return redirect('manage_reviews')
+        return JsonResponse({'success': False, 'message': 'Review not found.'}, status=404)
+    except Exception as e:
+        return JsonResponse({'success': False, 'message': f'An error occurred: {str(e)}'}, status=500)
 
 def reject_review_view(request, review_id):
     if 'user_id' not in request.session or request.session.get('user_type') != 'admin':
-        return redirect('/login/')
+        return JsonResponse({'success': False, 'message': 'Unauthorized access.'}, status=403)
 
     if request.method == 'POST':
-        reason = request.POST.get('reason')
         try:
+            data = json.loads(request.body)
+            reason = data.get('reason')
+
+            if not reason:
+                return JsonResponse({'success': False, 'message': 'Reason is required.'}, status=400)
+
             review = Review.objects.get(reviewID=review_id)
             review.status = 'rejected'
             review.admin_response = reason
             review.save()
-            messages.success(request, 'Review rejected successfully.')
+            return JsonResponse({'success': True, 'message': 'Review rejected successfully.'})
         except Review.DoesNotExist:
-            messages.error(request, 'Review not found.')
+             return JsonResponse({'success': False, 'message': 'Review not found.'}, status=404)
+        except json.JSONDecodeError:
+            return JsonResponse({'success': False, 'message': 'Invalid JSON data.'}, status=400)
+        except Exception as e:
+            return JsonResponse({'success': False, 'message': f'An error occurred: {str(e)}'}, status=500)
 
-    return redirect('manage_reviews')
+    return JsonResponse({'success': False, 'message': 'Invalid request method.'}, status=405)
 
 def add_movie_view(request):
     if 'user_id' not in request.session or request.session.get('user_type') != 'admin':

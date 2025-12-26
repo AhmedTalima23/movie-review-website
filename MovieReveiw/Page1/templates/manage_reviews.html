@@ -113,12 +113,12 @@
                     </thead>
                     <tbody id="reviewsTableBody">
                         {% for review in reviews %}
-                        <tr
+                        <tr id="review-row-{{ review.reviewID }}"
                             class="{% if review.status == 'pending' %}row-pending{% elif review.status == 'rejected' %}row-denied{% endif %}">
                             <td>{{ review.movie.title }}</td>
                             <td>{{ review.user.first_name }} {{ review.user.last_name }}</td>
                             <td style="max-width: 400px; word-wrap: break-word;">
-                                <span style="color: var(--accent-color); font-weight: bold; margin-right: 0.5rem;">⭐  {{ review.rating|default:'N/A' }}/10</span>
+                                <span style="color: var(--accent-color); font-weight: bold; margin-right: 0.5rem;">⭐{{ review.rating|default:'N/A' }}/10</span>
                                 {{ review.comment|truncatechars:100 }}
                             </td>
                             <td>
@@ -133,11 +133,11 @@
                             <td>{{ review.created_at|date:"M d, Y" }}</td>
                             <td>
                                 {% if review.status == 'pending' %}
-                                <a href="{% url 'approve_review' review.reviewID %}" class="btn"
-                                    style="background: #4CAF50; margin-right: 0.5rem; text-decoration: none; padding: 8px 12px; display: inline-block; font-size: 0.9rem;"
-                                    title="Accept">
+                                <button class="btn"
+                                    style="background: #4CAF50; margin-right: 0.5rem; padding: 8px 12px; font-size: 0.9rem;"
+                                    onclick="approveReview(event, '{{ review.reviewID }}')" title="Accept">
                                     <i class="fas fa-check"></i> Accept
-                                </a>
+                                </button>
                                 <button class="btn" style="background: #f44336; padding: 8px 12px; font-size: 0.9rem;"
                                     onclick="openDenyModal('{{ review.reviewID }}', '{{ review.movie.title|escapejs }}')"
                                     title="Deny">
@@ -166,6 +166,7 @@
             style="background: #222; padding: 2rem; border-radius: 8px; box-shadow: 0 4px 6px rgba(0, 0, 0, 0.3); max-width: 500px; width: 90%; color: white;">
             <h3 style="margin-top: 0; color: white; margin-bottom: 1rem;">Deny Review</h3>
             <p id="denyMovieTitle" style="color: #aaa; margin-bottom: 1rem;"></p>
+            <input type="hidden" id="currentReviewId">
 
             <form id="denyForm" method="POST">
                 {% csrf_token %}
@@ -193,19 +194,163 @@
     </footer>
 
     <script>
+        function getCSRFToken() {
+            const name = 'csrftoken';
+            let cookieValue = null;
+            if (document.cookie && document.cookie !== '') {
+                const cookies = document.cookie.split(';');
+                for (let i = 0; i < cookies.length; i++) {
+                    const cookie = cookies[i].trim();
+                    if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                        cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                        break;
+                    }
+                }
+            }
+            return cookieValue;
+        }
+
+        function showMessage(message, type) {
+            const messageArea = document.getElementById('messageArea') || createMessageArea();
+            messageArea.innerHTML = ''; // Clear previous messages
+
+            const div = document.createElement('div');
+            div.className = `message-box ${type === 'success' ? 'message-success' : 'message-error'}`;
+            div.textContent = message;
+            messageArea.appendChild(div);
+
+            // Auto remove after 3s
+            setTimeout(() => {
+                div.remove();
+                if (messageArea.children.length === 0) messageArea.remove();
+            }, 3000);
+        }
+
+        function createMessageArea() {
+            const area = document.createElement('div');
+            area.id = 'messageArea';
+            area.style.marginBottom = '1rem';
+            const panel = document.querySelector('.admin-panel');
+            panel.insertBefore(area, panel.firstChild);
+            return area;
+        }
+
+        function updateRowStatus(reviewId, status) {
+            // Find the row
+            // Note: We need a way to identify the row.
+            // Better to add ID to TR or find button's parent TR
+            // For now, since we pass event to approve, we can use that.
+            // But for reject modal, we use ID. So let's rely on ID selector if we add it, or just reload?
+            // "Ajax" implies no reload.
+            // Let's modify the buttons to pass 'this' or rely on finding the row.
+
+            // Actually, best approach is to add id="review-row-{{review.reviewID}}" to the TR in the loop.
+            // But since I can't easily edit the whole loop without large replace...
+            // I will assume I can find it via querySelector using a data attribute or similar if I added it.
+            // Wait, I didn't add data attribute or ID to TR earlier.
+            // I'll try to find it by iterating rows or just use reload if complex?
+            // No, task is Ajax.
+            // I will add `id="review-row-{{ review.reviewID }}"` to the TR in a separate chunk.
+
+            const row = document.getElementById(`review-row-${reviewId}`);
+            if (row) {
+                const statusCell = row.cells[3];
+                const actionsCell = row.cells[5];
+
+                row.className = status === 'approved' ? '' : 'row-denied'; // Clear pending class, add denied if rejected
+
+                if (status === 'approved') {
+                    statusCell.innerHTML = '<span class="status-badge status-accepted">Accepted</span>';
+                } else {
+                    statusCell.innerHTML = '<span class="status-badge status-denied">Denied</span>';
+                }
+
+                actionsCell.innerHTML = ''; // Remove buttons
+            }
+        }
+
+        function approveReview(event, reviewId) {
+            if (!confirm('Are you sure you want to approve this review?')) return;
+
+            const btn = event.currentTarget;
+            const originalText = btn.innerHTML;
+            btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i>';
+            btn.disabled = true;
+
+            fetch(`/admin/reviews/approve/${reviewId}/`, {
+                method: 'POST',
+                headers: {
+                    'X-CSRFToken': getCSRFToken(),
+                    'Content-Type': 'application/json'
+                }
+            })
+                .then(res => res.json())
+                .then(data => {
+                    if (data.success) {
+                        showMessage(data.message, 'success');
+                        updateRowStatus(reviewId, 'approved');
+                    } else {
+                        showMessage(data.message, 'error');
+                        btn.innerHTML = originalText;
+                        btn.disabled = false;
+                    }
+                })
+                .catch(err => {
+                    console.error(err);
+                    showMessage('An error occurred.', 'error');
+                    btn.innerHTML = originalText;
+                    btn.disabled = false;
+                });
+        }
+
         function openDenyModal(reviewId, movieTitle) {
             document.getElementById('denyMovieTitle').textContent = 'Movie: ' + movieTitle;
-            const form = document.getElementById('denyForm');
-            // Dynamically set the action URL using the review ID
-            // Using a placeholder pattern or constructing the URL string manually
-            form.action = "/admin/reviews/reject/" + reviewId + "/";
-
+            document.getElementById('currentReviewId').value = reviewId; // Store ID in hidden input
             document.getElementById('denyReviewModal').style.display = 'flex';
         }
 
         function closeDenyModal() {
             document.getElementById('denyReviewModal').style.display = 'none';
         }
+
+        document.getElementById('denyForm').addEventListener('submit', function (e) {
+            e.preventDefault();
+            const reviewId = document.getElementById('currentReviewId').value;
+            const reason = this.reason.value;
+            const btn = this.querySelector('button[type="submit"]');
+            const originalText = btn.innerHTML;
+
+            btn.innerHTML = 'Processing...';
+            btn.disabled = true;
+
+            fetch(`/admin/reviews/reject/${reviewId}/`, {
+                method: 'POST',
+                headers: {
+                    'X-CSRFToken': getCSRFToken(),
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ reason: reason })
+            })
+                .then(res => res.json())
+                .then(data => {
+                    if (data.success) {
+                        showMessage(data.message, 'success');
+                        updateRowStatus(reviewId, 'rejected');
+                        closeDenyModal();
+                        this.reset();
+                    } else {
+                        showMessage(data.message, 'error');
+                    }
+                })
+                .catch(err => {
+                    console.error(err);
+                    showMessage('An error occurred.', 'error');
+                })
+                .finally(() => {
+                    btn.innerHTML = originalText;
+                    btn.disabled = false;
+                });
+        });
 
         // Close modal if clicking outside
         window.onclick = function (event) {
