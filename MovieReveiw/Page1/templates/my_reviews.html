@@ -1,0 +1,116 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>My Reviews - MovieReview</title>
+    <link rel="stylesheet" href="{% static 'css/style.css' %}">
+    <link rel="stylesheet" href="{% static 'css/pages/user.css' %}">
+    <link
+        href="https://fonts.googleapis.com/css2?family=Open+Sans:wght@400;600;700&family=Inter:wght@400;700&display=swap"
+        rel="stylesheet">
+</head>
+
+<body>
+    <!-- Navbar -->
+    <nav class="navbar">
+        <div class="container">
+            <div class="navbar-content">
+                <h1><a href="{% url 'user_home' %}">Movie<span>Review</span></a></h1>
+                <ul>
+                    <li><a href="{% url 'user_home' %}">Home</a></li>
+                    <li><a href="{% url 'movie_list' %}">Browse Movies</a></li>
+                    <li><a href="{% url 'my_reviews' %}" class="active">My Reviews</a></li>
+                    <li><a href="{% url 'profile' %}">Profile</a></li>
+                    <li><a href="{% url 'logout' %}">Logout</a></li>
+                </ul>
+                <div class="bar-icon">☰</div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Main Content -->
+    <section class="hero-browse">
+        <div class="container">
+            <div class="hero-content">
+                <h2>My Reviews</h2>
+                <p>Manage and edit your <span>submitted reviews</span></p>
+            </div>
+        </div>
+    </section>
+
+    <section class="movie-browse">
+        <div class="browse-container">
+            <div class="stats-bar">
+                <div class="stat-item">
+                    <span class="stat-number">{{ reviews.count }}</span>
+                    <span class="stat-label">My Reviews</span>
+                </div>
+                <!-- Calculate average rating if possible, or omit -->
+            </div>
+
+            <div class="movie-grid" id="movieGrid" style="display: grid;">
+                {% for review in reviews %}
+                <div class="movie-card">
+                    <div class="movie-card-img">
+                        <div class="rating-badge">⭐ {{ review.rating }}/10</div>
+                        <!-- Status Badge -->
+                        {% if review.status == 'approved' %}
+                        <div
+                            style="position: absolute; top: 10px; left: 10px; background: #4CAF50; color: white; padding: 4px 8px; border-radius: 4px; font-weight: bold; font-size: 0.8rem; z-index: 10;">
+                            Accepted</div>
+                        {% elif review.status == 'rejected' %}
+                        <div
+                            style="position: absolute; top: 10px; left: 10px; background: #f44336; color: white; padding: 4px 8px; border-radius: 4px; font-weight: bold; font-size: 0.8rem; z-index: 10;">
+                            Denied</div>
+                        {% else %}
+                        <div
+                            style="position: absolute; top: 10px; left: 10px; background: #FFA500; color: white; padding: 4px 8px; border-radius: 4px; font-weight: bold; font-size: 0.8rem; z-index: 10;">
+                            Pending</div>
+                        {% endif %}
+
+                        {% static 'img/movies/default.jpg' as fallback_img %}
+                        <img src="{{ review.movie.poster_url|default:'/static/img/movies/default.jpg' }}"
+                            alt="{{ review.movie.title }}" onerror="this.src='{{ fallback_img }}'">
+                    </div>
+                    <div class="movie-info">
+                        <h3>{{ review.movie.title }}</h3>
+                        <p class="review-excerpt">{{ review.comment|truncatechars:80 }}</p>
+
+                        {% if review.status == 'rejected' and review.admin_response %}
+                        <div
+                            style="background: rgba(244, 67, 54, 0.1); padding: 0.8rem; border-radius: 4px; margin: 0.5rem 0; border-left: 3px solid #f44336;">
+                            <p style="color: #f44336; font-weight: bold; font-size: 0.85rem; margin-bottom: 0.2rem;">
+                                Rejection Reason:</p>
+                            <p style="color: #ccc; font-size: 0.85rem;">{{ review.admin_response }}</p>
+                        </div>
+                        {% endif %}
+
+                        <p class="review-meta">Reviewed {{ review.created_at|date:"M d, Y" }}</p>
+                        <div class="action-row">
+                            <a href="{% url 'movie_details' review.movie.moID %}" class="btn">View Details →</a>
+                        </div>
+                    </div>
+                </div>
+                {% empty %}
+                <div style="grid-column: 1 / -1; text-align: center; padding: 3rem; color: var(--secondary-color);">
+                    <h3>No reviews yet</h3>
+                    <p>Start reviewing movies to see them here!</p>
+                    <a href="{% url 'movie_list' %}" class="btn" style="margin-top: 1rem;">Browse Movies</a>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+    </section>
+
+    <footer>
+        <div class="container">
+            <p>&copy; 2025 MovieReview. All rights reserved.</p>
+            <p>Discover, Review, and Rate your favorite movies.</p>
+        </div>
+    </footer>
+</body>
+
+</html>

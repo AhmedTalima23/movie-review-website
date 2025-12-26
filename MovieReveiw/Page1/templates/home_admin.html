@@ -1,6 +1,7 @@
 <!DOCTYPE html>
 {% load static %}
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -8,8 +9,11 @@
     <title>Admin Dashboard - MovieReview</title>
     <link rel="stylesheet" href="{% static 'css/style.css' %}">
     <link rel="stylesheet" href="{% static 'css/admin.css' %}">
-    <link href="https://fonts.googleapis.com/css2?family=Open+Sans:wght@400;600;700&family=Inter:wght@400;700&display=swap" rel="stylesheet">
+    <link
+        href="https://fonts.googleapis.com/css2?family=Open+Sans:wght@400;600;700&family=Inter:wght@400;700&display=swap"
+        rel="stylesheet">
 </head>
+
 <body>
     <!-- Admin Navigation Bar -->
     <nav class="navbar">
@@ -20,7 +24,7 @@
                     <li><a href="{% url 'admin_home' %}">Dashboard</a></li>
                     <li><a href="{% url 'add_movie_page' %}">Add Movie</a></li>
                     <li><a href="{% url 'manage_movies' %}" title="Manage all movies">Manage Movies</a></li>
-                    <li><a href="/get_reviews/" title="View all reviews">View Reviews</a></li>
+                    <li><a href="{% url 'manage_reviews' %}" title="Manage all reviews">Manage Reviews</a></li>
                     <li><a href="{% url 'logout' %}">Logout</a></li>
                 </ul>
                 <div class="bar-icon">☰</div>
@@ -43,25 +47,29 @@
         <div class="admin-stat-grid" role="region" aria-labelledby="stats-heading">
             <!-- Total Movies Card -->
             <div class="stat-card" role="article" aria-labelledby="movies-count">
-                <h3 style="font-size: 3rem; color: var(--accent-color); margin-bottom: 0.5rem;" id="totalMovies" aria-label="Total movies count">Loading...</h3>
+                <h3 style="font-size: 3rem; color: var(--accent-color); margin-bottom: 0.5rem;" id="totalMovies"
+                    aria-label="Total movies count">{{ total_movies }}</h3>
                 <p style="color: var(--secondary-color); font-size: 1.2rem;" id="movies-count">Total Movies</p>
             </div>
 
             <!-- Pending Reviews Card -->
             <div class="stat-card alt-orange" role="article" aria-labelledby="reviews-count">
-                <h3 style="font-size: 3rem; color: #FFA500; margin-bottom: 0.5rem;" id="totalReviews" aria-label="Total reviews count">Loading...</h3>
+                <h3 style="font-size: 3rem; color: #FFA500; margin-bottom: 0.5rem;" id="totalReviews"
+                    aria-label="Total reviews count">{{ total_reviews }}</h3>
                 <p style="color: var(--secondary-color); font-size: 1.2rem;" id="reviews-count">Total Reviews</p>
             </div>
 
             <!-- Total Users Card -->
             <div class="stat-card alt-green" role="article" aria-labelledby="users-count">
-                <h3 style="font-size: 3rem; color: #4CAF50; margin-bottom: 0.5rem;" id="totalUsers" aria-label="Total users count">Loading...</h3>
+                <h3 style="font-size: 3rem; color: #4CAF50; margin-bottom: 0.5rem;" id="totalUsers"
+                    aria-label="Total users count">{{ total_users }}</h3>
                 <p style="color: var(--secondary-color); font-size: 1.2rem;" id="users-count">Registered Users</p>
             </div>
 
             <!-- Movies Reviewed Card -->
             <div class="stat-card alt-primary" role="article" aria-labelledby="reviewed-count">
-                <h3 style="font-size: 3rem; color: var(--primary-color); margin-bottom: 0.5rem;" id="moviesReviewed" aria-label="Movies reviewed count">Loading...</h3>
+                <h3 style="font-size: 3rem; color: var(--primary-color); margin-bottom: 0.5rem;" id="moviesReviewed"
+                    aria-label="Movies reviewed count">{{ movies_reviewed_count }}</h3>
                 <p style="color: var(--secondary-color); font-size: 1.2rem;" id="reviewed-count">Movies Reviewed</p>
             </div>
         </div>
@@ -101,7 +109,8 @@
             <p>Latest <span>Updates</span></p>
         </div>
 
-        <div class="recent-activity" id="recentActivity" role="region" aria-labelledby="activity-heading" aria-live="polite">
+        <div class="recent-activity" id="recentActivity" role="region" aria-labelledby="activity-heading"
+            aria-live="polite">
             <div class="item loading">
                 <p style="color: var(--secondary-color); margin-bottom: 0.3rem;">Loading recent activity...</p>
                 <p style="color: #7f7f90; font-size: 0.9rem;">Just now</p>
@@ -118,29 +127,12 @@
     </footer>
 
     <script>
-        // Pass user data from Django to JavaScript
-        const currentUser = JSON.parse('{{ user|default:"null"|escapejs }}');
-        const isLoggedIn = currentUser !== null;
-
-        // Function to update navigation based on login status
-        function updateNavigation() {
-            const navLinks = document.getElementById('navLinks');
-            const user = getCurrentUser();
-
-            if (user) {
-                // Admin navigation
-                navLinks.innerHTML = `
-                    <li><a href="/home_admin/">Dashboard</a></li>
-                    <li><a href="/add-movie/">Add Movie</a></li>
-                    <li><a href="/admin/manage_movies/">Manage Movies</a></li>
-                    <li><a href="/admin/manage_reviews/">Manage Reviews</a></li>
-                    <li><a href="/logout/">Logout</a></li>
-                `;
-            } else {
-                // Not logged in - redirect
-                window.location.href = '/login/';
-            }
-        }
+        // Initialize dashboard
+        document.addEventListener('DOMContentLoaded', function () {
+            updateDashboardStats();
+            // Update stats every 30 seconds
+            setInterval(updateDashboardStats, 30000);
+        });
 
         // Function to update dashboard statistics using AJAX
         function updateDashboardStats() {
@@ -187,13 +179,9 @@
                 })
                 .catch(error => {
                     console.error('Error updating dashboard stats:', error);
-                    // Set error states if fetches fail
-                    document.getElementById('totalMovies').textContent = 'Error';
-                    document.getElementById('totalUsers').textContent = 'Error';
-                    document.getElementById('totalReviews').textContent = 'Error';
-                    document.getElementById('moviesReviewed').textContent = 'Error';
+                    // Do not overwrite stats with 'Error' to keep server-rendered values
 
-                    // Show error in recent activity
+                    // Show error in recent activity only
                     const activityContainer = document.getElementById('recentActivity');
                     activityContainer.innerHTML = `
                         <div class="item error">
@@ -206,7 +194,7 @@
 
         // Function to get CSS class for activity type
         function getActivityTypeClass(type) {
-            switch(type) {
+            switch (type) {
                 case 'movie': return 'alt-primary';
                 case 'user': return 'alt-green';
                 case 'review': return 'alt-orange';
@@ -217,7 +205,7 @@
 
         // Function to generate activity message
         function getActivityMessage(activity) {
-            switch(activity.type) {
+            switch (activity.type) {
                 case 'movie':
                     if (activity.action === 'created') {
                         return `New movie added: "${activity.title}"`;
@@ -258,13 +246,8 @@
             return timestamp.toLocaleDateString();
         }
 
-        // Initialize on page load
-        document.addEventListener('DOMContentLoaded', function() {
-            updateNavigation();
-            updateDashboardStats();
-            // Update stats every 30 seconds
-            setInterval(updateDashboardStats, 30000);
-        });
+
     </script>
 </body>
+
 </html>

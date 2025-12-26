@@ -1,15 +1,19 @@
 <!DOCTYPE html>
 {% load static %}
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Manage Movies - Admin | MovieReview</title>
     <link rel="stylesheet" href="{% static 'css/style.css' %}">
     <link rel="stylesheet" href="{% static 'css/admin.css' %}">
-    <link href="https://fonts.googleapis.com/css2?family=Open+Sans:wght@400;600;700&family=Inter:wght@400;700&display=swap" rel="stylesheet">
+    <link
+        href="https://fonts.googleapis.com/css2?family=Open+Sans:wght@400;600;700&family=Inter:wght@400;700&display=swap"
+        rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
 </head>
+
 <body>
     <!-- Admin Navigation Bar -->
     <nav class="navbar">
@@ -20,17 +24,17 @@
                     <li><a href="{% url 'admin_home' %}">Dashboard</a></li>
                     <li><a href="{% url 'add_movie_page' %}">Add Movie</a></li>
                     <li><a href="{% url 'manage_movies' %}">Manage Movies</a></li>
-                    <li><a href="#">Manage Reviews</a></li>
+                    <li><a href="{% url 'manage_reviews' %}">Manage Reviews</a></li>
                     <li><a href="{% url 'logout' %}">Logout</a></li>
                 </ul>
                 <div class="bar-icon">☰</div>
             </div>
         </div>
     </nav>
-    
+
     <!-- CSRF token for AJAX requests -->
     {% csrf_token %}
-    
+
     <div class="content-with-sidebar no-sidebar">
         <div class="container">
             <h2>Manage Movies</h2>
@@ -41,11 +45,11 @@
 
                 <!-- Server-rendered message placeholder -->
                 {% if messages %}
-                    {% for message in messages %}
-                        <div class="{% if message.tags == 'error' %}error-message{% else %}success-message{% endif %}">
-                            {{ message }}
-                        </div>
-                    {% endfor %}
+                {% for message in messages %}
+                <div class="{% if message.tags == 'error' %}error-message{% else %}success-message{% endif %}">
+                    {{ message }}
+                </div>
+                {% endfor %}
                 {% endif %}
 
                 <table class="admin-table">
@@ -61,44 +65,49 @@
                     </thead>
                     <tbody id="moviesTableBody">
                         {% if movies and movies|length > 0 %}
-                            {% for movie in movies %}
-                            <tr>
-                                <td>
-                                    {% if movie.poster %}
-                                        <img class="admin-thumb" src="{{ movie.poster }}" alt="{{ movie.title|escape }}">
-                                    {% elif movie.image %}
-                                        <img class="admin-thumb" src="{{ movie.image }}" alt="{{ movie.title|escape }}">
-                                    {% else %}
-                                        <img class="admin-thumb" src="{% static 'img/movies/default.jpg' %}" alt="{{ movie.title|escape }}">
-                                    {% endif %}
-                                </td>
-                                <td>{{ movie.title|escape }}</td>
-                                <td>
-                                    {% if movie.additionalGenres %}
-                                        {{ movie.genre }}, {{ movie.additionalGenres }}
-                                    {% else %}
-                                        {{ movie.genre|default:"N/A" }}
-                                    {% endif %}
-                                </td>
-                                <td>{{ movie.releaseYear|default:movie.year|default:"N/A" }}</td>
-                                <td>{{ movie.director|default:"N/A" }}</td>
-                                <td style="display: flex; gap: 0.5rem; align-items: center;">
-                                    <a class="btn edit-btn" href="{% url 'edit_movie' movie.movieId|default:movie.id %}" title="Edit">
-                                        <i class="fas fa-edit"></i>
-                                    </a>
+                        {% for movie in movies %}
+                        <tr>
+                            <td>
+                                {% if movie.poster %}
+                                <img class="admin-thumb" src="{{ movie.poster }}" alt="{{ movie.title|escape }}">
+                                {% elif movie.image %}
+                                <img class="admin-thumb" src="{{ movie.image }}" alt="{{ movie.title|escape }}">
+                                {% else %}
+                                <img class="admin-thumb" src="{% static 'img/movies/default.jpg' %}"
+                                    alt="{{ movie.title|escape }}">
+                                {% endif %}
+                            </td>
+                            <td>{{ movie.title|escape }}</td>
+                            <td>
+                                {% if movie.additionalGenres %}
+                                {{ movie.genre }}, {{ movie.additionalGenres }}
+                                {% else %}
+                                {{ movie.genre|default:"N/A" }}
+                                {% endif %}
+                            </td>
+                            <td>{{ movie.releaseYear|default:movie.year|default:"N/A" }}</td>
+                            <td>{{ movie.director|default:"N/A" }}</td>
+                            <td style="display: flex; gap: 0.5rem; align-items: center;">
+                                <a class="btn edit-btn" href="{% url 'edit_movie' movie.movieId|default:movie.id %}"
+                                    title="Edit">
+                                    <i class="fas fa-edit"></i>
+                                </a>
 
-                                    <button class="btn delete-btn" data-url="{% url 'delete_movie' movie.movieId|default:movie.id %}" data-title="{{ movie.title|escapejs }}" title="Delete">
-                                        <i class="fas fa-trash"></i>
-                                    </button>
-                                </td>
-                            </tr>
-                            {% endfor %}
+                                <button class="btn delete-btn"
+                                    data-url="{% url 'delete_movie' movie.movieId|default:movie.id %}"
+                                    data-title="{{ movie.title|escapejs }}" title="Delete">
+                                    <i class="fas fa-trash"></i>
+                                </button>
+                            </td>
+                        </tr>
+                        {% endfor %}
                         {% else %}
-                            <tr>
-                                <td colspan="6" style="text-align: center; padding: 2rem; color: #999;">
-                                    No movies found. <a href="{% url 'add_movie_page' %}" style="color: var(--primary-color);">Add your first movie</a>
-                                </td>
-                            </tr>
+                        <tr>
+                            <td colspan="6" style="text-align: center; padding: 2rem; color: #999;">
+                                No movies found. <a href="{% url 'add_movie_page' %}"
+                                    style="color: var(--primary-color);">Add your first movie</a>
+                            </td>
+                        </tr>
                         {% endif %}
                     </tbody>
                 </table>
@@ -114,7 +123,7 @@
                 var form = document.createElement('form');
                 form.method = 'POST';
                 form.action = url;
-                
+
                 // Add CSRF token
                 var csrfToken = document.querySelector('[name=csrfmiddlewaretoken]');
                 if (csrfToken) {
@@ -124,17 +133,17 @@
                     csrfInput.value = csrfToken.value;
                     form.appendChild(csrfInput);
                 }
-                
+
                 document.body.appendChild(form);
                 form.submit();
             }
         }
 
         // Add event listeners to delete buttons
-        document.addEventListener('DOMContentLoaded', function() {
+        document.addEventListener('DOMContentLoaded', function () {
             var deleteButtons = document.querySelectorAll('.delete-btn');
-            deleteButtons.forEach(function(button) {
-                button.addEventListener('click', function(e) {
+            deleteButtons.forEach(function (button) {
+                button.addEventListener('click', function (e) {
                     e.preventDefault();
                     var url = this.getAttribute('data-url');
                     var title = this.getAttribute('data-title');
@@ -152,4 +161,5 @@
         </div>
     </footer>
 </body>
+
 </html>

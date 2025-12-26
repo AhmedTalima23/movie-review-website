@@ -1,26 +1,30 @@
 <!DOCTYPE html>
 {% load static %}
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Home - MovieReview</title>
     <link rel="stylesheet" href="{% static 'css/style.css' %}">
     <link rel="stylesheet" href="{% static 'css/pages/user.css' %}">
-    <link href="https://fonts.googleapis.com/css2?family=Open+Sans:wght@400;600;700&family=Inter:wght@400;700&display=swap" rel="stylesheet">
+    <link
+        href="https://fonts.googleapis.com/css2?family=Open+Sans:wght@400;600;700&family=Inter:wght@400;700&display=swap"
+        rel="stylesheet">
 </head>
+
 <body>
     <!-- Navbar -->
     <nav class="navbar">
         <div class="container">
             <div class="navbar-content">
-                <h1><a href="/">Movie<span>Review</span></a></h1>
+                <h1><a href="{% url 'user_home' %}">Movie<span>Review</span></a></h1>
                 <ul id="navLinks">
-                    <li><a href="/" class="active">Home</a></li>
-                    <li><a href="/pages/user/movie_list.html">Browse Movies</a></li>
-                    <li><a href="/pages/user/my_reviews.html">My Reviews</a></li>
-                    <li><a href="/pages/user/profile.html">Profile</a></li>
-                    <li><a href="/logout/">Logout</a></li>
+                    <li><a href="{% url 'user_home' %}" class="active">Home</a></li>
+                    <li><a href="{% url 'movie_list' %}">Browse Movies</a></li>
+                    <li><a href="{% url 'my_reviews' %}">My Reviews</a></li>
+                    <li><a href="{% url 'profile' %}">Profile</a></li>
+                    <li><a href="{% url 'logout' %}">Logout</a></li>
                 </ul>
                 <div class="bar-icon">☰</div>
             </div>
@@ -34,21 +38,22 @@
                 <div class="header-text">
                     <h2>Welcome Back, <span id="userName">{{ user.name|default:"User" }}!</span></h2>
                     <p>Continue exploring amazing movies and share your reviews with the community.
-                       Discover trending films, revisit your favorites, and express your cinematic voice.</p>
+                        Discover trending films, revisit your favorites, and express your cinematic voice.</p>
                     <div class="header-btn">
-                        <a href="/pages/user/movie_list.html" class="book-btn">Browse Movies</a>
-                        <a href="/pages/user/my_reviews.html" class="watch-btn">My Reviews</a>
+                        <a href="{% url 'movie_list' %}" class="book-btn">Browse Movies</a>
+                        <a href="{% url 'my_reviews' %}" class="watch-btn">My Reviews</a>
                     </div>
                 </div>
                 <div class="header-img">
-                    <img src="{% static 'img/movies/samuel-regan-asante-wMkaMXTJjlQ-unsplash.jpg' %}" alt="Movie Collection">
+                    <img src="{% static 'img/movies/samuel-regan-asante-wMkaMXTJjlQ-unsplash.jpg' %}"
+                        alt="Movie Collection">
                 </div>
             </div>
         </div>
     </section>
 
     <!-- Search Section -->
-    <section class="container mt-1" aria-label="Search Section">
+    <!-- <section class="container mt-1" aria-label="Search Section">
         <div class="head-style">
             <h2>Search Movies</h2>
             <p>Find Your <span>Favorite</span></p>
@@ -73,19 +78,20 @@
 
             <button type="submit" class="btn">Search</button>
         </form>
-    </section>
+    </section> -->
 
     <!-- Trending Movies -->
-    <section class="container">
+    <!-- <section class="container">
         <div class="head-style">
             <h2>Featured Movies</h2>
             <p>Popular <span>This Week</span></p>
         </div>
 
         <div class="movie-list" id="movieList">
-            <p>Loading movies...</p>
+            Movies will be loaded dynamically from API -->
+            <!-- <p style="text-align: center; color: #999; padding: 2rem;">Loading movies...</p>
         </div>
-    </section>
+    </section> -->
 
     <!-- Footer -->
     <footer>
@@ -110,30 +116,6 @@
             return currentUser;
         }
 
-        // Function to update navigation based on login status
-        function updateNavigation() {
-            const navLinks = document.getElementById('navLinks');
-            const user = getCurrentUser();
-
-            if (user) {
-                // User is logged in - show user menu
-                navLinks.innerHTML = `
-                    <li><a href="/" class="active">Home</a></li>
-                    <li><a href="/pages/user/movie_list.html">Browse Movies</a></li>
-                    <li><a href="/pages/user/my_reviews.html">My Reviews</a></li>
-                    <li><a href="/pages/user/profile.html">Profile</a></li>
-                    <li><a href="/logout/">Logout</a></li>
-                `;
-            } else {
-                // User is not logged in - show guest menu
-                navLinks.innerHTML = `
-                    <li><a href="/" class="active">Home</a></li>
-                    <li><a href="/login/">Login</a></li>
-                    <li><a href="/signup/">Sign Up</a></li>
-                `;
-            }
-        }
-
         // Load movies from database
         function loadMovies() {
             const movieList = document.getElementById('movieList');
@@ -151,6 +133,7 @@
 
                     movieList.innerHTML = featuredMovies.map(movie => {
                         const posterUrl = movie.poster_url || '{% static "img/movies/default.jpg" %}';
+                        const movieId = movie.moID;
                         return `
                             <div class="movie">
                                 <img src="${posterUrl}" alt="${movie.title}" onerror="this.src='{% static 'img/movies/default.jpg' %}'">
@@ -158,8 +141,8 @@
                                     <h3>${movie.title}</h3>
                                     <p><strong>Genre:</strong> ${movie.genre} | <strong>Year:</strong> ${movie.release_date ? new Date(movie.release_date).getFullYear() : 'N/A'} | <strong>Director:</strong> ${movie.director}</p>
                                     <p>No description available.</p>
-                                    <a href="/pages/user/movie_details.html?movie=${movie.moID}" class="btn">View Details</a>
-                                    <a href="/pages/user/submit_review.html?movie=${movie.moID}" class="btn add-review">Add Review</a>
+                                    <a href="/movies/${movieId}/" class="btn">View Details</a>
+                                    <a href="/submit_review/${movieId}/" class="btn add-review">Add Review</a>
                                 </div>
                             </div>
                         `;
@@ -176,27 +159,25 @@
             const searchForm = document.getElementById('searchForm');
 
             if (searchForm) {
-                searchForm.addEventListener('submit', function(e) {
+                searchForm.addEventListener('submit', function (e) {
                     e.preventDefault();
                     const searchQuery = document.getElementById('searchQuery').value;
                     const searchBy = document.getElementById('searchBy').value;
 
-                    if (searchQuery && searchBy) {
-                        // Redirect to movie list page with search parameters
-                        window.location.href = `/pages/user/movie_list.html?search=${encodeURIComponent(searchQuery)}&by=${encodeURIComponent(searchBy)}`;
-                    } else {
-                        alert('Please select a search criteria and enter a search term.');
+                    // Simple alert for now as full search logic should be in movie_list page
+                    if (searchQuery) {
+                        window.location.href = "{% url 'movie_list' %}"; // In a real app we'd pass query params
                     }
                 });
             }
         }
 
         // Initialize on page load
-        document.addEventListener('DOMContentLoaded', function() {
-            updateNavigation();
-            setupSearchForm();
+        document.addEventListener('DOMContentLoaded', function () {
             loadMovies();
+            setupSearchForm();
         });
     </script>
 </body>
+
 </html>

@@ -17,7 +17,13 @@ def home_view(request):
             'role': request.session.get('user_role'),
             'type': request.session.get('user_type')
         }
-    return render(request, 'assets/home.html', {'user': user_data})
+    # Get all movies
+    movies = Movie.objects.all().order_by('-created_at')
+
+    return render(request, 'assets/home.html', {
+        'user': user_data,
+        'movies': movies
+    })
 
 def user_home_view(request):
     if 'user_id' not in request.session or request.session.get('user_type') != 'user':
@@ -32,12 +38,75 @@ def user_home_view(request):
 def admin_home_view(request):
     if 'user_id' not in request.session or request.session.get('user_type') != 'admin':
         return redirect('/login/')
+
+    # Calculate stats
+    total_movies = Movie.objects.count()
+    total_users = User.objects.count()
+    total_reviews = Review.objects.count()
+    movies_reviewed_count = Review.objects.values('movie').distinct().count()
+
     user_data = {
         'name': request.session.get('user_name'),
         'role': request.session.get('user_role'),
         'type': request.session.get('user_type')
     }
-    return render(request, 'home_admin.html', {'user': user_data})
+
+    context = {
+        'user': user_data,
+        'total_movies': total_movies,
+        'total_users': total_users,
+        'total_reviews': total_reviews,
+        'movies_reviewed_count': movies_reviewed_count,
+    }
+    return render(request, 'home_admin.html', context)
+
+def manage_reviews_view(request):
+    if 'user_id' not in request.session or request.session.get('user_type') != 'admin':
+        return redirect('/login/')
+
+    reviews = Review.objects.all().order_by('-created_at')
+
+    user_data = {
+        'name': request.session.get('user_name'),
+        'role': request.session.get('user_role'),
+        'type': request.session.get('user_type')
+    }
+
+    return render(request, 'manage_reviews.html', {
+        'user': user_data,
+        'reviews': reviews
+    })
+
+def approve_review_view(request, review_id):
+    if 'user_id' not in request.session or request.session.get('user_type') != 'admin':
+        return redirect('/login/')
+
+    try:
+        review = Review.objects.get(reviewID=review_id)
+        review.status = 'approved'
+        review.save()
+        messages.success(request, 'Review approved successfully.')
+    except Review.DoesNotExist:
+        messages.error(request, 'Review not found.')
+
+    return redirect('manage_reviews')
+
+def reject_review_view(request, review_id):
+    if 'user_id' not in request.session or request.session.get('user_type') != 'admin':
+        return redirect('/login/')
+
+    if request.method == 'POST':
+        reason = request.POST.get('reason')
+        try:
+            review = Review.objects.get(reviewID=review_id)
+            review.status = 'rejected'
+            review.admin_response = reason
+            review.save()
+            messages.success(request, 'Review rejected successfully.')
+        except Review.DoesNotExist:
+            messages.error(request, 'Review not found.')
+
+    return redirect('manage_reviews')
 
 def add_movie_view(request):
     if 'user_id' not in request.session or request.session.get('user_type') != 'admin':
@@ -281,10 +350,10 @@ def add_movie(request):
 def manage_movies_view(request):
     if 'user_id' not in request.session or request.session.get('user_type') != 'admin':
         return redirect('/login/')
-    
+
     # Get all movies from database
     movies = Movie.objects.all().order_by('-created_at')
-    
+
     # Convert to list of dictionaries for template
     movies_list = []
     for movie in movies:
@@ -300,13 +369,13 @@ def manage_movies_view(request):
             'poster': movie.poster_url,
             'image': movie.poster_url,  # For backward compatibility
         })
-    
+
     user_data = {
         'name': request.session.get('user_name'),
         'role': request.session.get('user_role'),
         'type': request.session.get('user_type')
     }
-    
+
     return render(request, 'manage_movies.html', {
         'user': user_data,
         'movies': movies_list
@@ -315,47 +384,47 @@ def manage_movies_view(request):
 def edit_movie_view(request, movie_id):
     if 'user_id' not in request.session or request.session.get('user_type') != 'admin':
         return redirect('/login/')
-    
+
     try:
         movie = Movie.objects.get(moID=movie_id)
     except Movie.DoesNotExist:
         messages.error(request, 'Movie not found.')
         return redirect('/admin/manage_movies/')
-    
+
     if request.method == 'POST':
         # Handle movie update
         movie.title = request.POST.get('title', movie.title)
         movie.genre = request.POST.get('genre', movie.genre)
         movie.additional_genres = request.POST.get('additionalGenres', movie.additional_genres)
-        
+
         release_year = request.POST.get('releaseYear')
         if release_year:
             movie.release_date = f"{release_year}-01-01"
-        
+
         movie.director = request.POST.get('director', movie.director)
         movie.cast = request.POST.get('cast', movie.cast)
-        
+
         duration = request.POST.get('duration')
         if duration:
             movie.duration = int(duration)
-        
+
         movie.rating = request.POST.get('rating', movie.rating)
-        
+
         imdb_rating = request.POST.get('imdbRating')
         if imdb_rating:
             movie.imdb_rating = float(imdb_rating)
-        
+
         movie.description = request.POST.get('description', movie.description)
         movie.poster_url = request.POST.get('poster', movie.poster_url)
         movie.trailer_url = request.POST.get('trailer', movie.trailer_url)
         movie.language = request.POST.get('language', movie.language)
         movie.country = request.POST.get('country', movie.country)
-        
+
         movie.save()
-        
+
         messages.success(request, f'Movie "{movie.title}" has been updated successfully.')
         return redirect('/admin/manage_movies/')
-    
+
     # GET request - show edit form
     movie_data = {
         'id': movie.moID,
@@ -375,13 +444,13 @@ def edit_movie_view(request, movie_id):
         'language': movie.language,
         'country': movie.country,
     }
-    
+
     user_data = {
         'name': request.session.get('user_name'),
         'role': request.session.get('user_role'),
         'type': request.session.get('user_type')
     }
-    
+
     return render(request, 'edit_movie.html', {
         'user': user_data,
         'movie': movie_data
@@ -391,19 +460,145 @@ def edit_movie_view(request, movie_id):
 def delete_movie_view(request, movie_id):
     if 'user_id' not in request.session or request.session.get('user_type') != 'admin':
         return redirect('/login/')
-    
+
     try:
         movie = Movie.objects.get(moID=movie_id)
         movie_title = movie.title
-        
+
         # Delete associated reviews first
         Review.objects.filter(movie_id=movie_id).delete()
-        
+
         # Then delete the movie
         movie.delete()
-        
+
         messages.success(request, f'Movie "{movie_title}" has been deleted successfully.')
     except Movie.DoesNotExist:
         messages.error(request, 'Movie not found.')
-    
+
     return redirect('/admin/manage_movies/')
+# ==========================================
+# New Views for User Pages
+# ==========================================
+
+def movie_list_view(request):
+    if 'user_id' not in request.session or request.session.get('user_type') != 'user':
+        return redirect('/login/')
+    return render(request, 'movie_list.html')
+
+def movie_details_view(request, movie_id):
+    if 'user_id' not in request.session or request.session.get('user_type') != 'user':
+        return redirect('/login/')
+
+    try:
+        movie = Movie.objects.get(moID=movie_id)
+    except Movie.DoesNotExist:
+        messages.error(request, 'Movie not found.')
+        return redirect('movie_list')
+
+    reviews = Review.objects.filter(movie=movie).order_by('-created_at')
+
+    user_id = request.session.get('user_id')
+    user_has_reviewed = Review.objects.filter(movie=movie, user_id=user_id).exists()
+
+    return render(request, 'movie_details.html', {
+        'movie': movie,
+        'reviews': reviews,
+        'user_has_reviewed': user_has_reviewed
+    })
+
+def my_reviews_view(request):
+    if 'user_id' not in request.session or request.session.get('user_type') != 'user':
+        return redirect('/login/')
+
+    user_id = request.session.get('user_id')
+    reviews = Review.objects.filter(user_id=user_id).order_by('-created_at')
+
+    return render(request, 'my_reviews.html', {'reviews': reviews})
+
+def profile_view(request):
+    if 'user_id' not in request.session or request.session.get('user_type') != 'user':
+        return redirect('/login/')
+
+    user_id = request.session.get('user_id')
+    try:
+        user = User.objects.get(id=user_id)
+        reviews_count = Review.objects.filter(user_id=user_id).count()
+
+        return render(request, 'profile.html', {
+            'user': user,
+            'reviews_count': reviews_count
+        })
+    except User.DoesNotExist:
+        request.session.flush()
+        return redirect('/login/')
+
+def settings_view(request):
+    if 'user_id' not in request.session or request.session.get('user_type') != 'user':
+        return redirect('/login/')
+
+    user_id = request.session.get('user_id')
+    try:
+        user = User.objects.get(id=user_id)
+
+        if request.method == 'POST':
+            user.first_name = request.POST.get('first_name', user.first_name)
+            user.last_name = request.POST.get('last_name', user.last_name)
+            user.email = request.POST.get('email', user.email)
+            user.save()
+
+            # Update session name just in case
+            request.session['user_name'] = user.get_full_name()
+
+            messages.success(request, 'Profile updated successfully.')
+            return redirect('profile')
+
+        return render(request, 'settings.html', {'user': user})
+    except User.DoesNotExist:
+        request.session.flush()
+        return redirect('/login/')
+
+def submit_review_view(request, movie_id=None):
+    if 'user_id' not in request.session or request.session.get('user_type') != 'user':
+        return redirect('/login/')
+
+    if request.method == 'POST':
+        movie_id_post = request.POST.get('movie_id') or movie_id
+        rating = request.POST.get('rating')
+        comment = request.POST.get('comment')
+
+        if not all([movie_id_post, rating, comment]):
+            messages.error(request, 'All fields are required.')
+            return redirect('movie_details', movie_id=movie_id_post) if movie_id_post else redirect('movie_list')
+
+        try:
+            movie = Movie.objects.get(moID=movie_id_post)
+            user_id = request.session.get('user_id')
+            user = User.objects.get(id=user_id)
+
+            if Review.objects.filter(user=user, movie=movie).exists():
+                 messages.error(request, 'You have already reviewed this movie.')
+            else:
+                Review.objects.create(
+                    user=user,
+                    movie=movie,
+                    rating=rating,
+                    comment=comment
+                )
+                messages.success(request, 'Review submitted successfully.')
+
+            return redirect('movie_details', movie_id=movie_id_post)
+
+        except Movie.DoesNotExist:
+             messages.error(request, 'Movie not found.')
+             return redirect('movie_list')
+
+    # GET request
+    movie = None
+    if movie_id:
+        try:
+            movie = Movie.objects.get(moID=movie_id)
+        except:
+            pass
+
+    return render(request, 'submit_review.html', {'movie': movie})
+

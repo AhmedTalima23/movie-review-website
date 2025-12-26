@@ -1,7 +1,7 @@
 from django.db import models
 from django.contrib.auth.hashers import check_password
 from django.utils import timezone
- 
+
 
 class User(models.Model):
     first_name = models.CharField(max_length=100)
@@ -27,7 +27,7 @@ class User(models.Model):
     def set_password(self, new_password):
         self.password = new_password
         self.save()
-        
+
 class Movie(models.Model):
     moID = models.AutoField(primary_key=True)
     title = models.CharField(max_length=200)
@@ -57,7 +57,7 @@ class Movie(models.Model):
         return self.director
     def get_moID(self):
         return self.moID
-    
+
 class Review(models.Model):
     reviewID = models.AutoField(primary_key=True)
     user = models.ForeignKey(User, on_delete=models.CASCADE)
@@ -68,7 +68,7 @@ class Review(models.Model):
     admin_response = models.TextField(blank=True, null=True)
     created_at = models.DateTimeField(default=timezone.now)
     updated_at = models.DateTimeField(auto_now=True)
-    
+
 
     def __str__(self):
         return f"Review by {self.user.get_full_name()} for {self.movie.title}"
@@ -79,7 +79,7 @@ class Review(models.Model):
     def get_user(self):
         return self.user
     def get_movie(self):
-        return self.movie   
+        return self.movie
     def set_rating(self, new_rating):
         self.rating = new_rating
         self.save()
@@ -87,9 +87,7 @@ class Review(models.Model):
         return self.movie.moID
     def userID(self):
         return self.user.id
-    def reviewID(self):
-        return self.reviewID
-    
+
 class Admin(models.Model):
     adminID = models.AutoField(primary_key=True)
     first_name = models.CharField(max_length=100)
@@ -99,7 +97,7 @@ class Admin(models.Model):
     role = models.CharField(max_length=50, default='admin')
     created_at = models.DateTimeField(default=timezone.now)
     updated_at = models.DateTimeField(auto_now=True)
-  
+
     def __str__(self):
         return f"Admin: {self.get_full_name()}"
 
@@ -121,4 +119,3 @@ class Admin(models.Model):
 
     def get_adminID(self):
         return self.adminID
-    

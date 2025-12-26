@@ -1,0 +1,220 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Manage Reviews - Admin | MovieReview</title>
+    {% load static %}
+    <link rel="stylesheet" href="{% static 'css/style.css' %}">
+    <link rel="stylesheet" href="{% static 'css/admin.css' %}">
+    <link
+        href="https://fonts.googleapis.com/css2?family=Open+Sans:wght@400;600;700&family=Inter:wght@400;700&display=swap"
+        rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        .status-badge {
+            padding: 0.25rem 0.5rem;
+            border-radius: 3px;
+            font-size: 0.85rem;
+            color: white;
+            display: inline-block;
+        }
+
+        .status-accepted {
+            background: #4CAF50;
+        }
+
+        .status-denied {
+            background: #f44336;
+        }
+
+        .status-pending {
+            background: #FFA500;
+        }
+
+        .row-pending {
+            background-color: rgba(255, 165, 0, 0.05);
+        }
+
+        .row-denied {
+            background-color: rgba(244, 67, 54, 0.05);
+        }
+
+        .message-box {
+            padding: 1rem;
+            border-radius: 5px;
+            text-align: center;
+            margin-bottom: 0.5rem;
+            color: white;
+        }
+
+        .message-success {
+            background-color: #4CAF50;
+        }
+
+        .message-error {
+            background-color: #f44336;
+        }
+    </style>
+</head>
+
+<body>
+    <!-- Admin Navigation Bar -->
+    <nav class="navbar">
+        <div class="container">
+            <div class="navbar-content">
+                <h1><a href="/">Movie<span>Review</span> Admin</a></h1>
+                <ul>
+                    <li><a href="{% url 'admin_home' %}">Dashboard</a></li>
+                    <li><a href="{% url 'add_movie_page' %}">Add Movie</a></li>
+                    <li><a href="{% url 'manage_movies' %}">Manage Movies</a></li>
+                    <li><a href="{% url 'manage_reviews' %}">Manage Reviews</a></li>
+                    <li><a href="{% url 'logout' %}">Logout</a></li>
+                </ul>
+                <div class="bar-icon">☰</div>
+            </div>
+        </div>
+    </nav>
+    <div class="content-with-sidebar no-sidebar">
+        <div class="container">
+            <h2>Manage Reviews</h2>
+            <div class="admin-panel">
+                <!-- Messages -->
+                {% if messages %}
+                <div id="messageArea" style="margin-bottom: 1rem;">
+                    {% for message in messages %}
+                    <div
+                        class="message-box {% if message.tags == 'success' %}message-success{% else %}message-error{% endif %}">
+                        {{ message }}
+                    </div>
+                    {% endfor %}
+                </div>
+                {% endif %}
+
+                <!-- Filter (Optional Implementation later, for now just show all) -->
+                <!-- <div style="margin-bottom: 1rem;">
+                    <label style="color: var(--secondary-color); margin-right: 1rem;">
+                        <input type="checkbox" id="showPendingOnly" style="margin-right: 0.5rem;">
+                        Show pending reviews only
+                    </label>
+                </div> -->
+
+                <table class="admin-table">
+                    <thead>
+                        <tr style="background:#333;">
+                            <th style="padding:10px;">Movie</th>
+                            <th>User</th>
+                            <th>Review</th>
+                            <th>Status</th>
+                            <th>Date</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody id="reviewsTableBody">
+                        {% for review in reviews %}
+                        <tr
+                            class="{% if review.status == 'pending' %}row-pending{% elif review.status == 'rejected' %}row-denied{% endif %}">
+                            <td>{{ review.movie.title }}</td>
+                            <td>{{ review.user.first_name }} {{ review.user.last_name }}</td>
+                            <td style="max-width: 400px; word-wrap: break-word;">
+                                <span style="color: var(--accent-color); font-weight: bold; margin-right: 0.5rem;">⭐  {{ review.rating|default:'N/A' }}/10</span>
+                                {{ review.comment|truncatechars:100 }}
+                            </td>
+                            <td>
+                                {% if review.status == 'approved' %}
+                                <span class="status-badge status-accepted">Accepted</span>
+                                {% elif review.status == 'rejected' %}
+                                <span class="status-badge status-denied">Denied</span>
+                                {% else %}
+                                <span class="status-badge status-pending">Pending</span>
+                                {% endif %}
+                            </td>
+                            <td>{{ review.created_at|date:"M d, Y" }}</td>
+                            <td>
+                                {% if review.status == 'pending' %}
+                                <a href="{% url 'approve_review' review.reviewID %}" class="btn"
+                                    style="background: #4CAF50; margin-right: 0.5rem; text-decoration: none; padding: 8px 12px; display: inline-block; font-size: 0.9rem;"
+                                    title="Accept">
+                                    <i class="fas fa-check"></i> Accept
+                                </a>
+                                <button class="btn" style="background: #f44336; padding: 8px 12px; font-size: 0.9rem;"
+                                    onclick="openDenyModal('{{ review.reviewID }}', '{{ review.movie.title|escapejs }}')"
+                                    title="Deny">
+                                    <i class="fas fa-times"></i> Deny
+                                </button>
+                                {% endif %}
+                            </td>
+                        </tr>
+                        {% empty %}
+                        <tr>
+                            <td colspan="6" style="text-align: center; padding: 2rem; color: #999;">
+                                No reviews found.
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <!-- Deny Review Modal -->
+    <div id="denyReviewModal"
+        style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background-color: rgba(0, 0, 0, 0.7); z-index: 1000; justify-content: center; align-items: center;">
+        <div
+            style="background: #222; padding: 2rem; border-radius: 8px; box-shadow: 0 4px 6px rgba(0, 0, 0, 0.3); max-width: 500px; width: 90%; color: white;">
+            <h3 style="margin-top: 0; color: white; margin-bottom: 1rem;">Deny Review</h3>
+            <p id="denyMovieTitle" style="color: #aaa; margin-bottom: 1rem;"></p>
+
+            <form id="denyForm" method="POST">
+                {% csrf_token %}
+                <label style="display: block; margin-bottom: 0.5rem; color: #ccc;">Reason for Denial:</label>
+                <textarea name="reason" placeholder="Enter reason for denying this review..." required
+                    style="width: 100%; height: 120px; padding: 0.75rem; border: 1px solid #444; background: #333; color: white; border-radius: 4px; font-family: sans-serif; resize: vertical; margin-bottom: 1.5rem;"></textarea>
+
+                <div style="display: flex; gap: 1rem; justify-content: flex-end;">
+                    <button type="button" onclick="closeDenyModal()"
+                        style="background: #555; color: white; border: none; padding: 0.75rem 1.5rem; border-radius: 4px; cursor: pointer;">Cancel</button>
+                    <button type="submit"
+                        style="background: #f44336; color: white; border: none; padding: 0.75rem 1.5rem; border-radius: 4px; cursor: pointer;">Deny
+                        Review</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer>
+        <div class="container">
+            <p>&copy; 2025 MovieReview. All rights reserved.</p>
+            <p>Admin Dashboard - Manage your movie review platform.</p>
+        </div>
+    </footer>
+
+    <script>
+        function openDenyModal(reviewId, movieTitle) {
+            document.getElementById('denyMovieTitle').textContent = 'Movie: ' + movieTitle;
+            const form = document.getElementById('denyForm');
+            // Dynamically set the action URL using the review ID
+            // Using a placeholder pattern or constructing the URL string manually
+            form.action = "/admin/reviews/reject/" + reviewId + "/";
+
+            document.getElementById('denyReviewModal').style.display = 'flex';
+        }
+
+        function closeDenyModal() {
+            document.getElementById('denyReviewModal').style.display = 'none';
+        }
+
+        // Close modal if clicking outside
+        window.onclick = function (event) {
+            const modal = document.getElementById('denyReviewModal');
+            if (event.target == modal) {
+                closeDenyModal();
+            }
+        }
+    </script>
+</body>
+
+</html>

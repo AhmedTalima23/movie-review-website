@@ -1,14 +1,18 @@
 <!DOCTYPE html>
 {% load static %}
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>MovieReview - Discover & Review Movies</title>
-    
+
     <link rel="stylesheet" href="{% static 'css/style.css' %}">
-    <link href="https://fonts.googleapis.com/css2?family=Open+Sans:wght@400;600;700&family=Inter:wght@400;700&display=swap" rel="stylesheet">
+    <link
+        href="https://fonts.googleapis.com/css2?family=Open+Sans:wght@400;600;700&family=Inter:wght@400;700&display=swap"
+        rel="stylesheet">
 </head>
+
 <body>
 
     <!-- Navigation Bar -->
@@ -32,29 +36,51 @@
             <div class="header-content">
                 <div class="header-text">
                     <h2 id="headerTitle">Discover. Review. Rate.</h2>
-                    <p id="headerSubtext">Join our community of movie lovers! Read reviews, share your opinions, and explore a world of cinematic stories.</p>
+                    <p id="headerSubtext">Join our community of movie lovers! Read reviews, share your opinions, and
+                        explore a world of cinematic stories.</p>
                     <div class="header-btn" id="headerButtons">
                         <a href="/signup/" class="book-btn" id="getStartedBtn">Get Started</a>
                     </div>
                 </div>
                 <div class="header-img">
-                    <img src="{% static 'img/movies/samuel-regan-asante-wMkaMXTJjlQ-unsplash.jpg' %}" alt="Movie Collection">
+                    <img src="{% static 'img/movies/samuel-regan-asante-wMkaMXTJjlQ-unsplash.jpg' %}"
+                        alt="Movie Collection">
                 </div>
             </div>
         </div>
     </header>
 
     <!-- Featured Movies Section -->
-    <section class="container">
+    <!-- <section class="container">
         <div class="head-style">
             <h2>Featured Movies</h2>
             <p>Popular <span>This Week</span></p>
         </div>
 
         <div class="movie-list" id="movie-list">
-            <p>Loading movies...</p>
+            {% if movies %}
+            {% for movie in movies %}
+            <div class="movie">
+                {% if movie.poster_url %}
+                <img src="{{ movie.poster_url }}" alt="{{ movie.title }}">
+                {% else %}
+                <img src="{% static 'img/movies/default.jpg' %}" alt="{{ movie.title }}">
+                {% endif %}
+                <div class="movie-info">
+                    <h3>{{ movie.title }}</h3>
+                    <p><strong>Genre:</strong> {{ movie.genre }} | <strong>Year:</strong> {{ movie.release_date|date:"Y"
+                        }} | <strong>Director:</strong> {{ movie.director }}</p>
+                    <p>{{ movie.description|truncatewords:20 }}</p>
+                    <a href="{% url 'movie_details' movie.moID %}" class="btn view-details-btn">View Details</a>
+                    <a href="{% url 'submit_review' movie.moID %}" class="btn add-review add-review-btn">Add Review</a>
+                </div>
+            </div>
+            {% endfor %}
+            {% else %}
+            <p>No movies available at the moment.</p>
+            {% endif %}
         </div>
-    </section>
+    </section> -->
 
     <!-- Footer -->
     <footer>
@@ -139,7 +165,7 @@
             const addReviewBtns = document.querySelectorAll('.add-review-btn');
 
             viewDetailsBtns.forEach(btn => {
-                btn.addEventListener('click', function(e) {
+                btn.addEventListener('click', function (e) {
                     if (!isLoggedIn()) {
                         e.preventDefault();
                         if (confirm('Please login to view movie details. Would you like to go to the login page?')) {
@@ -151,7 +177,7 @@
             });
 
             addReviewBtns.forEach(btn => {
-                btn.addEventListener('click', function(e) {
+                btn.addEventListener('click', function (e) {
                     if (!isLoggedIn()) {
                         e.preventDefault();
                         if (confirm('Please login to add a review. Would you like to go to the login page?')) {
@@ -163,51 +189,12 @@
             });
         }
 
-        // Load movies from database
-        function loadMovies() {
-            const movieList = document.getElementById('movie-list');
-            movieList.innerHTML = '<p>Loading movies...</p>';
-            fetch('/get_movies/')
-                .then(response => {
-                    if (!response.ok) {
-                        throw new Error('Network response was not ok');
-                    }
-                    return response.json();
-                })
-                .then(data => {
-                    movieList.innerHTML = '';
-                    if (data.length === 0) {
-                        movieList.innerHTML = '<p>No movies available at the moment.</p>';
-                    } else {
-                        data.forEach(movie => {
-                            const movieDiv = document.createElement('div');
-                            movieDiv.className = 'movie';
-                            movieDiv.innerHTML = `
-                                ${movie.poster_url ? `<img src="${movie.poster_url}" alt="${movie.title}">` : ''}
-                                <div class="movie-info">
-                                    <h3>${movie.title}</h3>
-                                    <p><strong>Genre:</strong> ${movie.genre} | <strong>Year:</strong> ${new Date(movie.release_date).getFullYear()} | <strong>Director:</strong> ${movie.director}</p>
-                                    <p>A great movie to watch.</p>
-                                    <a href="pages/user/movie_details.html?movie=${movie.moID}" class="btn view-details-btn">View Details</a>
-                                    <a href="pages/user/submit_review.html?movie=${movie.moID}" class="btn add-review add-review-btn">Add Review</a>
-                                </div>
-                            `;
-                            movieList.appendChild(movieDiv);
-                        });
-                    }
-                })
-                .catch(error => {
-                    console.error('Error loading movies:', error);
-                    movieList.innerHTML = '<p>Failed to load movies. Please try again later.</p>';
-                });
-        }
-
         // Initialize on page load
-        document.addEventListener('DOMContentLoaded', function() {
+        document.addEventListener('DOMContentLoaded', function () {
             updateNavigation();
             setupMovieLinks();
-            loadMovies();
         });
     </script>
 </body>
+
 </html>
