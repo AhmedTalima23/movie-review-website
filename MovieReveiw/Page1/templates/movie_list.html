@@ -1,0 +1,264 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Browse Movies - MovieReview</title>
+    <link rel="stylesheet" href="{% static 'css/style.css' %}">
+    <link
+        href="https://fonts.googleapis.com/css2?family=Open+Sans:wght@400;600;700&family=Inter:wght@400;700&display=swap"
+        rel="stylesheet">
+    <style>
+        /* Add some basic styles for the filter/search if missing from global css */
+        .search-filter-wrapper {
+            display: flex;
+            gap: 1rem;
+            margin-top: 1rem;
+        }
+
+        .search-input {
+            padding: 0.5rem;
+            border-radius: 4px;
+            border: 1px solid #ddd;
+            flex-grow: 1;
+        }
+
+        .filter-select {
+            padding: 0.5rem;
+            border-radius: 4px;
+            border: 1px solid #ddd;
+        }
+    </style>
+</head>
+
+<body>
+    <!-- Navbar -->
+    <nav class="navbar">
+        <div class="container">
+            <div class="navbar-content">
+                <h1><a href="{% url 'user_home' %}">Movie<span>Review</span></a></h1>
+                <ul>
+                    <li><a href="{% url 'user_home' %}">Home</a></li>
+                    <li><a href="{% url 'movie_list' %}" class="active">Browse Movies</a></li>
+                    <li><a href="{% url 'my_reviews' %}">My Reviews</a></li>
+                    <li><a href="{% url 'profile' %}">Profile</a></li>
+                    <li><a href="{% url 'logout' %}">Logout</a></li>
+                </ul>
+                <div class="bar-icon">☰</div>
+            </div>
+        </div>
+    </nav>
+
+    <section class="hero-browse">
+        <div class="container">
+            <div class="hero-content">
+                <h2>Discover Cinematic Excellence</h2>
+                <p>Explore thousands of movies from every genre and era</p>
+
+                <div class="search-filter-wrapper">
+                    <input type="text" id="searchInput" placeholder="Search for movies, actors, directors..."
+                        class="search-input">
+                    <select id="genreFilter" class="filter-select">
+                        <option value="">All Genres</option>
+                        <!-- Genres will be populated dynamically -->
+                    </select>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section class="movie-browse">
+        <div class="browse-container">
+            <div class="stats-bar">
+                <div class="stat-item">
+                    <span class="stat-number" id="totalMoviesCount">0</span>
+                    <span class="stat-label">Movies</span>
+                </div>
+                <!--
+                <div class="stat-item">
+                    <span class="stat-number" id="totalReviewsCount">0</span>
+                    <span class="stat-label">Reviews</span>
+                </div>
+                -->
+            </div>
+
+            <div class="filter-tabs">
+                <a href="#" class="filter-tab active" data-filter="all">All Movies</a>
+                <!-- <a href="#" class="filter-tab" data-filter="trending">Trending Now</a>
+                <a href="#" class="filter-tab" data-filter="top-rated">Top Rated</a>
+                <a href="#" class="filter-tab" data-filter="new-releases">New Releases</a> -->
+            </div>
+
+            <div id="noResults" class="no-results"
+                style="display: none; text-align: center; padding: 3rem; color: var(--secondary-color);">
+                <h3>No movies found</h3>
+                <p>Try adjusting your search criteria or filter options.</p>
+            </div>
+
+            <div class="movie-grid" id="movieGrid">
+                <p style="text-align: center; color: #999; padding: 2rem; grid-column: 1 / -1;">Loading movies...</p>
+            </div>
+
+            <!--
+            <div class="load-more">
+                <a href="#" class="load-more-btn">Load More Movies</a>
+            </div>
+            -->
+        </div>
+    </section>
+
+    <footer>
+        <div class="container">
+            <p>&copy; 2025 MovieReview. All rights reserved.</p>
+            <p>Discover, Review, and Rate your favorite movies.</p>
+        </div>
+    </footer>
+
+    <script>
+        // Global variables
+        let allMovies = [];
+
+        // Function to generate movie ID from title (fallback)
+        function generateMovieId(title) {
+            return title.toLowerCase()
+                .replace(/[^a-z0-9]+/g, '-')
+                .replace(/^-+|-+$/g, '');
+        }
+
+        // Fetch movies from API
+        function loadMovies() {
+            const movieGrid = document.getElementById('movieGrid');
+            movieGrid.innerHTML = '<p style="text-align: center; color: #999; padding: 2rem; grid-column: 1 / -1;">Loading movies...</p>';
+
+            fetch('/get_movies/')
+                .then(response => response.json())
+                .then(movies => {
+                    allMovies = movies;
+                    displayMovies(allMovies);
+                    populateGenreFilter(allMovies);
+                    updateStats(allMovies);
+                })
+                .catch(error => {
+                    console.error('Error loading movies:', error);
+                    movieGrid.innerHTML = '<p style="text-align: center; color: #999; padding: 2rem;">Error loading movies. Please try again later.</p>';
+                });
+        }
+
+        function displayMovies(movies) {
+            const movieGrid = document.getElementById('movieGrid');
+            if (movies.length === 0) {
+                movieGrid.innerHTML = '<p style="text-align: center; color: #999; padding: 2rem; grid-column: 1 / -1;">No movies found.</p>';
+                document.getElementById('noResults').style.display = 'block';
+                return;
+            }
+            document.getElementById('noResults').style.display = 'none';
+
+            movieGrid.innerHTML = movies.map(movie => {
+                const movieId = movie.moID || movie.id;
+                const title = movie.title || 'Untitled';
+                const genre = movie.genre || 'N/A';
+                const year = movie.release_date ? new Date(movie.release_date).getFullYear() : 'N/A';
+                const imageSrc = movie.poster_url || '{% static "img/movies/default.jpg" %}';
+                const rating = 'N/A'; // Fetching average rating requires more logic/API
+
+                // Construct URL for details page
+                const detailsUrl = `{% url 'movie_details' 0 %}`.replace('0', movieId);
+
+                return `
+                    <div class="movie-card"
+                         data-title="${title.toLowerCase()}"
+                         data-genre="${genre.toLowerCase()}"
+                         data-year="${year}">
+                        <div class="movie-card-img">
+                            <!-- <div class="rating-badge">⭐ ${rating}</div> -->
+                            <img src="${imageSrc}" alt="${title.replace(/"/g, '&quot;')}" onerror="this.src='{% static 'img/movies/default.jpg' %}'">
+                        </div>
+                        <div class="movie-info">
+                            <h3>${title}</h3>
+                            <p>${genre} | ${year}</p>
+                            <a href="${detailsUrl}" class="btn">View Details →</a>
+                        </div>
+                    </div>
+                `;
+            }).join('');
+        }
+
+        // Filter Logic
+        function filterMovies() {
+            const searchTerm = document.getElementById('searchInput').value.toLowerCase();
+            const selectedGenre = document.getElementById('genreFilter').value.toLowerCase();
+
+            const filtered = allMovies.filter(movie => {
+                const title = (movie.title || '').toLowerCase();
+                const genre = (movie.genre || '').toLowerCase();
+                const year = movie.release_date ? new Date(movie.release_date).getFullYear().toString() : '';
+                const director = (movie.director || '').toLowerCase();
+
+                const matchesSearch = title.includes(searchTerm) || genre.includes(searchTerm) || year.includes(searchTerm) || director.includes(searchTerm);
+                const matchesGenre = selectedGenre === '' || genre.includes(selectedGenre);
+
+                return matchesSearch && matchesGenre;
+            });
+
+            displayMovies(filtered);
+        }
+
+        // Stats
+        function updateStats(movies) {
+            document.getElementById('totalMoviesCount').textContent = movies.length;
+        }
+
+        // Genres
+        function populateGenreFilter(movies) {
+            // Standard comprehensive list of genres
+            const STANDARD_GENRES = [
+                "Action", "Adventure", "Animation", "Biography", "Comedy",
+                "Crime", "Documentary", "Drama", "Family", "Fantasy",
+                "History", "Horror", "Music", "Musical", "Mystery",
+                "Romance", "Sci-Fi", "Sport", "Thriller", "War", "Western"
+            ];
+
+            // Initialize set with standard genres
+            const genres = new Set(STANDARD_GENRES);
+
+            // Add any other genres found in the movies
+            movies.forEach(m => {
+                if (m.genre) {
+                    m.genre.split(',').forEach(g => {
+                        const trimmedGenre = g.trim();
+                        if (trimmedGenre) {
+                            genres.add(trimmedGenre);
+                        }
+                    });
+                }
+            });
+
+            const genreSelect = document.getElementById('genreFilter');
+            // Keep first option
+            const firstOpt = genreSelect.options[0];
+            genreSelect.innerHTML = '';
+            genreSelect.appendChild(firstOpt);
+
+            // Sort and append options
+            Array.from(genres).sort().forEach(g => {
+                const opt = document.createElement('option');
+                opt.value = g;
+                opt.textContent = g;
+                genreSelect.appendChild(opt);
+            });
+        }
+
+        // Setup Events
+        document.addEventListener('DOMContentLoaded', function () {
+            loadMovies();
+
+            document.getElementById('searchInput').addEventListener('input', filterMovies);
+            document.getElementById('genreFilter').addEventListener('change', filterMovies);
+        });
+
+    </script>
+</body>
+
+</html>

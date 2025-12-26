@@ -1,0 +1,365 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Manage Reviews - Admin | MovieReview</title>
+    {% load static %}
+    <link rel="stylesheet" href="{% static 'css/style.css' %}">
+    <link rel="stylesheet" href="{% static 'css/admin.css' %}">
+    <link
+        href="https://fonts.googleapis.com/css2?family=Open+Sans:wght@400;600;700&family=Inter:wght@400;700&display=swap"
+        rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        .status-badge {
+            padding: 0.25rem 0.5rem;
+            border-radius: 3px;
+            font-size: 0.85rem;
+            color: white;
+            display: inline-block;
+        }
+
+        .status-accepted {
+            background: #4CAF50;
+        }
+
+        .status-denied {
+            background: #f44336;
+        }
+
+        .status-pending {
+            background: #FFA500;
+        }
+
+        .row-pending {
+            background-color: rgba(255, 165, 0, 0.05);
+        }
+
+        .row-denied {
+            background-color: rgba(244, 67, 54, 0.05);
+        }
+
+        .message-box {
+            padding: 1rem;
+            border-radius: 5px;
+            text-align: center;
+            margin-bottom: 0.5rem;
+            color: white;
+        }
+
+        .message-success {
+            background-color: #4CAF50;
+        }
+
+        .message-error {
+            background-color: #f44336;
+        }
+    </style>
+</head>
+
+<body>
+    <!-- Admin Navigation Bar -->
+    <nav class="navbar">
+        <div class="container">
+            <div class="navbar-content">
+                <h1><a href="/">Movie<span>Review</span> Admin</a></h1>
+                <ul>
+                    <li><a href="{% url 'admin_home' %}">Dashboard</a></li>
+                    <li><a href="{% url 'add_movie_page' %}">Add Movie</a></li>
+                    <li><a href="{% url 'manage_movies' %}">Manage Movies</a></li>
+                    <li><a href="{% url 'manage_reviews' %}">Manage Reviews</a></li>
+                    <li><a href="{% url 'logout' %}">Logout</a></li>
+                </ul>
+                <div class="bar-icon">☰</div>
+            </div>
+        </div>
+    </nav>
+    <div class="content-with-sidebar no-sidebar">
+        <div class="container">
+            <h2>Manage Reviews</h2>
+            <div class="admin-panel">
+                <!-- Messages -->
+                {% if messages %}
+                <div id="messageArea" style="margin-bottom: 1rem;">
+                    {% for message in messages %}
+                    <div
+                        class="message-box {% if message.tags == 'success' %}message-success{% else %}message-error{% endif %}">
+                        {{ message }}
+                    </div>
+                    {% endfor %}
+                </div>
+                {% endif %}
+
+                <!-- Filter (Optional Implementation later, for now just show all) -->
+                <!-- <div style="margin-bottom: 1rem;">
+                    <label style="color: var(--secondary-color); margin-right: 1rem;">
+                        <input type="checkbox" id="showPendingOnly" style="margin-right: 0.5rem;">
+                        Show pending reviews only
+                    </label>
+                </div> -->
+
+                <table class="admin-table">
+                    <thead>
+                        <tr style="background:#333;">
+                            <th style="padding:10px;">Movie</th>
+                            <th>User</th>
+                            <th>Review</th>
+                            <th>Status</th>
+                            <th>Date</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody id="reviewsTableBody">
+                        {% for review in reviews %}
+                        <tr id="review-row-{{ review.reviewID }}"
+                            class="{% if review.status == 'pending' %}row-pending{% elif review.status == 'rejected' %}row-denied{% endif %}">
+                            <td>{{ review.movie.title }}</td>
+                            <td>{{ review.user.first_name }} {{ review.user.last_name }}</td>
+                            <td style="max-width: 400px; word-wrap: break-word;">
+                                <span style="color: var(--accent-color); font-weight: bold; margin-right: 0.5rem;">⭐{{ review.rating|default:'N/A' }}/10</span>
+                                {{ review.comment|truncatechars:100 }}
+                            </td>
+                            <td>
+                                {% if review.status == 'approved' %}
+                                <span class="status-badge status-accepted">Accepted</span>
+                                {% elif review.status == 'rejected' %}
+                                <span class="status-badge status-denied">Denied</span>
+                                {% else %}
+                                <span class="status-badge status-pending">Pending</span>
+                                {% endif %}
+                            </td>
+                            <td>{{ review.created_at|date:"M d, Y" }}</td>
+                            <td>
+                                {% if review.status == 'pending' %}
+                                <button class="btn"
+                                    style="background: #4CAF50; margin-right: 0.5rem; padding: 8px 12px; font-size: 0.9rem;"
+                                    onclick="approveReview(event, '{{ review.reviewID }}')" title="Accept">
+                                    <i class="fas fa-check"></i> Accept
+                                </button>
+                                <button class="btn" style="background: #f44336; padding: 8px 12px; font-size: 0.9rem;"
+                                    onclick="openDenyModal('{{ review.reviewID }}', '{{ review.movie.title|escapejs }}')"
+                                    title="Deny">
+                                    <i class="fas fa-times"></i> Deny
+                                </button>
+                                {% endif %}
+                            </td>
+                        </tr>
+                        {% empty %}
+                        <tr>
+                            <td colspan="6" style="text-align: center; padding: 2rem; color: #999;">
+                                No reviews found.
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <!-- Deny Review Modal -->
+    <div id="denyReviewModal"
+        style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background-color: rgba(0, 0, 0, 0.7); z-index: 1000; justify-content: center; align-items: center;">
+        <div
+            style="background: #222; padding: 2rem; border-radius: 8px; box-shadow: 0 4px 6px rgba(0, 0, 0, 0.3); max-width: 500px; width: 90%; color: white;">
+            <h3 style="margin-top: 0; color: white; margin-bottom: 1rem;">Deny Review</h3>
+            <p id="denyMovieTitle" style="color: #aaa; margin-bottom: 1rem;"></p>
+            <input type="hidden" id="currentReviewId">
+
+            <form id="denyForm" method="POST">
+                {% csrf_token %}
+                <label style="display: block; margin-bottom: 0.5rem; color: #ccc;">Reason for Denial:</label>
+                <textarea name="reason" placeholder="Enter reason for denying this review..." required
+                    style="width: 100%; height: 120px; padding: 0.75rem; border: 1px solid #444; background: #333; color: white; border-radius: 4px; font-family: sans-serif; resize: vertical; margin-bottom: 1.5rem;"></textarea>
+
+                <div style="display: flex; gap: 1rem; justify-content: flex-end;">
+                    <button type="button" onclick="closeDenyModal()"
+                        style="background: #555; color: white; border: none; padding: 0.75rem 1.5rem; border-radius: 4px; cursor: pointer;">Cancel</button>
+                    <button type="submit"
+                        style="background: #f44336; color: white; border: none; padding: 0.75rem 1.5rem; border-radius: 4px; cursor: pointer;">Deny
+                        Review</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer>
+        <div class="container">
+            <p>&copy; 2025 MovieReview. All rights reserved.</p>
+            <p>Admin Dashboard - Manage your movie review platform.</p>
+        </div>
+    </footer>
+
+    <script>
+        function getCSRFToken() {
+            const name = 'csrftoken';
+            let cookieValue = null;
+            if (document.cookie && document.cookie !== '') {
+                const cookies = document.cookie.split(';');
+                for (let i = 0; i < cookies.length; i++) {
+                    const cookie = cookies[i].trim();
+                    if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                        cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                        break;
+                    }
+                }
+            }
+            return cookieValue;
+        }
+
+        function showMessage(message, type) {
+            const messageArea = document.getElementById('messageArea') || createMessageArea();
+            messageArea.innerHTML = ''; // Clear previous messages
+
+            const div = document.createElement('div');
+            div.className = `message-box ${type === 'success' ? 'message-success' : 'message-error'}`;
+            div.textContent = message;
+            messageArea.appendChild(div);
+
+            // Auto remove after 3s
+            setTimeout(() => {
+                div.remove();
+                if (messageArea.children.length === 0) messageArea.remove();
+            }, 3000);
+        }
+
+        function createMessageArea() {
+            const area = document.createElement('div');
+            area.id = 'messageArea';
+            area.style.marginBottom = '1rem';
+            const panel = document.querySelector('.admin-panel');
+            panel.insertBefore(area, panel.firstChild);
+            return area;
+        }
+
+        function updateRowStatus(reviewId, status) {
+            // Find the row
+            // Note: We need a way to identify the row.
+            // Better to add ID to TR or find button's parent TR
+            // For now, since we pass event to approve, we can use that.
+            // But for reject modal, we use ID. So let's rely on ID selector if we add it, or just reload?
+            // "Ajax" implies no reload.
+            // Let's modify the buttons to pass 'this' or rely on finding the row.
+
+            // Actually, best approach is to add id="review-row-{{review.reviewID}}" to the TR in the loop.
+            // But since I can't easily edit the whole loop without large replace...
+            // I will assume I can find it via querySelector using a data attribute or similar if I added it.
+            // Wait, I didn't add data attribute or ID to TR earlier.
+            // I'll try to find it by iterating rows or just use reload if complex?
+            // No, task is Ajax.
+            // I will add `id="review-row-{{ review.reviewID }}"` to the TR in a separate chunk.
+
+            const row = document.getElementById(`review-row-${reviewId}`);
+            if (row) {
+                const statusCell = row.cells[3];
+                const actionsCell = row.cells[5];
+
+                row.className = status === 'approved' ? '' : 'row-denied'; // Clear pending class, add denied if rejected
+
+                if (status === 'approved') {
+                    statusCell.innerHTML = '<span class="status-badge status-accepted">Accepted</span>';
+                } else {
+                    statusCell.innerHTML = '<span class="status-badge status-denied">Denied</span>';
+                }
+
+                actionsCell.innerHTML = ''; // Remove buttons
+            }
+        }
+
+        function approveReview(event, reviewId) {
+            if (!confirm('Are you sure you want to approve this review?')) return;
+
+            const btn = event.currentTarget;
+            const originalText = btn.innerHTML;
+            btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i>';
+            btn.disabled = true;
+
+            fetch(`/admin/reviews/approve/${reviewId}/`, {
+                method: 'POST',
+                headers: {
+                    'X-CSRFToken': getCSRFToken(),
+                    'Content-Type': 'application/json'
+                }
+            })
+                .then(res => res.json())
+                .then(data => {
+                    if (data.success) {
+                        showMessage(data.message, 'success');
+                        updateRowStatus(reviewId, 'approved');
+                    } else {
+                        showMessage(data.message, 'error');
+                        btn.innerHTML = originalText;
+                        btn.disabled = false;
+                    }
+                })
+                .catch(err => {
+                    console.error(err);
+                    showMessage('An error occurred.', 'error');
+                    btn.innerHTML = originalText;
+                    btn.disabled = false;
+                });
+        }
+
+        function openDenyModal(reviewId, movieTitle) {
+            document.getElementById('denyMovieTitle').textContent = 'Movie: ' + movieTitle;
+            document.getElementById('currentReviewId').value = reviewId; // Store ID in hidden input
+            document.getElementById('denyReviewModal').style.display = 'flex';
+        }
+
+        function closeDenyModal() {
+            document.getElementById('denyReviewModal').style.display = 'none';
+        }
+
+        document.getElementById('denyForm').addEventListener('submit', function (e) {
+            e.preventDefault();
+            const reviewId = document.getElementById('currentReviewId').value;
+            const reason = this.reason.value;
+            const btn = this.querySelector('button[type="submit"]');
+            const originalText = btn.innerHTML;
+
+            btn.innerHTML = 'Processing...';
+            btn.disabled = true;
+
+            fetch(`/admin/reviews/reject/${reviewId}/`, {
+                method: 'POST',
+                headers: {
+                    'X-CSRFToken': getCSRFToken(),
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ reason: reason })
+            })
+                .then(res => res.json())
+                .then(data => {
+                    if (data.success) {
+                        showMessage(data.message, 'success');
+                        updateRowStatus(reviewId, 'rejected');
+                        closeDenyModal();
+                        this.reset();
+                    } else {
+                        showMessage(data.message, 'error');
+                    }
+                })
+                .catch(err => {
+                    console.error(err);
+                    showMessage('An error occurred.', 'error');
+                })
+                .finally(() => {
+                    btn.innerHTML = originalText;
+                    btn.disabled = false;
+                });
+        });
+
+        // Close modal if clicking outside
+        window.onclick = function (event) {
+            const modal = document.getElementById('denyReviewModal');
+            if (event.target == modal) {
+                closeDenyModal();
+            }
+        }
+    </script>
+</body>
+
+</html>

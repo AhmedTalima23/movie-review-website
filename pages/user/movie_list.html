@@ -122,16 +122,16 @@
         function initializeDefaultMovies() {
             const existingMovies = getMoviesArray();
             const defaultMovieIds = ['the-shawshank-redemption', 'the-dark-knight', 'the-godfather'];
-            
+
             // Check if default movies exist
             const existingMovieIds = existingMovies.map(m => m.movieId || m.id || generateMovieId(m.title));
             const missingDefaults = defaultMovieIds.filter(id => !existingMovieIds.includes(id));
-            
+
             // If all default movies exist, no need to initialize
             if (missingDefaults.length === 0) {
                 return false;
             }
-            
+
             // Add missing default movies
             const defaultMovies = [
                 {
@@ -192,11 +192,11 @@
                     createdAt: new Date().toISOString()
                 }
             ];
-            
+
             // Add only missing default movies
             const moviesToAdd = defaultMovies.filter(movie => missingDefaults.includes(movie.movieId));
             const updatedMovies = [...existingMovies, ...moviesToAdd];
-            
+
             saveMoviesArray(updatedMovies);
             console.log(`Added ${moviesToAdd.length} default movie(s) to localStorage`);
             return moviesToAdd.length > 0;
@@ -215,12 +215,12 @@
                 const id = m.movieId || m.id || generateMovieId(m.title);
                 return id === movieId;
             });
-            
+
             // Return IMDb rating if available, otherwise return null
             if (movie && movie.imdbRating !== undefined && movie.imdbRating !== null) {
                 return parseFloat(movie.imdbRating).toFixed(1);
             }
-            
+
             return null;
         }
 
@@ -242,14 +242,14 @@
                     reviewCount: getReviewCount(movieId)
                 };
             });
-            
+
             // Sort by review count (descending)
             moviesWithReviews.sort((a, b) => b.reviewCount - a.reviewCount);
-            
+
             // Get the top 30% of movies with reviews, or at least top 3
             const moviesWithAnyReviews = moviesWithReviews.filter(m => m.reviewCount > 0);
             const topCount = Math.max(3, Math.ceil(moviesWithAnyReviews.length * 0.3));
-            
+
             // Return movieIds of top-rated movies
             return moviesWithAnyReviews.slice(0, topCount).map(m => m.movieId);
         }
@@ -260,23 +260,23 @@
             const year = movie.releaseYear || movie.year || 0;
             const currentYear = new Date().getFullYear();
             const movieId = movie.movieId || movie.id || generateMovieId(movie.title);
-            
+
             // Top rated if it's in the top-rated list
             if (topRatedMovieIds.includes(movieId)) {
                 categories.push('top-rated');
             }
-            
+
             // Trending if it has at least 2 approved reviews
             const reviewCount = getReviewCount(movieId);
             if (reviewCount >= 2) {
                 categories.push('trending');
             }
-            
+
             // New releases if released in last 5 years
             if (year >= currentYear - 5) {
                 categories.push('new-releases');
             }
-            
+
             return categories.length > 0 ? categories.join(',') : 'all';
         }
 
@@ -284,7 +284,7 @@
         function getAllGenres() {
             const movies = getMoviesArray();
             const genresSet = new Set();
-            
+
             movies.forEach(movie => {
                 if (movie.genre) {
                     genresSet.add(movie.genre.toLowerCase());
@@ -296,7 +296,7 @@
                     });
                 }
             });
-            
+
             return Array.from(genresSet).sort();
         }
 
@@ -304,13 +304,13 @@
         function populateGenreFilter() {
             const genreFilter = document.getElementById('genreFilter');
             if (!genreFilter) return;
-            
+
             const genres = getAllGenres();
             const currentValue = genreFilter.value;
-            
+
             // Clear existing options except "All Genres"
             genreFilter.innerHTML = '<option value="">All Genres</option>';
-            
+
             // Add genres
             genres.forEach(genre => {
                 const option = document.createElement('option');
@@ -318,7 +318,7 @@
                 option.textContent = genre.charAt(0).toUpperCase() + genre.slice(1);
                 genreFilter.appendChild(option);
             });
-            
+
             // Restore previous selection if it still exists
             if (currentValue) {
                 genreFilter.value = currentValue;
@@ -329,21 +329,21 @@
         function updateStats() {
             const movies = getMoviesArray();
             let totalReviews = 0;
-            
+
             movies.forEach(movie => {
                 const movieId = movie.movieId || movie.id || generateMovieId(movie.title);
                 const reviews = getReviews(movieId);
                 const approvedReviews = reviews.filter(r => r.approved === true);
                 totalReviews += approvedReviews.length;
             });
-            
+
             const users = localStorage.getItem('users');
             const userCount = users ? JSON.parse(users).length : 0;
-            
+
             const totalMoviesEl = document.getElementById('totalMoviesCount');
             const totalReviewsEl = document.getElementById('totalReviewsCount');
             const totalUsersEl = document.getElementById('totalUsersCount');
-            
+
             if (totalMoviesEl) totalMoviesEl.textContent = movies.length;
             if (totalReviewsEl) totalReviewsEl.textContent = totalReviews;
             if (totalUsersEl) totalUsersEl.textContent = userCount;
@@ -355,7 +355,7 @@
             if (!movieGrid) return;
 
             const movies = getMoviesArray();
-            
+
             if (movies.length === 0) {
                 movieGrid.innerHTML = '<p style="text-align: center; color: #999; padding: 2rem; grid-column: 1 / -1;">No movies available. Check back later!</p>';
                 updateStats();
@@ -376,17 +376,17 @@
                 const rating = calculateRating(movieId) || '7.0';
                 const reviewCount = getReviewCount(movieId);
                 const category = getMovieCategory(movie, topRatedMovieIds);
-                
+
                 // Normalize genre for filtering (split by comma and normalize each)
                 const genreArray = fullGenre.toLowerCase().split(',').map(g => g.trim());
                 const genreForFilter = genreArray.join(',');
-                
+
                 return `
-                    <div class="movie-card" 
-                         data-title="${title.toLowerCase()}" 
-                         data-genre="${genreForFilter}" 
-                         data-year="${year}" 
-                         data-rating="${rating}" 
+                    <div class="movie-card"
+                         data-title="${title.toLowerCase()}"
+                         data-genre="${genreForFilter}"
+                         data-year="${year}"
+                         data-rating="${rating}"
                          data-category="${category}"
                          data-review-count="${reviewCount}">
                         <div class="movie-card-img">
@@ -416,7 +416,7 @@
         const movieGrid = document.getElementById('movieGrid');
         const noResults = document.getElementById('noResults');
         const filterTabs = document.querySelectorAll('.filter-tab');
-        
+
         let currentCategoryFilter = 'all'; // Track current category filter
         let movieCards = []; // Will be populated after movies load
 
@@ -424,14 +424,14 @@
         function filterMovies() {
             // Refresh movie cards list
             movieCards = document.querySelectorAll('.movie-card');
-            
+
             if (!movieCards || movieCards.length === 0) {
                 return;
             }
-            
+
             const searchTerm = (searchInput.value || '').toLowerCase().trim();
             const selectedGenre = (genreFilter.value || '').toLowerCase().trim();
-            
+
             let visibleCount = 0;
 
             movieCards.forEach(card => {
@@ -443,7 +443,7 @@
                 // Check if movie matches search term (title, genre, director, or year)
                 let matchesSearch = true;
                 if (searchTerm !== '') {
-                    matchesSearch = title.includes(searchTerm) || 
+                    matchesSearch = title.includes(searchTerm) ||
                                    genres.includes(searchTerm) ||
                                    year.toString().includes(searchTerm);
                 }
@@ -487,14 +487,14 @@
             // Refresh DOM element references
             searchInput = document.getElementById('searchInput');
             genreFilter = document.getElementById('genreFilter');
-            
+
             // Remove old event listeners and add new ones
             if (searchInput) {
                 // Clone to remove old listeners
                 const newSearchInput = searchInput.cloneNode(true);
                 searchInput.parentNode.replaceChild(newSearchInput, searchInput);
                 searchInput = newSearchInput;
-                
+
                 searchInput.addEventListener('input', filterMovies);
                 searchInput.addEventListener('keydown', function(e) {
                     if (e.key === 'Escape') {
@@ -503,19 +503,19 @@
                     }
                 });
             }
-            
+
             if (genreFilter) {
                 // Clone to remove old listeners
                 const newGenreFilter = genreFilter.cloneNode(true);
                 genreFilter.parentNode.replaceChild(newGenreFilter, genreFilter);
                 genreFilter = newGenreFilter;
-                
+
                 genreFilter.addEventListener('change', filterMovies);
             }
-            
+
             // Refresh movie cards
             movieCards = document.querySelectorAll('.movie-card');
-            
+
             // Apply current filters
             filterMovies();
         }
@@ -525,16 +525,16 @@
             filterTabs.forEach(tab => {
                 tab.addEventListener('click', function(e) {
                     e.preventDefault();
-                    
+
                     // Remove active class from all tabs
                     filterTabs.forEach(t => t.classList.remove('active'));
-                    
+
                     // Add active class to clicked tab
                     this.classList.add('active');
-                    
+
                     // Update current category filter
                     currentCategoryFilter = this.getAttribute('data-filter');
-                    
+
                     // Re-apply filters
                     filterMovies();
                 });
@@ -545,10 +545,10 @@
         document.addEventListener('DOMContentLoaded', function() {
             // Initialize default movies if localStorage is empty
             initializeDefaultMovies();
-            
+
             // Load movies from localStorage
             loadMovies();
-            
+
             // Initialize category filters
             setupCategoryFilters();
         });

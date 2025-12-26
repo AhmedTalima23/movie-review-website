@@ -1,0 +1,83 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <title>Settings - MovieReview</title>
+    <link rel="stylesheet" href="{% static 'css/style.css' %}">
+    <link rel="stylesheet" href="{% static 'css/pages/user.css' %}">
+    <link
+        href="https://fonts.googleapis.com/css2?family=Open+Sans:wght@400;600;700&family=Inter:wght@400;700&display=swap"
+        rel="stylesheet">
+</head>
+
+<body>
+    <!-- Navbar -->
+    <nav class="navbar">
+        <div class="container">
+            <div class="navbar-content">
+                <h1><a href="{% url 'user_home' %}">Movie<span>Review</span></a></h1>
+                <ul>
+                    <li><a href="{% url 'user_home' %}">Home</a></li>
+                    <li><a href="{% url 'movie_list' %}">Browse Movies</a></li>
+                    <li><a href="{% url 'my_reviews' %}">My Reviews</a></li>
+                    <li><a href="{% url 'profile' %}">Profile</a></li>
+                    <li><a href="{% url 'logout' %}">Logout</a></li>
+                </ul>
+                <div class="bar-icon">☰</div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Main Content -->
+    <div class="content-with-sidebar no-sidebar">
+        <h2>Account Settings</h2>
+
+        <div class="settings-form">
+            <form method="post">
+                {% csrf_token %}
+                {% if messages %}
+                {% for message in messages %}
+                <div class="message-alert message-{{ message.tags }}">
+                    {{ message }}
+                </div>
+                {% endfor %}
+                {% endif %}
+
+                <div class="settings-row">
+                    <div class="form-group inline">
+                        <label for="firstName">First Name</label>
+                        <input id="firstName" name="first_name" type="text" value="{{ user.first_name }}" required>
+                    </div>
+                    <div class="form-group inline">
+                        <label for="lastName">Last Name</label>
+                        <input id="lastName" name="last_name" type="text" value="{{ user.last_name }}" required>
+                    </div>
+                </div>
+
+                <div class="settings-row">
+                    <div class="form-group inline full-basis">
+                        <label for="email">Email</label>
+                        <input id="email" name="email" type="email" value="{{ user.email }}" required>
+                    </div>
+                </div>
+
+                <div class="mt-1">
+                    <button type="submit" class="btn">Save Changes</button>
+                    <a href="{% url 'profile' %}" class="btn btn-cancel">Cancel</a>
+                </div>
+            </form>
+        </div>
+
+        <footer>
+            <div class="container">
+                <p>&copy; 2025 MovieReview. All rights reserved.</p>
+                <p>Discover, Review, and Rate your favorite movies.</p>
+            </div>
+        </footer>
+    </div>
+</body>
+
+</html>

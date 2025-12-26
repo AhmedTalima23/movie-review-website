@@ -1,0 +1,253 @@
+<!DOCTYPE html>
+{% load static %}
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="MovieReview Admin Dashboard - Manage movies, reviews, and users">
+    <title>Admin Dashboard - MovieReview</title>
+    <link rel="stylesheet" href="{% static 'css/style.css' %}">
+    <link rel="stylesheet" href="{% static 'css/admin.css' %}">
+    <link
+        href="https://fonts.googleapis.com/css2?family=Open+Sans:wght@400;600;700&family=Inter:wght@400;700&display=swap"
+        rel="stylesheet">
+</head>
+
+<body>
+    <!-- Admin Navigation Bar -->
+    <nav class="navbar">
+        <div class="container">
+            <div class="navbar-content">
+                <h1><a href="/">Movie<span>Review</span> Admin</a></h1>
+                <ul id="navLinks">
+                    <li><a href="{% url 'admin_home' %}">Dashboard</a></li>
+                    <li><a href="{% url 'add_movie_page' %}">Add Movie</a></li>
+                    <li><a href="{% url 'manage_movies' %}" title="Manage all movies">Manage Movies</a></li>
+                    <li><a href="{% url 'manage_reviews' %}" title="Manage all reviews">Manage Reviews</a></li>
+                    <li><a href="{% url 'logout' %}">Logout</a></li>
+                </ul>
+                <div class="bar-icon">☰</div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Admin Dashboard -->
+    <section class="container admin-panel">
+        <div class="head-style">
+            <h2>Admin Dashboard</h2>
+            <p>Welcome <span id="adminName">{{ user.name|default:"Administrator" }}</span></p>
+        </div>
+
+        <!-- Statistics Cards -->
+        <div class="head-style" style="margin-top: 2rem;">
+            <h2 id="stats-heading">Platform Statistics</h2>
+            <p>Current <span>Overview</span></p>
+        </div>
+        <div class="admin-stat-grid" role="region" aria-labelledby="stats-heading">
+            <!-- Total Movies Card -->
+            <div class="stat-card" role="article" aria-labelledby="movies-count">
+                <h3 style="font-size: 3rem; color: var(--accent-color); margin-bottom: 0.5rem;" id="totalMovies"
+                    aria-label="Total movies count">{{ total_movies }}</h3>
+                <p style="color: var(--secondary-color); font-size: 1.2rem;" id="movies-count">Total Movies</p>
+            </div>
+
+            <!-- Pending Reviews Card -->
+            <div class="stat-card alt-orange" role="article" aria-labelledby="reviews-count">
+                <h3 style="font-size: 3rem; color: #FFA500; margin-bottom: 0.5rem;" id="totalReviews"
+                    aria-label="Total reviews count">{{ total_reviews }}</h3>
+                <p style="color: var(--secondary-color); font-size: 1.2rem;" id="reviews-count">Total Reviews</p>
+            </div>
+
+            <!-- Total Users Card -->
+            <div class="stat-card alt-green" role="article" aria-labelledby="users-count">
+                <h3 style="font-size: 3rem; color: #4CAF50; margin-bottom: 0.5rem;" id="totalUsers"
+                    aria-label="Total users count">{{ total_users }}</h3>
+                <p style="color: var(--secondary-color); font-size: 1.2rem;" id="users-count">Registered Users</p>
+            </div>
+
+            <!-- Movies Reviewed Card -->
+            <div class="stat-card alt-primary" role="article" aria-labelledby="reviewed-count">
+                <h3 style="font-size: 3rem; color: var(--primary-color); margin-bottom: 0.5rem;" id="moviesReviewed"
+                    aria-label="Movies reviewed count">{{ movies_reviewed_count }}</h3>
+                <p style="color: var(--secondary-color); font-size: 1.2rem;" id="reviewed-count">Movies Reviewed</p>
+            </div>
+        </div>
+
+        <!-- Quick Actions -->
+        <div class="head-style" style="margin-top: 3rem;">
+            <h2>Quick Actions</h2>
+            <p>Manage Your <span>Platform</span></p>
+        </div>
+
+        <div class="quick-actions">
+            <!-- Add Movie -->
+            <div class="action-card">
+                <h3 style="color: var(--secondary-color); margin-bottom: 1rem;">Add New Movie</h3>
+                <p style="color: #b0b0b0; margin-bottom: 1.5rem;">Add a new movie to the platform database</p>
+                <a href="{% url 'add_movie_page' %}" class="btn">Add Movie</a>
+            </div>
+
+            <!-- Manage Movies -->
+            <div class="action-card">
+                <h3 style="color: var(--secondary-color); margin-bottom: 1rem;">Manage Movies</h3>
+                <p style="color: #b0b0b0; margin-bottom: 1.5rem;">View, edit, or delete existing movies</p>
+                <a href="/admin/manage_movies/" class="btn">Manage Movies</a>
+            </div>
+
+            <!-- Manage Reviews -->
+            <div class="action-card">
+                <h3 style="color: var(--secondary-color); margin-bottom: 1rem;">Manage Reviews</h3>
+                <p style="color: #b0b0b0; margin-bottom: 1.5rem;">Review and moderate user submissions</p>
+                <a href="/admin/manage_reviews/" class="btn">Manage Reviews</a>
+            </div>
+        </div>
+
+        <!-- Recent Activity -->
+        <div class="head-style" style="margin-top: 3rem;">
+            <h2 id="activity-heading">Recent Activity</h2>
+            <p>Latest <span>Updates</span></p>
+        </div>
+
+        <div class="recent-activity" id="recentActivity" role="region" aria-labelledby="activity-heading"
+            aria-live="polite">
+            <div class="item loading">
+                <p style="color: var(--secondary-color); margin-bottom: 0.3rem;">Loading recent activity...</p>
+                <p style="color: #7f7f90; font-size: 0.9rem;">Just now</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer>
+        <div class="container">
+            <p>&copy; 2025 MovieReview. All rights reserved.</p>
+            <p>Admin Dashboard - Manage your movie review platform.</p>
+        </div>
+    </footer>
+
+    <script>
+        // Initialize dashboard
+        document.addEventListener('DOMContentLoaded', function () {
+            updateDashboardStats();
+            // Update stats every 30 seconds
+            setInterval(updateDashboardStats, 30000);
+        });
+
+        // Function to update dashboard statistics using AJAX
+        function updateDashboardStats() {
+            // Fetch data from server endpoints
+            const moviePromise = fetch('/get_movies/').then(r => r.ok ? r.json() : Promise.reject('Movies fetch failed')).catch(() => []);
+            const userPromise = fetch('/get_users/').then(r => r.ok ? r.json() : Promise.reject('Users fetch failed')).catch(() => []);
+            const reviewPromise = fetch('/get_reviews/').then(r => r.ok ? r.json() : Promise.reject('Reviews fetch failed')).catch(() => []);
+            const activityPromise = fetch('/get_recent_activity/').then(r => r.ok ? r.json() : Promise.reject('Activity fetch failed')).catch(() => []);
+
+            Promise.all([moviePromise, userPromise, reviewPromise, activityPromise])
+                .then(([movies, users, reviews, activities]) => {
+                    // Update statistics
+                    document.getElementById('totalMovies').textContent = movies.length;
+                    document.getElementById('totalUsers').textContent = users.length;
+                    document.getElementById('totalReviews').textContent = reviews.length;
+
+                    // Calculate movies reviewed (unique movies with reviews)
+                    const reviewedMovieIds = new Set(reviews.map(r => r.movie__title));
+                    document.getElementById('moviesReviewed').textContent = reviewedMovieIds.size;
+
+                    // Update recent activity using the new API
+                    const activityContainer = document.getElementById('recentActivity');
+
+                    if (activities.length === 0) {
+                        activityContainer.innerHTML = `
+                            <div class="item">
+                                <p style="color: var(--secondary-color); margin-bottom: 0.3rem;">No recent activity yet</p>
+                                <p style="color: #7f7f90; font-size: 0.9rem;">Activity will appear here</p>
+                            </div>
+                        `;
+                    } else {
+                        activityContainer.innerHTML = activities.map(activity => {
+                            const typeClass = getActivityTypeClass(activity.type);
+                            const message = getActivityMessage(activity);
+                            const timestamp = new Date(activity.timestamp || activity.created_at);
+                            return `
+                                <div class="item ${typeClass}" role="article">
+                                    <p style="color: var(--secondary-color); margin-bottom: 0.3rem;">${message}</p>
+                                    <p style="color: #7f7f90; font-size: 0.9rem;">${getRelativeTime(timestamp)}</p>
+                                </div>
+                            `;
+                        }).join('');
+                    }
+                })
+                .catch(error => {
+                    console.error('Error updating dashboard stats:', error);
+                    // Do not overwrite stats with 'Error' to keep server-rendered values
+
+                    // Show error in recent activity only
+                    const activityContainer = document.getElementById('recentActivity');
+                    activityContainer.innerHTML = `
+                        <div class="item error">
+                            <p style="color: var(--secondary-color); margin-bottom: 0.3rem;">Unable to load recent activity</p>
+                            <p style="color: #7f7f90; font-size: 0.9rem;">Please refresh the page</p>
+                        </div>
+                    `;
+                });
+        }
+
+        // Function to get CSS class for activity type
+        function getActivityTypeClass(type) {
+            switch (type) {
+                case 'movie': return 'alt-primary';
+                case 'user': return 'alt-green';
+                case 'review': return 'alt-orange';
+                case 'admin': return 'alt-primary';
+                default: return '';
+            }
+        }
+
+        // Function to generate activity message
+        function getActivityMessage(activity) {
+            switch (activity.type) {
+                case 'movie':
+                    if (activity.action === 'created') {
+                        return `New movie added: "${activity.title}"`;
+                    } else if (activity.action === 'updated') {
+                        return `Movie updated: "${activity.title}"`;
+                    }
+                    break;
+                case 'user':
+                    return `New user registered: ${activity.first_name} ${activity.last_name}`;
+                case 'review':
+                    if (activity.action === 'submitted') {
+                        return `New review by ${activity.user__first_name} ${activity.user__last_name} on "${activity.movie__title}"`;
+                    } else if (activity.action === 'updated') {
+                        return `Review updated by ${activity.user__first_name} ${activity.user__last_name} on "${activity.movie__title}"`;
+                    }
+                    break;
+                case 'admin':
+                    return `New admin created: ${activity.first_name} ${activity.last_name}`;
+                default:
+                    return `${activity.type} ${activity.action}`;
+            }
+            return `${activity.type} ${activity.action}`;
+        }
+
+        // Function to format relative time
+        function getRelativeTime(timestamp) {
+            if (!timestamp) return 'Recently';
+            const now = new Date();
+            const diff = now - timestamp;
+            if (diff < 0) return timestamp.toLocaleDateString();
+            const minutes = Math.floor(diff / 60000);
+            const hours = Math.floor(diff / 3600000);
+            const days = Math.floor(diff / 86400000);
+            if (minutes < 1) return 'Just now';
+            if (minutes < 60) return `${minutes}m ago`;
+            if (hours < 24) return `${hours}h ago`;
+            if (days < 7) return `${days}d ago`;
+            return timestamp.toLocaleDateString();
+        }
+
+
+    </script>
+</body>
+
+</html>

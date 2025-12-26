@@ -1,0 +1,200 @@
+<!DOCTYPE html>
+{% load static %}
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MovieReview - Discover & Review Movies</title>
+
+    <link rel="stylesheet" href="{% static 'css/style.css' %}">
+    <link
+        href="https://fonts.googleapis.com/css2?family=Open+Sans:wght@400;600;700&family=Inter:wght@400;700&display=swap"
+        rel="stylesheet">
+</head>
+
+<body>
+
+    <!-- Navigation Bar -->
+    <nav class="navbar">
+        <div class="container">
+            <div class="navbar-content">
+                <h1><a href="/">Movie<span>Review</span></a></h1>
+                <ul id="navLinks">
+                    <li><a href="/" class="active">Home</a></li>
+                    <li><a href="/login/" id="loginLink">Login</a></li>
+                    <li><a href="/signup/" id="signupLink">Sign Up</a></li>
+                </ul>
+                <div class="bar-icon">☰</div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Header Section -->
+    <header class="header">
+        <div class="container">
+            <div class="header-content">
+                <div class="header-text">
+                    <h2 id="headerTitle">Discover. Review. Rate.</h2>
+                    <p id="headerSubtext">Join our community of movie lovers! Read reviews, share your opinions, and
+                        explore a world of cinematic stories.</p>
+                    <div class="header-btn" id="headerButtons">
+                        <a href="/signup/" class="book-btn" id="getStartedBtn">Get Started</a>
+                    </div>
+                </div>
+                <div class="header-img">
+                    <img src="{% static 'img/movies/samuel-regan-asante-wMkaMXTJjlQ-unsplash.jpg' %}"
+                        alt="Movie Collection">
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- Featured Movies Section -->
+    <!-- <section class="container">
+        <div class="head-style">
+            <h2>Featured Movies</h2>
+            <p>Popular <span>This Week</span></p>
+        </div>
+
+        <div class="movie-list" id="movie-list">
+            {% if movies %}
+            {% for movie in movies %}
+            <div class="movie">
+                {% if movie.poster_url %}
+                <img src="{{ movie.poster_url }}" alt="{{ movie.title }}">
+                {% else %}
+                <img src="{% static 'img/movies/default.jpg' %}" alt="{{ movie.title }}">
+                {% endif %}
+                <div class="movie-info">
+                    <h3>{{ movie.title }}</h3>
+                    <p><strong>Genre:</strong> {{ movie.genre }} | <strong>Year:</strong> {{ movie.release_date|date:"Y"
+                        }} | <strong>Director:</strong> {{ movie.director }}</p>
+                    <p>{{ movie.description|truncatewords:20 }}</p>
+                    <a href="{% url 'movie_details' movie.moID %}" class="btn view-details-btn">View Details</a>
+                    <a href="{% url 'submit_review' movie.moID %}" class="btn add-review add-review-btn">Add Review</a>
+                </div>
+            </div>
+            {% endfor %}
+            {% else %}
+            <p>No movies available at the moment.</p>
+            {% endif %}
+        </div>
+    </section> -->
+
+    <!-- Footer -->
+    <footer>
+        <div class="container">
+            <p>&copy; 2025 MovieReview. All rights reserved.</p>
+            <p>Discover, Review, and Rate your favorite movies.</p>
+        </div>
+    </footer>
+
+    <script>
+        // Pass user data from Django to JavaScript
+        const currentUser = JSON.parse('{{ user|default:"null"|escapejs }}');
+        const isLoggedIn = currentUser !== null;
+        // Function to check if user is logged in
+        function isLoggedIn() {
+            return isLoggedIn;
+        }
+
+        // Function to get current user
+        function getCurrentUser() {
+            return currentUser;
+        }
+
+        // Function to update navigation based on login status
+        function updateNavigation() {
+            const navLinks = document.getElementById('navLinks');
+            const user = getCurrentUser();
+
+            if (user) {
+                // User is logged in - show user menu
+                let menuItems = `
+                    <li><a href="/" class="active">Home</a></li>
+                    <li><a href="pages/user/movie_list.html">Browse Movies</a></li>
+                    <li><a href="pages/user/my_reviews.html">My Reviews</a></li>
+                    <li><a href="pages/user/profile.html">Profile</a></li>
+                    <li><a href="/logout/">Logout</a></li>
+                `;
+                if (user.type == 'admin') {
+                    menuItems = `
+                        <li><a href="/" class="active">Home</a></li>
+                        <li><a href="pages/admin/users.html">Manage Users</a></li>
+                        <li><a href="pages/admin/movies.html">Manage Movies</a></li>
+                        <li><a href="pages/admin/reviews.html">Manage Reviews</a></li>
+                        <li><a href="/logout/">Logout</a></li>
+                    `;
+                }
+                navLinks.innerHTML = menuItems;
+
+                // Update header for logged-in users
+                const headerTitle = document.getElementById('headerTitle');
+                const headerSubtext = document.getElementById('headerSubtext');
+                const headerButtons = document.getElementById('headerButtons');
+
+                if (user.type == 'admin') {
+                    headerTitle.textContent = 'Admin Dashboard';
+                    headerSubtext.textContent = 'Manage users, movies, and reviews from here.';
+                    headerButtons.innerHTML = `
+                        <a href="pages/admin/users.html" class="book-btn">Manage Users</a>
+                        <a href="pages/admin/movies.html" class="book-btn" style="background: var(--main-color); margin-left: 1rem;">Manage Movies</a>
+                    `;
+                } else {
+                    headerTitle.textContent = `Welcome back, ${user.name}!`;
+                    headerSubtext.textContent = 'Continue exploring amazing movies and share your reviews with the community.';
+                    headerButtons.innerHTML = `
+                        <a href="pages/user/movie_list.html" class="book-btn">Browse Movies</a>
+                        <a href="pages/user/my_reviews.html" class="book-btn" style="background: var(--main-color); margin-left: 1rem;">My Reviews</a>
+                    `;
+                }
+            } else {
+                // User is not logged in - show guest menu
+                navLinks.innerHTML = `
+                    <li><a href="/" class="active">Home</a></li>
+                    <li><a href="/login/">Login</a></li>
+                    <li><a href="/signup/">Sign Up</a></li>
+                `;
+            }
+        }
+
+        // Function to handle movie detail links
+        function setupMovieLinks() {
+            const viewDetailsBtns = document.querySelectorAll('.view-details-btn');
+            const addReviewBtns = document.querySelectorAll('.add-review-btn');
+
+            viewDetailsBtns.forEach(btn => {
+                btn.addEventListener('click', function (e) {
+                    if (!isLoggedIn()) {
+                        e.preventDefault();
+                        if (confirm('Please login to view movie details. Would you like to go to the login page?')) {
+                            window.location.href = '/login/';
+                        }
+                    }
+                    // If logged in, allow navigation to movie details
+                });
+            });
+
+            addReviewBtns.forEach(btn => {
+                btn.addEventListener('click', function (e) {
+                    if (!isLoggedIn()) {
+                        e.preventDefault();
+                        if (confirm('Please login to add a review. Would you like to go to the login page?')) {
+                            window.location.href = '/login/';
+                        }
+                    }
+                    // If logged in, allow navigation to submit review
+                });
+            });
+        }
+
+        // Initialize on page load
+        document.addEventListener('DOMContentLoaded', function () {
+            updateNavigation();
+            setupMovieLinks();
+        });
+    </script>
+</body>
+
+</html>
