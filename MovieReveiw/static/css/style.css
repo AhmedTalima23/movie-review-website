@@ -948,4 +948,25 @@ footer {
     }
 }
 
-@import "mediaquery.css"
+/* Messages / Alerts */
+.message-alert {
+    background: rgba(255, 255, 255, 0.1);
+    padding: 1rem;
+    border-radius: 5px;
+    margin-bottom: 1rem;
+    text-align: center;
+}
+
+.message-error {
+    color: #ff4444;
+}
+
+.message-success, .message-info, .message-debug {
+    color: #44ff44;
+}
+
+.message-warning {
+    color: #ffbb33;
+}
+
+@import "mediaquery.css";

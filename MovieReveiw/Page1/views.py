@@ -139,7 +139,7 @@ def get_users(request):
     return JsonResponse(list(users), safe=False)
 
 def get_reviews(request):
-    reviews = Review.objects.all().values('id', 'user__first_name', 'user__last_name', 'movie__title', 'rating', 'comment', 'created_at', 'updated_at')
+    reviews = Review.objects.all().values('reviewID', 'user__first_name', 'user__last_name', 'movie__title', 'rating', 'comment', 'created_at', 'updated_at')
     return JsonResponse(list(reviews), safe=False)
 
 def get_recent_activity(request):
@@ -165,7 +165,7 @@ def get_recent_activity(request):
 
     # Get recent reviews (last 10 submitted)
     recent_reviews = Review.objects.all().order_by('-created_at')[:10].values(
-        'id', 'user__first_name', 'user__last_name', 'movie__title', 'rating', 'created_at', 'updated_at'
+        'reviewID', 'user__first_name', 'user__last_name', 'movie__title', 'rating', 'created_at', 'updated_at'
     )
     reviews_data = [{'type': 'review', 'action': 'submitted', **review} for review in recent_reviews]
 
@@ -173,7 +173,7 @@ def get_recent_activity(request):
     recent_review_updates = Review.objects.filter(
         updated_at__gt=models.F('created_at')  # Only if updated after creation
     ).order_by('-updated_at')[:10].values(
-        'id', 'user__first_name', 'user__last_name', 'movie__title', 'rating', 'created_at', 'updated_at'
+        'reviewID', 'user__first_name', 'user__last_name', 'movie__title', 'rating', 'created_at', 'updated_at'
     )
     review_updates_data = [{'type': 'review', 'action': 'updated', **review} for review in recent_review_updates]
 
